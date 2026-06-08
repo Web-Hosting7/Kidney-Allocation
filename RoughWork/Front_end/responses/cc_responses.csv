@@ -1,0 +1,5 @@
+username,scenario,choice,timestamp,A_age,B_age,A_years_waiting,B_years_waiting,A_health_score,B_health_score,A_dependents,B_dependents,A_prior_transplants,B_prior_transplants,A_urgency_score,B_urgency_score
+cc,1,A,2026-06-08T14:10:09.331980,28.0,55.0,2.0,9.0,8.0,7.0,1.0,2.0,0.0,0.0,6.0,7.0
+cc,2,B,2026-06-08T14:10:10.704795,40.0,42.0,3.0,7.0,9.0,6.0,2.0,1.0,0.0,0.0,5.0,8.0
+cc,3,A,2026-06-08T14:10:11.173430,35.0,38.0,4.0,5.0,7.0,7.0,4.0,1.0,0.0,0.0,6.0,9.0
+cc,4,B,2026-06-08T14:10:11.917147,45.0,40.0,6.0,8.0,8.0,9.0,2.0,3.0,0.0,1.0,7.0,8.0
