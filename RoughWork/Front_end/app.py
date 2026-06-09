@@ -1353,12 +1353,16 @@ padding:16px;text-align:center'>
                     break
         if flips:
             for fl in flips:
+                fl_fc = fl["fc"]
+                fl_param = fl["param"]
+                fl_ds = fl["ds"]
+                fl_np_lbl = fl["np_lbl"]
                 st.markdown(
-                    f"<div style='border-left:3px solid {fl["fc"]};"
+                    f"<div style='border-left:3px solid {fl_fc};"
                     f"padding:6px 14px;margin:4px 0;"
                     f"background:#f9fafb;border-radius:4px;font-size:13px'>"
-                    f"If <b>{fl["param"]}</b> of A changes by <b>{fl["ds"]}</b> → "
-                    f"<span style='color:{fl["fc"]};font-weight:600'>{fl["np_lbl"]}</span>"
+                    f"If <b>{fl_param}</b> of A changes by <b>{fl_ds}</b> → "
+                    f"<span style='color:{fl_fc};font-weight:600'>{fl_np_lbl}</span>"
                     f"</div>",
                     unsafe_allow_html=True,
                 )
