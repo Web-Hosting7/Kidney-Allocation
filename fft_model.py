@@ -121,8 +121,9 @@ class FastFrugalTree:
         u = np.unique(x)
         if len(u) <= 1:
             return np.array([float(u[0]) if len(u) else 0.0])
-        mids = (u[:-1] + u[1:]) / 2.0
-        cands = np.unique(np.concatenate([mids, [0.0]]))  # 0 is a natural split
+        # Round midpoints to integers — all features are integer-valued
+        mids = np.ceil((u[:-1] + u[1:]) / 2.0)
+        cands = np.unique(np.concatenate([mids, [0.0]]))
         if len(cands) > cap:
             idx = np.linspace(0, len(cands) - 1, cap).astype(int)
             cands = cands[idx]
@@ -182,7 +183,7 @@ class FastFrugalTree:
                     key = (score, purity, n_exit)
                     if best is None or key > (best[0], best[1], best[2]):
                         best = (score, purity, n_exit, fidx,
-                                float(thr), prefer_higher, exit_class, M)
+                                float(round(thr)), prefer_higher, exit_class, M)
             if best is None:
                 break
 
@@ -274,49 +275,67 @@ class FastFrugalTree:
     def _best_refine_split(self, X, y, mask, exclude_idx, n_total):
         """
         Among the rows that satisfied a near-tie parent condition, find the
-        single other cue that best separates them into A vs B. Returns a
-        refine-node dict, or None if no cue actually distinguishes anything
-        (e.g. every row in this slice already agrees on the same class).
+        single other cue that best separates them into A vs B.
+
+        Uses the same abs-value split logic as the main fit() so the resulting
+        node has the identical data structure (use_abs=True, prefer_higher,
+        threshold ≥ 0) and can be displayed with the same |Δ| ≥ X format.
+
+        Returns a refine-node dict, or None if no cue distinguishes anything.
         """
         idx = np.where(mask)[0]
         yr = y[idx]
         if len(idx) < 4 or len(np.unique(yr)) < 2:
             return None
 
-        best = None  # (n_correct, dict)
+        best = None  # (score, purity, n_exit, dict)
         for fidx in range(X.shape[1]):
             if fidx == exclude_idx:
                 continue
-            xr = X[idx, fidx]
-            for thr in self._candidate_thresholds(xr):
-                for op in (">=", "<="):
-                    M = (xr >= thr) if op == ">=" else (xr <= thr)
-                    n_t = int(M.sum())
-                    n_f = len(idx) - n_t
-                    if n_t == 0 or n_f == 0:
-                        continue
-                    true_class = int(round(yr[M].mean()))
-                    false_class = int(round(yr[~M].mean()))
-                    if true_class == false_class:
-                        continue  # doesn't actually break the tie either way
-                    n_correct = (int((yr[M] == true_class).sum())
-                                 + int((yr[~M] == false_class).sum()))
-                    if best is None or n_correct > best[0]:
-                        purity_t = float((yr[M] == true_class).mean())
-                        purity_f = float((yr[~M] == false_class).mean())
-                        best = (n_correct, {
-                            "feature":      self.feature_names[fidx],
-                            "feature_idx":  fidx,
-                            "op":           op,
-                            "threshold":    float(thr),
-                            "true_class":   true_class,
-                            "false_class":  false_class,
-                            "support":      n_t / n_total,
-                            "false_support": n_f / n_total,
-                            "purity":       purity_t,
-                            "false_purity": purity_f,
-                        })
-        return best[1] if best else None
+            xr     = X[idx, fidx]
+            xr_abs = np.abs(xr)
+            for thr in self._candidate_thresholds(xr_abs):
+                if thr <= 0:
+                    continue  # skip zero — same rule as main fit()
+                M = xr_abs >= thr
+                n_t = int(M.sum())
+                n_f = len(idx) - n_t
+                if n_t == 0 or n_f == 0:
+                    continue
+                yr_t  = yr[M]
+                signs = np.sign(xr[M])
+                votes_higher = int(np.sum((signs > 0) & (yr_t == 1))
+                                   + np.sum((signs < 0) & (yr_t == 0)))
+                votes_lower  = int(np.sum((signs > 0) & (yr_t == 0))
+                                   + np.sum((signs < 0) & (yr_t == 1)))
+                prefer_higher = votes_higher >= votes_lower
+                pred_exit = np.where((signs > 0) == prefer_higher, 1, 0)
+                n_correct = int((yr_t == pred_exit).sum())
+                # false branch: majority class among non-exiting rows
+                yr_f = yr[~M]
+                false_cls = int(round(yr_f.mean())) if n_f > 0 else (1 if prefer_higher else 0)
+                purity_t = n_correct / n_t
+                purity_f = float((yr_f == false_cls).mean()) if n_f > 0 else 0.5
+                score = n_correct - (n_t - n_correct)
+                key = (score, purity_t, n_t)
+                if best is None or key > (best[0], best[1], best[2]):
+                    # true_class: kept for backward compat; derived from prefer_higher
+                    true_cls = 1 if prefer_higher else 0
+                    best = (score, purity_t, n_t, {
+                        "feature":       self.feature_names[fidx],
+                        "feature_idx":   fidx,
+                        "op":            ">=",
+                        "threshold":     float(round(thr)),
+                        "use_abs":       True,
+                        "prefer_higher": prefer_higher,
+                        "true_class":    true_cls,
+                        "false_class":   false_cls,
+                        "support":       n_t / n_total,
+                        "false_support": n_f / n_total,
+                        "purity":        purity_t,
+                        "false_purity":  purity_f,
+                    })
+        return best[3] if best else None
 
     # ── single-row evaluation ───────────────────────────────────────────────
     def _row_predict(self, row):
@@ -334,10 +353,20 @@ class FastFrugalTree:
                     refine = node.get("refine")
                     if refine:
                         rx = row[refine["feature_idx"]]
-                        rcond = ((rx >= refine["threshold"]) if refine["op"] == ">="
-                                 else (rx <= refine["threshold"]))
-                        cls = refine["true_class"] if rcond else refine["false_class"]
-                        purity = refine["purity"] if rcond else refine["false_purity"]
+                        if refine.get("use_abs"):
+                            rcond = abs(rx) >= refine["threshold"]
+                            if rcond:
+                                ph = refine["prefer_higher"]
+                                cls = 1 if (rx > 0) == ph else 0
+                            else:
+                                cls = int(refine["false_class"])
+                            purity = refine["purity"] if rcond else refine["false_purity"]
+                        else:
+                            # legacy signed refine — kept for backward compat
+                            rcond = ((rx >= refine["threshold"]) if refine["op"] == ">="
+                                     else (rx <= refine["threshold"]))
+                            cls = refine["true_class"] if rcond else refine["false_class"]
+                            purity = refine["purity"] if rcond else refine["false_purity"]
                         return cls, i, purity, bool(rcond)
                     # dynamic exit: prefer the patient with higher/lower raw value
                     ph = node["prefer_higher"]
@@ -349,10 +378,19 @@ class FastFrugalTree:
                     refine = node.get("refine")
                     if refine:
                         rx = row[refine["feature_idx"]]
-                        rcond = ((rx >= refine["threshold"]) if refine["op"] == ">="
-                                 else (rx <= refine["threshold"]))
-                        cls = refine["true_class"] if rcond else refine["false_class"]
-                        purity = refine["purity"] if rcond else refine["false_purity"]
+                        if refine.get("use_abs"):
+                            rcond = abs(rx) >= refine["threshold"]
+                            if rcond:
+                                ph = refine["prefer_higher"]
+                                cls = 1 if (rx > 0) == ph else 0
+                            else:
+                                cls = int(refine["false_class"])
+                            purity = refine["purity"] if rcond else refine["false_purity"]
+                        else:
+                            rcond = ((rx >= refine["threshold"]) if refine["op"] == ">="
+                                     else (rx <= refine["threshold"]))
+                            cls = refine["true_class"] if rcond else refine["false_class"]
+                            purity = refine["purity"] if rcond else refine["false_purity"]
                         return cls, i, purity, bool(rcond)
                     return node["exit_class"], i, node["purity"], None
         return self.default_class, -1, self.default_purity, None
@@ -418,16 +456,29 @@ class FastFrugalTree:
                 ridx = np.where(exit_here)[0]
                 if len(ridx) > 0:
                     rx = X[ridx, refine["feature_idx"]]
-                    rcond = ((rx >= refine["threshold"]) if refine["op"] == ">="
-                             else (rx <= refine["threshold"]))
                     ry = y[ridx]
+                    if refine.get("use_abs"):
+                        rcond = np.abs(rx) >= refine["threshold"]
+                        if rcond.sum() > 0:
+                            ph = refine["prefer_higher"]
+                            pred_t = np.where((rx[rcond] > 0) == ph, 1, 0)
+                            refine["purity"] = float((ry[rcond] == pred_t).mean())
+                        else:
+                            refine["purity"] = 0.5
+                        refine["false_purity"] = (
+                            float((ry[~rcond] == refine["false_class"]).mean())
+                            if (~rcond).sum() > 0 else 0.5)
+                    else:
+                        rcond = ((rx >= refine["threshold"]) if refine["op"] == ">="
+                                 else (rx <= refine["threshold"]))
+                        n_t_r, n_f_r = int(rcond.sum()), int((~rcond).sum())
+                        refine["purity"] = (float((ry[rcond] == refine["true_class"]).mean())
+                                             if n_t_r > 0 else 0.5)
+                        refine["false_purity"] = (float((ry[~rcond] == refine["false_class"]).mean())
+                                                   if n_f_r > 0 else 0.5)
                     n_t, n_f = int(rcond.sum()), int((~rcond).sum())
                     refine["support"] = n_t / n_total
                     refine["false_support"] = n_f / n_total
-                    refine["purity"] = (float((ry[rcond] == refine["true_class"]).mean())
-                                         if n_t > 0 else 0.5)
-                    refine["false_purity"] = (float((ry[~rcond] == refine["false_class"]).mean())
-                                               if n_f > 0 else 0.5)
                 else:
                     refine["support"] = refine["false_support"] = 0.0
                     refine["purity"] = refine["false_purity"] = 0.5
@@ -443,13 +494,17 @@ class FastFrugalTree:
     @staticmethod
     def _refine_to_dict(r):
         d = {
-            "feature": r["feature"], "op": r["op"], "threshold": float(r["threshold"]),
+            "feature": r["feature"], "op": r.get("op", ">="),
+            "threshold": float(r["threshold"]),
             "true_class": int(r["true_class"]), "false_class": int(r["false_class"]),
             "support": float(r.get("support", 0.0)),
             "false_support": float(r.get("false_support", 0.0)),
             "purity": float(r.get("purity", 0.5)),
             "false_purity": float(r.get("false_purity", 0.5)),
         }
+        if r.get("use_abs"):
+            d["use_abs"] = True
+            d["prefer_higher"] = bool(r["prefer_higher"])
         if r.get("manual"):
             d["manual"] = True
         return d
@@ -468,12 +523,14 @@ class FastFrugalTree:
             nodes_out.append(nd)
         return {
             "nodes": nodes_out,
-            "default_class":   int(self.default_class),
-            "default_support": float(self.default_support),
-            "default_purity":  float(self.default_purity),
-            "feature_names":   list(self.feature_names),
-            "max_depth":       self.max_depth,
-            "near_tie_threshold": self.near_tie_threshold,
+            "default_class":         int(self.default_class),
+            "default_support":       float(self.default_support),
+            "default_purity":        float(self.default_purity),
+            "default_feature":       getattr(self, "default_feature", None),
+            "default_prefer_higher": getattr(self, "default_prefer_higher", None),
+            "feature_names":         list(self.feature_names),
+            "max_depth":             self.max_depth,
+            "near_tie_threshold":    self.near_tie_threshold,
         }
 
     @classmethod
@@ -515,10 +572,10 @@ class FastFrugalTree:
                 node["threshold"]     = abs(thr)
             r = n.get("refine")
             if r:
-                node["refine"] = {
+                refine = {
                     "feature":       r["feature"],
                     "feature_idx":   name_to_idx.get(r["feature"], 0),
-                    "op":            r["op"],
+                    "op":            r.get("op", ">="),
                     "threshold":     float(r["threshold"]),
                     "true_class":    int(r["true_class"]),
                     "false_class":   int(r["false_class"]),
@@ -527,12 +584,33 @@ class FastFrugalTree:
                     "purity":        float(r.get("purity", 0.5)),
                     "false_purity":  float(r.get("false_purity", 0.5)),
                 }
+                if r.get("use_abs"):
+                    refine["use_abs"]       = True
+                    refine["prefer_higher"] = bool(r["prefer_higher"])
+                else:
+                    # Migrate legacy signed refine to abs-value format
+                    op  = refine["op"]
+                    thr = refine["threshold"]
+                    tc  = refine["true_class"]
+                    # prefer_higher: when op=">=" the condition fires for positive diffs
+                    # (A higher), so true_class=1 means prefer higher. Vice-versa for "<=".
+                    if op == ">=":
+                        ph = (tc == 1)
+                    else:  # "<="
+                        ph = (tc == 0)
+                    refine["use_abs"]       = True
+                    refine["prefer_higher"] = ph
+                    refine["op"]            = ">="
+                    refine["threshold"]     = abs(thr)
                 if r.get("manual"):
-                    node["refine"]["manual"] = True
+                    refine["manual"] = True
+                node["refine"] = refine
             t.nodes.append(node)
-        t.default_class   = int(d.get("default_class", 0))
-        t.default_support = float(d.get("default_support", 0.0))
-        t.default_purity  = float(d.get("default_purity", 0.5))
+        t.default_class          = int(d.get("default_class", 0))
+        t.default_support        = float(d.get("default_support", 0.0))
+        t.default_purity         = float(d.get("default_purity", 0.5))
+        t.default_feature        = d.get("default_feature")
+        t.default_prefer_higher  = d.get("default_prefer_higher")
         return t
 
 
@@ -561,14 +639,9 @@ def _pretty(feature):
     return feature.replace("_diff", "").replace("_", " ").title()
 
 
-def _fmt_num(x, decimals=2):
-    """Round for display and drop noisy trailing zeros: 0.50 -> '0.5', 4.00 -> '4'."""
-    r = round(float(x), decimals)
-    if r == 0:
-        r = 0.0  # avoid '-0'
-    if float(r).is_integer():
-        return str(int(r))
-    return f"{r:g}"
+def _fmt_num(x, **_):
+    """Round to nearest integer for display."""
+    return str(int(round(float(x))))
 
 
 def explain_prediction(tree, params, feat_names, d, pred):
@@ -671,23 +744,17 @@ _OP_PHRASE = {
 def _fallback_node_explanation(node):
     pretty = _pretty(node["feature"]).lower()
     prefers = "Patient A" if node["exit_class"] == 1 else "Patient B"
-    reliability = ("very reliable" if node["purity"] >= 0.85
-                   else "fairly reliable" if node["purity"] >= 0.65
-                   else "a weaker signal")
     if node.get("refine"):
         tie_radius = _fmt_num(abs(node["threshold"]))
         return (
             f"If the {pretty} difference between Patient A and Patient B is small — "
             f"{tie_radius} or less either way — we treat it as a close call and use one "
-            f"more check (below) instead of guessing. This came up in your choices about "
-            f"{node['purity']:.0%} of the time — {reliability}."
+            f"more check (below) instead of guessing."
         )
     op_phrase = _OP_PHRASE.get(node["op"], node["op"])
     return (
         f"If the {pretty} difference (Patient A minus Patient B) is {op_phrase} "
-        f"{_fmt_num(node['threshold'])}, we choose {prefers}. "
-        f"This matched your actual choices about {node['purity']:.0%} of the time — "
-        f"{reliability}."
+        f"{_fmt_num(node['threshold'])}, we choose {prefers}."
     )
 
 
@@ -740,8 +807,7 @@ def explain_node_llm(node):
         "'If the <factor> difference is <plain comparison, e.g. \"less than or equal to 4\">, "
         "we choose <patient>.' For example: 'If the age difference is less than or equal to "
         "4, we choose Patient A.' No jargon (no 'purity', 'coefficient', 'threshold', 'exit "
-        "class'), no markdown, one sentence only. You may add a short second sentence noting "
-        "how often this matched the participant's real choices, in plain words."
+        "class'), no markdown, one sentence only."
     )
     if node.get("refine"):
         tie_radius = _fmt_num(abs(node["threshold"]))
@@ -759,8 +825,7 @@ def explain_node_llm(node):
             f"The step compares '{pretty}' between two patients (A and B) in an organ-allocation "
             f"preference study. The rule is: (Patient A's value minus Patient B's value) "
             f"{node['op']} {_fmt_num(node['threshold'])}. When that's true, the model immediately "
-            f"recommends {prefers}. This rule matched the participant's actual choices "
-            f"{node['purity']:.0%} of the time. Write the caption, following the pattern above "
+            f"recommends {prefers}. Write the caption, following the pattern above "
             f"exactly (e.g. 'If the {pretty} difference is {_OP_PHRASE.get(node['op'], node['op'])} "
             f"{_fmt_num(node['threshold'])}, we choose {prefers}.')."
         )
@@ -989,6 +1054,36 @@ def train_fft(decisions_json, params, override_json=None, max_depth=4):
             "Could not build a tree from these decisions — answer a few more, "
             "more varied scenarios."
         )
+
+    # ── compute semantic label for the default (fall-through) leaf ───────────
+    # Find rows in the ORIGINAL (non-augmented) data that fall through to default.
+    tree.default_feature        = None
+    tree.default_prefer_higher  = None
+    reached_o = np.ones(len(y), dtype=bool)
+    for _nd in tree.nodes:
+        _xs = F.values[:, _nd["feature_idx"]]
+        if _nd.get("use_abs"):
+            reached_o &= ~(np.abs(_xs) >= _nd["threshold"])
+        else:
+            reached_o &= ~(((_xs >= _nd["threshold"]) if _nd["op"] == ">="
+                             else (_xs <= _nd["threshold"])))
+    _idx_def = np.where(reached_o)[0]
+    if len(_idx_def) >= 2 and len(np.unique(y[_idx_def])) >= 2:
+        _X_def = F.values[_idx_def]
+        _y_def = y[_idx_def]
+        _dc    = tree.default_class
+        _best_sep = -1.0
+        for _fi, _fn in enumerate(feat_names):
+            _xf = _X_def[:, _fi]
+            _mask1 = _y_def == _dc
+            if not _mask1.any() or not (~_mask1).any():
+                continue
+            _m1, _m0 = float(_xf[_mask1].mean()), float(_xf[~_mask1].mean())
+            _sep = abs(_m1 - _m0)
+            if _sep > _best_sep:
+                _best_sep = _sep
+                tree.default_feature       = _fn
+                tree.default_prefer_higher = (_m1 > _m0)
 
     # ── metrics ─────────────────────────────────────────────────────────────
     acc = float(balanced_accuracy_score(y_aug, tree.predict(F_aug.values)))

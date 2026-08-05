@@ -54,20 +54,22 @@ def outcome_label(node, short=False):
     return "Prefer A" if cls == 1 else "Prefer B"
 
 
-def _fmt_num(x, decimals=2):
-    """Round for display and drop noisy trailing zeros: 0.50 -> '0.5', 4.00 -> '4'."""
-    r = round(float(x), decimals)
-    if r == 0:
-        r = 0.0  # avoid '-0'
-    if float(r).is_integer():
-        return str(int(r))
-    return f"{r:g}"
+def _fmt_num(x, **_):
+    """Round to nearest integer for display."""
+    return str(int(round(float(x))))
 
 
 def pretty_feature(feature):
-    """'urgency_score_diff' -> 'Urgency Score (Δ A−B)'."""
+    """'urgency_score_diff' -> 'Urgency Score(A) - Urgency Score(B)'."""
     base = feature[:-5] if feature.endswith("_diff") else feature
-    return base.replace("_", " ").title() + " (Δ A−B)"
+    name = base.replace("_", " ").title()
+    return f"{name}(A) - {name}(B)"
+
+
+def _short_feature(feature):
+    """Short label for tight boxes: 'urgency_score_diff' -> 'Urgency Score'."""
+    base = feature[:-5] if feature.endswith("_diff") else feature
+    return base.replace("_", " ").title()
 
 
 def _leaf_text(cls):
@@ -117,6 +119,21 @@ def _eval_path(tree, diffs):
         if n.get("use_abs"):
             cond = abs(x) >= n["threshold"]
             if cond:
+                refine = n.get("refine")
+                if refine:
+                    rx = float(diffs.get(refine["feature"], 0.0))
+                    if refine.get("use_abs"):
+                        rcond = abs(rx) >= refine["threshold"]
+                        if rcond:
+                            ph = refine.get("prefer_higher", True)
+                            cls = 1 if (rx > 0) == ph else 0
+                        else:
+                            cls = int(refine["false_class"])
+                    else:
+                        rcond = ((rx >= refine["threshold"]) if refine["op"] == ">="
+                                 else (rx <= refine["threshold"]))
+                        cls = refine["true_class"] if rcond else refine["false_class"]
+                    return "exit", i, cls
                 ph = n.get("prefer_higher", True)
                 return "exit", i, (1 if (x > 0) == ph else 0)
         else:
@@ -215,10 +232,10 @@ def fft_svg(tree, palette, test_diffs=None, width=760):
             f'fill="{p["card"]}" stroke="{box_stroke}" stroke-width="{box_sw}"/>'
             f'<text x="{node_x + 16}" y="{y + 22}" font-size="13" '
             f'fill="{p["muted"]}" font-weight="600">STEP {i + 1}</text>'
-            f'<text x="{node_x + 16}" y="{y + 44}" font-size="15.5" '
+            f'<text x="{node_x + 16}" y="{y + 44}" font-size="13" '
             f'fill="{p["text"]}" font-weight="600">'
             f'{html.escape(pretty_feature(node["feature"]))}</text>'
-            f'<text x="{node_x + 16}" y="{y + 60}" font-size="14" '
+            f'<text x="{node_x + 16}" y="{y + 60}" font-size="13" '
             f'fill="{p["dim"]}" font-family="monospace">{cond_text}</text>'
             f'</g>'
         )
@@ -237,7 +254,11 @@ def fft_svg(tree, palette, test_diffs=None, width=760):
         )
 
         if not has_refine:
-            node_exit_cls = node.get("exit_class", 1)
+            # For use_abs nodes derive color from prefer_higher so color matches label
+            if node.get("use_abs"):
+                node_exit_cls = 1 if node.get("prefer_higher", True) else 0
+            else:
+                node_exit_cls = node.get("exit_class", 1)
             lf = leaf_fill(node_exit_cls)
             leaf_lbl = html.escape(outcome_label(node, short=True))
             leaf_op = node_op if (test_diffs is None or is_exit or not on_path) else 0.5
@@ -265,6 +286,9 @@ def fft_svg(tree, palette, test_diffs=None, width=760):
             r_op = 1.0 if (test_diffs is None or is_exit or not on_path) else 0.55
             ry = cy - refine_h / 2
 
+            _r_cond = (f'|Δ| ≥ {_fmt_num(refine["threshold"])}'
+                       if refine.get("use_abs") else
+                       f'{html.escape(refine.get("op",">="))} {_fmt_num(refine["threshold"])}')
             s.append(
                 f'<g opacity="{r_op}">'
                 f'<rect x="{refine_x}" y="{ry}" rx="10" width="{refine_w}" height="{refine_h}" '
@@ -272,11 +296,10 @@ def fft_svg(tree, palette, test_diffs=None, width=760):
                 f'stroke-dasharray="4 3"/>'
                 f'<text x="{refine_x + 12}" y="{ry + 18}" font-size="11.5" fill="{p["muted"]}" '
                 f'font-weight="700">CLOSE CALL — TIE-BREAKER</text>'
-                f'<text x="{refine_x + 12}" y="{ry + 35}" font-size="14" fill="{p["text"]}" '
+                f'<text x="{refine_x + 12}" y="{ry + 35}" font-size="13" fill="{p["text"]}" '
                 f'font-weight="600">{html.escape(pretty_feature(refine["feature"]))}</text>'
                 f'<text x="{refine_x + 12}" y="{ry + 50}" font-size="12.5" fill="{p["dim"]}" '
-                f'font-family="monospace">{html.escape(refine["op"])} '
-                f'{_fmt_num(refine["threshold"])}</text></g>'
+                f'font-family="monospace">{_r_cond}</text></g>'
             )
 
             true_cy, false_cy = cy - 30, cy + 30
@@ -338,6 +361,13 @@ def fft_svg(tree, palette, test_diffs=None, width=760):
     df = leaf_fill(dcls)
     d_hl = (kind == "default")
     d_op = 1.0 if d_hl else (0.4 if test_diffs is not None else 1.0)
+    _def_feat = tree.get("default_feature")
+    _def_ph   = tree.get("default_prefer_higher")
+    if _def_feat is not None and _def_ph is not None:
+        _def_lbl = outcome_label({"use_abs": True, "prefer_higher": _def_ph,
+                                  "feature": _def_feat}, short=True)
+    else:
+        _def_lbl = "Prefer A" if dcls == 1 else "Prefer B"
     s.append(
         f'<g opacity="{d_op}">'
         f'<rect x="{node_x + 24 - leaf_w / 2 + 14}" y="{y + 4}" rx="10" '
@@ -347,7 +377,7 @@ def fft_svg(tree, palette, test_diffs=None, width=760):
         f'stroke-width="{2.4 if d_hl else 1.4}"/>'
         f'<text x="{node_x + 24 + 14}" y="{y + 4 + leaf_h / 2 + 5}" font-size="14" '
         f'text-anchor="middle" fill="{df}" font-weight="700">'
-        f'Default · {"Prefer A" if dcls == 1 else "Prefer B"}</text>'
+        f'Default · {html.escape(_def_lbl)}</text>'
         f'</g>'
     )
 
@@ -407,9 +437,17 @@ def _eval_path_explained(tree, diffs):
             refine = n.get("refine")
             if refine:
                 rx = float(diffs.get(refine["feature"], 0.0))
-                rcond = ((rx >= refine["threshold"]) if refine["op"] == ">="
-                         else (rx <= refine["threshold"]))
-                cls = refine["true_class"] if rcond else refine["false_class"]
+                if refine.get("use_abs"):
+                    rcond = abs(rx) >= refine["threshold"]
+                    if rcond:
+                        ph = refine.get("prefer_higher", True)
+                        cls = 1 if (rx > 0) == ph else 0
+                    else:
+                        cls = int(refine["false_class"])
+                else:
+                    rcond = ((rx >= refine["threshold"]) if refine["op"] == ">="
+                             else (rx <= refine["threshold"]))
+                    cls = refine["true_class"] if rcond else refine["false_class"]
                 return "exit", i, cls, bool(rcond)
             if n.get("use_abs"):
                 ph = n.get("prefer_higher", True)
@@ -448,8 +486,9 @@ def fft_svg_explained(tree, palette=None, node_explanations=None,
     n = len(nodes)
     node_explanations = node_explanations or [{} for _ in nodes]
 
-    CAP_CHARS, CAP_LINE_H = 54, 17
-    node_x, node_w, node_h_base = 36, 372, 66
+    CAP_CHARS, CAP_LINE_H = 44, 17
+    RCAP_CHARS, RCAP_LINE_H = 28, 14
+    node_x, node_w, node_h_base = 36, 372, 68
     leaf_x, leaf_w, leaf_h = 540, 150, 46
     refine_gap, refine_w, refine_h = 34, 190, 54
     refine_x = leaf_x + leaf_w + refine_gap
@@ -458,7 +497,7 @@ def fft_svg_explained(tree, palette=None, node_explanations=None,
 
     summary_lines = _wrap(summary_explanation, 96) if summary_explanation else []
     summary_h = (26 + len(summary_lines) * 19 + 20) if summary_lines else 0
-    pad_top = summary_h + (44 if test_diffs is not None else 20)
+    pad_top = (44 if test_diffs is not None else 20)
 
     kind, exit_i, pred_class, refine_branch = (None, -2, None, None)
     if test_diffs is not None:
@@ -475,12 +514,13 @@ def fft_svg_explained(tree, palette=None, node_explanations=None,
         node_h = node_h_base + (len(cap_lines) * CAP_LINE_H if cap_lines else 0)
         refine_extra = 0
         if node.get("refine"):
-            rcap_lines = _wrap(exp.get("refine_explanation", ""), 40)
-            refine_extra = max(refine_h, len(rcap_lines) * 15 + 34) + 20
+            rcap_lines = _wrap(exp.get("refine_explanation", ""), RCAP_CHARS)
+            eff_rh = max(refine_h, 32 + len(rcap_lines) * RCAP_LINE_H + 26)
+            refine_extra = eff_rh + 20
         row_h = max(node_h, refine_extra) + 56
         row_heights.append((row_h, cap_lines, node_h))
 
-    total_h = pad_top + sum(rh for rh, _, _ in row_heights) + 150
+    total_h = pad_top + sum(rh for rh, _, _ in row_heights) + 150 + (summary_h + 30 if summary_lines else 0)
     out_width = max(width, mini_x + mini_w + 40)
 
     s = [
@@ -496,21 +536,9 @@ def fft_svg_explained(tree, palette=None, node_explanations=None,
         f'</defs>',
     ]
 
-    # summary panel
-    if summary_lines:
-        s.append(
-            f'<rect x="{node_x}" y="10" rx="10" width="{out_width - node_x * 2}" '
-            f'height="{summary_h - 10}" fill="{p["card"]}" stroke="{p["border"]}"/>'
-            f'<text x="{node_x + 16}" y="30" font-size="13.5" font-weight="700" '
-            f'fill="{p["muted"]}">WHAT YOU SEEM TO VALUE</text>'
-        )
-        for li, line in enumerate(summary_lines):
-            s.append(f'<text x="{node_x + 16}" y="{50 + li * 19}" font-size="15" '
-                     f'fill="{p["text"]}">{html.escape(line)}</text>')
-
     if test_diffs is not None:
         pf = leaf_fill(pred_class)
-        by = summary_h + 6
+        by = 6
         s.append(
             f'<rect x="{node_x}" y="{by}" rx="14" width="300" height="32" '
             f'fill="{pf}" opacity="0.16" stroke="{pf}"/>'
@@ -544,14 +572,18 @@ def fft_svg_explained(tree, palette=None, node_explanations=None,
             f'fill="{p["card"]}" stroke="{box_stroke}" stroke-width="{box_sw}"/>'
             f'<text x="{node_x + 16}" y="{y + 22}" font-size="13" fill="{p["muted"]}" '
             f'font-weight="600">STEP {i + 1}</text>'
-            f'<text x="{node_x + 16}" y="{y + 44}" font-size="15.5" fill="{p["text"]}" '
-            f'font-weight="600">{html.escape(pretty_feature(node["feature"]))}</text>'
-            f'<text x="{node_x + 16}" y="{y + 60}" font-size="14" fill="{p["dim"]}" '
+        )
+        # Text form first (primary) — then math below (secondary)
+        for li, line in enumerate(cap_lines):
+            s.append(f'<text x="{node_x + 16}" y="{y + 38 + li * CAP_LINE_H}" font-size="13.5" '
+                     f'fill="{p["text"]}" font-weight="600">{html.escape(line)}</text>')
+        _math_y = y + 38 + len(cap_lines) * CAP_LINE_H
+        s.append(
+            f'<text x="{node_x + 16}" y="{_math_y + 14}" font-size="12.5" fill="{p["muted"]}" '
+            f'font-weight="500">{html.escape(pretty_feature(node["feature"]))}</text>'
+            f'<text x="{node_x + 16}" y="{_math_y + 27}" font-size="12.5" fill="{p["dim"]}" '
             f'font-family="monospace">{cond_text}</text>'
         )
-        for li, line in enumerate(cap_lines):
-            s.append(f'<text x="{node_x + 16}" y="{y + 76 + li * CAP_LINE_H}" font-size="13.5" '
-                     f'fill="{p["muted"]}">{html.escape(line)}</text>')
         s.append('</g>')
 
         # YES branch
@@ -569,7 +601,11 @@ def fft_svg_explained(tree, palette=None, node_explanations=None,
         )
 
         if not has_refine:
-            lf = leaf_fill(node.get("exit_class", 1))
+            if node.get("use_abs"):
+                _leaf_cls = 1 if node.get("prefer_higher", True) else 0
+            else:
+                _leaf_cls = node.get("exit_class", 1)
+            lf = leaf_fill(_leaf_cls)
             leaf_lbl = html.escape(outcome_label(node, short=True))
             leaf_op = 1.0 if (test_diffs is None or is_exit_here) else 0.5
             s.append(
@@ -590,26 +626,34 @@ def fft_svg_explained(tree, palette=None, node_explanations=None,
             r_stroke = p["accent"] if is_exit_here else p["border"]
             r_sw = 2.4 if is_exit_here else 1.3
             r_op = 1.0 if (test_diffs is None or is_exit_here or not on_path) else 0.55
-            ry = cy - refine_h / 2
+            rcap_lines = _wrap(exp.get("refine_explanation", ""), RCAP_CHARS)
+            eff_rh = max(refine_h, 32 + len(rcap_lines) * RCAP_LINE_H + 26)
+            ry = max(y + 4, cy - eff_rh / 2)
 
             s.append(
                 f'<g opacity="{r_op}">'
-                f'<rect x="{refine_x}" y="{ry}" rx="10" width="{refine_w}" height="{refine_h}" '
+                f'<rect x="{refine_x}" y="{ry}" rx="10" width="{refine_w}" height="{eff_rh}" '
                 f'fill="{p["card"]}" stroke="{r_stroke}" stroke-width="{r_sw}" '
                 f'stroke-dasharray="4 3"/>'
                 f'<text x="{refine_x + 12}" y="{ry + 18}" font-size="11.5" fill="{p["muted"]}" '
                 f'font-weight="700">CLOSE CALL — TIE-BREAKER</text>'
-                f'<text x="{refine_x + 12}" y="{ry + 35}" font-size="14" fill="{p["text"]}" '
-                f'font-weight="600">{html.escape(pretty_feature(refine["feature"]))}</text>'
-                f'<text x="{refine_x + 12}" y="{ry + 50}" font-size="12.5" fill="{p["dim"]}" '
-                f'font-family="monospace">{html.escape(refine["op"])} '
-                f'{_fmt_num(refine["threshold"])}</text></g>'
             )
-
-            rcap_lines = _wrap(exp.get("refine_explanation", ""), 40)
+            # Text form first (primary) — then math below (secondary)
             for li, line in enumerate(rcap_lines):
-                s.append(f'<text x="{refine_x}" y="{ry + refine_h + 16 + li * 15}" '
-                         f'font-size="11.5" fill="{p["muted"]}">{html.escape(line)}</text>')
+                s.append(f'<text x="{refine_x + 12}" y="{ry + 32 + li * RCAP_LINE_H}" '
+                         f'font-size="11.5" fill="{p["text"]}" font-weight="600">'
+                         f'{html.escape(line)}</text>')
+            _rmath_y = ry + 32 + len(rcap_lines) * RCAP_LINE_H
+            _r2_cond = (f'|Δ| ≥ {_fmt_num(refine["threshold"])}'
+                        if refine.get("use_abs") else
+                        f'{html.escape(refine.get("op",">="))} {_fmt_num(refine["threshold"])}')
+            s.append(
+                f'<text x="{refine_x + 12}" y="{_rmath_y + 8}" font-size="12" '
+                f'fill="{p["muted"]}" font-weight="500">'
+                f'{html.escape(pretty_feature(refine["feature"]))}</text>'
+                f'<text x="{refine_x + 12}" y="{_rmath_y + 20}" font-size="11.5" '
+                f'fill="{p["dim"]}" font-family="monospace">{_r2_cond}</text></g>'
+            )
 
             true_cy, false_cy = cy - 30, cy + 30
             tf, ff = leaf_fill(refine["true_class"]), leaf_fill(refine["false_class"])
@@ -633,7 +677,7 @@ def fft_svg_explained(tree, palette=None, node_explanations=None,
                 f'{_refine_branch_label(refine, True)}</text></g>'
             )
             s.append(
-                f'<line x1="{refine_x + refine_w}" y1="{ry + refine_h - 12}" x2="{mini_x - 6}" '
+                f'<line x1="{refine_x + refine_w}" y1="{ry + eff_rh - 12}" x2="{mini_x - 6}" '
                 f'y2="{false_cy}" stroke="{f_col}" stroke-width="{2.2 if r_false_hit else 1.2}" '
                 f'marker-end="url(#{"ahx2" if r_false_hit else "ah2"})"/>'
                 f'<text x="{refine_x + refine_w + 6}" y="{false_cy + 16}" font-size="11.5" '
@@ -671,6 +715,13 @@ def fft_svg_explained(tree, palette=None, node_explanations=None,
     df = leaf_fill(dcls)
     d_hl = (kind == "default")
     d_op = 1.0 if d_hl else (0.4 if test_diffs is not None else 1.0)
+    _def2_feat = tree.get("default_feature")
+    _def2_ph   = tree.get("default_prefer_higher")
+    if _def2_feat is not None and _def2_ph is not None:
+        _def2_lbl = outcome_label({"use_abs": True, "prefer_higher": _def2_ph,
+                                   "feature": _def2_feat}, short=True)
+    else:
+        _def2_lbl = "Prefer A" if dcls == 1 else "Prefer B"
     s.append(
         f'<g opacity="{d_op}">'
         f'<rect x="{node_x + 24 - leaf_w / 2 + 14}" y="{y + 4}" rx="10" width="{leaf_w}" '
@@ -678,9 +729,23 @@ def fft_svg_explained(tree, palette=None, node_explanations=None,
         f'<rect x="{node_x + 24 - leaf_w / 2 + 14}" y="{y + 4}" rx="10" width="{leaf_w}" '
         f'height="{leaf_h}" fill="none" stroke="{df}" stroke-width="{2.4 if d_hl else 1.4}"/>'
         f'<text x="{node_x + 24 + 14}" y="{y + 4 + leaf_h / 2 + 5}" font-size="14" '
-        f'text-anchor="middle" fill="{df}" font-weight="700">Default · {"Prefer A" if dcls == 1 else "Prefer B"}</text>'
+        f'text-anchor="middle" fill="{df}" font-weight="700">'
+        f'Default · {html.escape(_def2_lbl)}</text>'
         f'</g>'
     )
+
+    # summary panel at the bottom (below the default leaf)
+    if summary_lines:
+        sy = y + leaf_h + 30
+        s.append(
+            f'<rect x="{node_x}" y="{sy}" rx="10" width="{out_width - node_x * 2}" '
+            f'height="{summary_h - 10}" fill="{p["card"]}" stroke="{p["border"]}"/>'
+            f'<text x="{node_x + 16}" y="{sy + 20}" font-size="13.5" font-weight="700" '
+            f'fill="{p["muted"]}">WHAT YOU SEEM TO VALUE</text>'
+        )
+        for li, line in enumerate(summary_lines):
+            s.append(f'<text x="{node_x + 16}" y="{sy + 40 + li * 19}" font-size="15" '
+                     f'fill="{p["text"]}">{html.escape(line)}</text>')
 
     s.append("</svg>")
     return "".join(s)

@@ -656,117 +656,111 @@ elif st.session_state.page == "results":
     rtree_dict = fft_stats["tree"]
     editing    = (st.session_state.wants_edit is True)
 
-    # ── Two-column layout: visualization left, feedback right ─────────────────
-    col_viz, col_fb = st.columns([5, 2.5], gap="large")
+    # ── Full-width: model + feedback below ───────────────────────────────────
+    st.markdown("## Your preference model")
+    st.markdown(
+        f"<div style='color:{COLORS['text_secondary']};font-size:15px;margin-bottom:20px;"
+        f"line-height:1.6'>Based on your decisions, here's the decision tree that captures "
+        f"your thinking. Each step is a single check the tree applies, in order.</div>",
+        unsafe_allow_html=True,
+    )
 
-    # ── LEFT: heading + FFT ───────────────────────────────────────────────────
-    with col_viz:
-        st.markdown("## Your preference model")
-        st.markdown(
-            f"<div style='color:{COLORS['text_secondary']};font-size:15px;margin-bottom:20px;"
-            f"line-height:1.6'>Based on your decisions, here's the decision tree that captures "
-            f"your thinking. Each step is a single check the tree applies, in order.</div>",
-            unsafe_allow_html=True,
+    if editing:
+        if st.session_state.pending_tree is None:
+            st.session_state.pending_tree = {**rtree_dict, "nodes": list(rtree_dict["nodes"])}
+        edited = fft_viz(
+            tree=st.session_state.pending_tree,
+            editing=True,
+            params=rparams,
+            labels=PARAM_DIRECTION_LABELS,
+            key="fft_edit",
         )
-
-        if editing:
-            if st.session_state.pending_tree is None:
-                st.session_state.pending_tree = {**rtree_dict, "nodes": list(rtree_dict["nodes"])}
-            edited = fft_viz(
-                tree=st.session_state.pending_tree,
-                editing=True,
-                params=rparams,
-                labels=PARAM_DIRECTION_LABELS,
-                key="fft_edit",
-            )
-            if edited is not None:
-                save_fft_override(st.session_state.username, edited)
-                train_fft_cached.clear()
-                st.session_state.wants_edit   = None
-                st.session_state.pending_tree = None
-                st.session_state._saved_msg   = True
-                st.rerun()
-        else:
+        if edited is not None:
+            save_fft_override(st.session_state.username, edited)
+            train_fft_cached.clear()
+            st.session_state.wants_edit   = None
             st.session_state.pending_tree = None
-            st.markdown(fft_svg_explained(
-                tree=rtree_dict,
-                palette=DEFAULT_FFT_PALETTE,
-                node_explanations=fft_stats.get("node_explanations"),
-                summary_explanation=fft_stats.get("summary_explanation"),
-            ), unsafe_allow_html=True)
+            st.session_state._saved_msg   = True
+            st.rerun()
+    else:
+        st.session_state.pending_tree = None
+        st.markdown(fft_svg_explained(
+            tree=rtree_dict,
+            palette=DEFAULT_FFT_PALETTE,
+            node_explanations=fft_stats.get("node_explanations"),
+            summary_explanation=fft_stats.get("summary_explanation"),
+        ), unsafe_allow_html=True)
 
-        if st.session_state.get("_saved_msg", False):
-            st.success("Changes saved. The model now reflects your edits.")
-            st.session_state._saved_msg = False
+    if st.session_state.get("_saved_msg", False):
+        st.success("Changes saved. The model now reflects your edits.")
+        st.session_state._saved_msg = False
 
-    # ── RIGHT: alignment rating + edit prompt ─────────────────────────────────
-    with col_fb:
-        st.markdown("<div class='fb-card'>", unsafe_allow_html=True)
+    # ── Feedback section below the model ──────────────────────────────────────
+    st.markdown("<div style='height:24px'></div>", unsafe_allow_html=True)
+    st.markdown("---")
 
-        st.markdown("### How well does this match your thinking?")
-        st.markdown(
-            f"<div style='color:{COLORS['text_secondary']};font-size:15px;margin-bottom:16px'>"
-            f"1 = not at all &nbsp;&nbsp;·&nbsp;&nbsp; 5 = perfectly</div>",
-            unsafe_allow_html=True,
-        )
+    st.markdown("### How well does this match your thinking?")
+    st.markdown(
+        f"<div style='color:{COLORS['text_secondary']};font-size:15px;margin-bottom:16px'>"
+        f"1 = not at all &nbsp;&nbsp;·&nbsp;&nbsp; 5 = perfectly</div>",
+        unsafe_allow_html=True,
+    )
 
-        score_cols    = st.columns(5)
-        current_score = st.session_state.alignment_score
-        for i, rcol in enumerate(score_cols):
-            with rcol:
-                score    = i + 1
-                btn_type = "primary" if current_score == score else "secondary"
-                if st.button(str(score), key=f"align_{score}",
-                             type=btn_type, use_container_width=True):
-                    st.session_state.alignment_score = score
-                    ru = load_users()
-                    ru.setdefault(st.session_state.username, {})
-                    ru[st.session_state.username]["alignment_score"] = score
-                    save_users(ru)
-                    st.rerun()
-
-        # Editing status note
-        if editing:
-            st.markdown("<div style='height:20px'></div>", unsafe_allow_html=True)
-            st.info("Editing mode is on. Edit the tree on the left, then click **Apply changes**.")
-
-        # Correction prompt — only after rating, only when not yet decided
-        elif st.session_state.alignment_score is not None and st.session_state.wants_edit is None:
-            st.markdown("<div style='height:32px'></div>", unsafe_allow_html=True)
-            st.markdown("---")
-            st.markdown("### Want to correct anything?")
-            cy, cn = st.columns(2)
-            with cy:
-                if st.button("Yes, edit it", type="primary",
-                             use_container_width=True, key="edit_yes"):
-                    st.session_state.wants_edit = True
-                    st.rerun()
-            with cn:
-                if st.button("No, it's good", use_container_width=True, key="edit_no"):
-                    st.session_state.wants_edit   = False
-                    st.session_state.pending_tree = None
-                    st.rerun()
-
-        if st.session_state.wants_edit is False:
-            st.markdown("<div style='height:20px'></div>", unsafe_allow_html=True)
-            st.success("Part 1 is done and saved.")
-            st.markdown(
-                f"<div style='color:{COLORS['text_secondary']};font-size:15px;margin:10px 0 16px;"
-                f"line-height:1.6'>One more thing — we'd like to show you 20 more scenarios, "
-                f"then ask once more whether the model still feels right.</div>",
-                unsafe_allow_html=True,
-            )
-            if st.button("Continue to Part 2 →", type="primary",
-                         use_container_width=True, key="go_survey"):
-                if not st.session_state.survey_scenarios:
-                    st.session_state.survey_scenarios = generate_survey_scenarios(
-                        rparams, st.session_state.scenarios, n=20
-                    )
-                    save_session()
-                st.session_state.page = "survey_questionnaire"
+    score_cols    = st.columns(5)
+    current_score = st.session_state.alignment_score
+    for i, rcol in enumerate(score_cols):
+        with rcol:
+            score    = i + 1
+            btn_type = "primary" if current_score == score else "secondary"
+            if st.button(str(score), key=f"align_{score}",
+                         type=btn_type, use_container_width=True):
+                st.session_state.alignment_score = score
+                ru = load_users()
+                ru.setdefault(st.session_state.username, {})
+                ru[st.session_state.username]["alignment_score"] = score
+                save_users(ru)
                 st.rerun()
 
-        st.markdown("</div>", unsafe_allow_html=True)
+    # Editing status note
+    if editing:
+        st.markdown("<div style='height:20px'></div>", unsafe_allow_html=True)
+        st.info("Editing mode is on. Edit the tree above, then click **Apply changes**.")
+
+    # Correction prompt — only after rating, only when not yet decided
+    elif st.session_state.alignment_score is not None and st.session_state.wants_edit is None:
+        st.markdown("<div style='height:32px'></div>", unsafe_allow_html=True)
+        st.markdown("---")
+        st.markdown("### Want to correct anything?")
+        btn_yes_col, btn_no_col = st.columns(2)
+        with btn_yes_col:
+            if st.button("Yes, edit it", type="primary",
+                         use_container_width=True, key="edit_yes"):
+                st.session_state.wants_edit = True
+                st.rerun()
+        with btn_no_col:
+            if st.button("No, it's good", use_container_width=True, key="edit_no"):
+                st.session_state.wants_edit   = False
+                st.session_state.pending_tree = None
+                st.rerun()
+
+    if st.session_state.wants_edit is False:
+        st.markdown("<div style='height:20px'></div>", unsafe_allow_html=True)
+        st.success("Part 1 is done and saved.")
+        st.markdown(
+            f"<div style='color:{COLORS['text_secondary']};font-size:15px;margin:10px 0 16px;"
+            f"line-height:1.6'>One more thing — we'd like to show you 20 more scenarios, "
+            f"then ask once more whether the model still feels right.</div>",
+            unsafe_allow_html=True,
+        )
+        if st.button("Continue to Part 2 →", type="primary",
+                     use_container_width=True, key="go_survey"):
+            if not st.session_state.survey_scenarios:
+                st.session_state.survey_scenarios = generate_survey_scenarios(
+                    rparams, st.session_state.scenarios, n=20
+                )
+                save_session()
+            st.session_state.page = "survey_questionnaire"
+            st.rerun()
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
