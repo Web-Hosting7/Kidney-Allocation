@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+{% if not_ready %}
+  <div class="alert alert-warning">
+    We need at least 6 answered scenarios to build a model — you've answered {{ n_decisions }} so far.
+  </div>
+  <a href="{{ url_for('questionnaire', part=1) }}" class="btn btn-secondary">← Back to scenarios</a>
+{% else %}
+  <h2>Your preference model</h2>
+  <div class="muted" style="font-size:15px; margin-bottom:20px; line-height:1.6;">
+    Based on your decisions, here's the decision tree that captures your thinking.
+    Each step is a single check the tree applies, in order.
+  </div>
+
+  {{ svg | safe }}
+
+  <div class="spacer-24"></div>
+  <hr>
+  <h3>Want to edit the model?</h3>
+  <div class="muted" style="margin-bottom:16px;">
+    You can adjust the checks and thresholds directly if something doesn't feel right.
+  </div>
+  <div class="btn-row">
+    <a href="{{ url_for('edit') }}" class="btn btn-primary btn-block">Edit the model</a>
+    <a href="{{ url_for('part2_intro') }}" class="btn btn-secondary btn-block">It's good — continue</a>
+  </div>
+{% endif %}
+{% endblock %}

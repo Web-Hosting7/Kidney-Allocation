@@ -315,6 +315,8 @@ var params       = [];
 var labels       = {};   // { param_base: [higher_label, lower_label] }
 var selectedNode = null;  // index | null
 
+var APPLY_URL = {{ apply_url | tojson }};
+
 // ── SVG geometry (mirrors Python fft_svg) ─────────────────────────
 var PAD  = 30, ROW_H = 110;
 var NX   = 36, NW = 372, NH = 66;
@@ -353,21 +355,29 @@ var SHORT_LABELS = {
 };
 
 function outcomeLabel(node, short) {
-  if (node && node.use_abs) {
-    var base = (node.feature || '').replace('_diff', '');
-    if (short) {
-      var sp = SHORT_LABELS[base];
-      if (sp) return node.prefer_higher !== false ? sp[0] : sp[1];
-      return node.prefer_higher !== false ? 'Higher' : 'Lower';
-    }
-    var pair = labels[base];
-    if (pair) {
-      var lbl = node.prefer_higher !== false ? pair[0] : pair[1];
-      return lbl.charAt(0).toUpperCase() + lbl.slice(1);
-    }
-    return node.prefer_higher !== false ? 'Higher value' : 'Lower value';
+  if (!node) return short ? 'Higher' : 'Higher value';
+  var base = (node.feature || '').replace('_diff', '');
+  var preferHigher;
+  if (node.use_abs) {
+    preferHigher = node.prefer_higher !== false;
+  } else {
+    // Legacy signed-diff node: infer direction from op/threshold/exit_class.
+    var op = node.op || '>=', thr = parseFloat(node.threshold) || 0, ec = node.exit_class;
+    if (op === '>=' && thr >= 0)      preferHigher = (ec === 1);
+    else if (op === '<=' && thr <= 0) preferHigher = (ec === 0);
+    else                              preferHigher = (ec === 1);
   }
-  return (node && node.exit_class === 1) ? 'Prefer A' : 'Prefer B';
+  if (short) {
+    var sp = SHORT_LABELS[base];
+    if (sp) return preferHigher ? sp[0] : sp[1];
+    return preferHigher ? 'Higher' : 'Lower';
+  }
+  var pair = labels[base];
+  if (pair) {
+    var lbl = preferHigher ? pair[0] : pair[1];
+    return lbl.charAt(0).toUpperCase() + lbl.slice(1);
+  }
+  return preferHigher ? 'Higher value' : 'Lower value';
 }
 
 function nodeCondText(node) {
@@ -453,8 +463,6 @@ function buildSVG() {
          + 'font-weight="600">STEP '+(i+1)+'</text>');
     s.push('<text x="'+(NX+16)+'" y="'+(y+42)+'" font-size="13" fill="'+C.text+'" '
          + 'font-weight="600">'+esc(prettyFeature(nd.feature))+'</text>');
-    s.push('<text x="'+(NX+16)+'" y="'+(y+58)+'" font-size="13" fill="'+C.dim+'" '
-         + 'font-family="monospace">'+esc(cond)+'</text>');
     s.push('</g>');
     // Reorder buttons (editing mode only)
     if (editing) {
@@ -587,7 +595,7 @@ function openPanel(i) {
   featSel.innerHTML = '';
   params.forEach(function(p) {
     var opt = document.createElement('option');
-    opt.value = p + '_diff'; opt.textContent = pretty(p + '_diff');
+    opt.value = p; opt.textContent = pretty(p);
     if (opt.value === nd.feature) opt.selected = true;
     featSel.appendChild(opt);
   });
@@ -761,7 +769,7 @@ function buildRefine(nodeIdx, refine) {
     rFeat.id = 'ep-r-feat'; rFeat.className = 'ep-select feat';
     params.forEach(function(p) {
       var opt = document.createElement('option');
-      opt.value = p+'_diff'; opt.textContent = pretty(p+'_diff');
+      opt.value = p; opt.textContent = pretty(p);
       if (opt.value === refine.feature) opt.selected = true;
       rFeat.appendChild(opt);
     });
@@ -911,7 +919,7 @@ function openRefinePanel(i) {
   featSel.innerHTML = '';
   params.forEach(function(p) {
     var opt = document.createElement('option');
-    opt.value = p + '_diff'; opt.textContent = pretty(p + '_diff');
+    opt.value = p; opt.textContent = pretty(p);
     if (opt.value === r.feature) opt.selected = true;
     featSel.appendChild(opt);
   });
@@ -990,9 +998,9 @@ function insertStepAt(afterIndex) {
   var used = tree.nodes.map(function(nd) { return nd.feature; });
   var rf = null;
   for (var pi = 0; pi < params.length; pi++) {
-    if (used.indexOf(params[pi] + '_diff') === -1) { rf = params[pi] + '_diff'; break; }
+    if (used.indexOf(params[pi]) === -1) { rf = params[pi]; break; }
   }
-  if (!rf) rf = (params[0] || 'age') + '_diff';
+  if (!rf) rf = params[0] || 'age_diff';
   var newNode = { feature: rf, op: '>=', threshold: 0, use_abs: true, prefer_higher: true, exit_class: 1, support: 0, purity: 0.5 };
   tree.nodes.splice(afterIndex + 1, 0, newNode);
   closeLeafPanel();
@@ -1065,16 +1073,8 @@ function reAttachNodeClicks() {
   });
 }
 
-// ── Height sync ───────────────────────────────────────────────────
-function updateHeight() {
-  requestAnimationFrame(function() {
-    var h = Math.max(document.body.scrollHeight, 100);
-    window.parent.postMessage({isStreamlitMessage:true, type:'streamlit:setFrameHeight', height:h}, '*');
-  });
-}
-if (typeof ResizeObserver !== 'undefined') {
-  new ResizeObserver(updateHeight).observe(document.body);
-}
+// ── Height sync (no-op: this is now a normal page, not an iframe) ──
+function updateHeight() {}
 
 // ── Panel button wiring ───────────────────────────────────────────
 document.getElementById('ep-close').addEventListener('click', function() {
@@ -1196,36 +1196,58 @@ document.getElementById('btn-apply').addEventListener('click', function() {
   saveLeafPanel();
   saveRefinePanel();
   saveDefaultPanel();
-  window.parent.postMessage(
-    {isStreamlitMessage:true, type:'streamlit:setComponentValue', value:tree, dataType:'json'},
-    '*'
-  );
+
   var btn = document.getElementById('btn-apply');
-  btn.textContent = '✓ Changes applied';
-  btn.classList.add('saved');
-  setTimeout(function(){ btn.textContent='Apply changes'; btn.classList.remove('saved'); }, 3000);
+  btn.disabled = true;
+  btn.textContent = 'Saving…';
+
+  fetch(APPLY_URL, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({tree: tree})
+  })
+  .then(function(resp) {
+    if (!resp.ok) throw new Error('Save failed');
+    return resp.json();
+  })
+  .then(function(data) {
+    btn.textContent = '✓ Changes applied';
+    btn.classList.add('saved');
+    if (data && data.redirect) {
+      setTimeout(function(){ window.location.href = data.redirect; }, 600);
+    } else {
+      btn.disabled = false;
+      setTimeout(function(){ btn.textContent='Apply changes'; btn.classList.remove('saved'); }, 3000);
+    }
+  })
+  .catch(function(err) {
+    btn.disabled = false;
+    btn.textContent = 'Apply changes — try again';
+  });
 });
 
-// ── Streamlit integration ─────────────────────────────────────────
-window.addEventListener('message', function(event) {
-  if (!event.data || !event.data.type) return;
-  if (event.data.type === 'streamlit:render') {
-    var args = event.data.args || {};
-    tree    = args.tree    ? JSON.parse(JSON.stringify(args.tree)) : null;
-    editing = !!args.editing;
-    params  = args.params  || [];
-    labels  = args.labels  || {};
-    selectedNode   = null;
-    leafPanelNode  = null;
-    refinePanelNode = null;
-    document.getElementById('edit-panel').style.display    = 'none';
-    document.getElementById('default-panel').style.display = 'none';
-    document.getElementById('leaf-panel').classList.remove('visible');
-    document.getElementById('refine-panel').classList.remove('visible');
-    render();
-  }
-});
-window.parent.postMessage({isStreamlitMessage:true, type:'streamlit:componentReady', apiVersion:1}, '*');
+// ── Init: data is injected server-side (see bottom of this template) ──
+function initEditor(initTree, initEditing, initParams, initLabels) {
+  tree    = initTree ? JSON.parse(JSON.stringify(initTree)) : null;
+  editing = !!initEditing;
+  params  = initParams || [];
+  labels  = initLabels || {};
+  selectedNode    = null;
+  leafPanelNode   = null;
+  refinePanelNode = null;
+  document.getElementById('edit-panel').style.display    = 'none';
+  document.getElementById('default-panel').style.display = 'none';
+  document.getElementById('leaf-panel').classList.remove('visible');
+  document.getElementById('refine-panel').classList.remove('visible');
+  render();
+}
+
+initEditor(
+  {{ tree_json | tojson }},
+  true,
+  {{ params_json | tojson }},
+  {{ labels_json | tojson }}
+);
 </script>
 </body>
 </html>

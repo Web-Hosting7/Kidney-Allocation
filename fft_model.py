@@ -39,6 +39,11 @@ Public API
 
 import json
 import os
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
 import numpy as np
 import pandas as pd
 from sklearn.metrics import balanced_accuracy_score
@@ -48,7 +53,7 @@ from sklearn.metrics import balanced_accuracy_score
 # on that dimension, so a single coarse cutoff is a weak way to decide. Every
 # such node automatically gets one extra tie-breaker node appended after it
 # (see FastFrugalTree.attach_near_tie_refinements / _best_refine_split below).
-NEAR_TIE_ABS_THRESHOLD = 4.0
+NEAR_TIE_ABS_THRESHOLD = 1.0
 
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -703,15 +708,17 @@ def _get_groq_client():
         return _groq_client
     try:
         from groq import Groq
-        if not os.environ.get("GROQ_API_KEY"):
+        api_key = os.environ.get("GROQ_API_KEY", "")
+        if not api_key:
             _groq_unavailable = True
+            print("[LLM] GROQ_API_KEY not set — explanations will use fallback text.")
             return None
-        _groq_client = Groq()
+        _groq_client = Groq(api_key=api_key)
         return _groq_client
-    except Exception:
+    except Exception as e:
         _groq_unavailable = True
+        print(f"[LLM] Failed to initialise Groq client: {e}")
         return None
-
 
 def _groq_chat(system, user, max_tokens=180):
     client = _get_groq_client()
@@ -729,7 +736,8 @@ def _groq_chat(system, user, max_tokens=180):
         )
         text = resp.choices[0].message.content
         return text.strip() if text else None
-    except Exception:
+    except Exception as e:
+        print(f"[LLM] _groq_chat failed: {e}")
         return None
 
 
@@ -802,12 +810,11 @@ def explain_node_llm(node):
     pretty = _pretty(node["feature"]).lower()
     prefers = "Patient A" if node["exit_class"] == 1 else "Patient B"
     system = (
-        "You write exactly one plain-English sentence for a decision-tree step, aimed at "
-        "non-technical, first-time app users. Always follow this literal pattern: "
-        "'If the <factor> difference is <plain comparison, e.g. \"less than or equal to 4\">, "
-        "we choose <patient>.' For example: 'If the age difference is less than or equal to "
-        "4, we choose Patient A.' No jargon (no 'purity', 'coefficient', 'threshold', 'exit "
-        "class'), no markdown, one sentence only."
+        "Write a very simple plain-English one-sentence description of the mathematical condition in this "
+        "decision-tree step. The explanation should be easy for a lay user to understand while communicating the condition in a non-technical manner. "
+        "For example, if the condition is 'absolute value of age difference >= 4', you might say 'you check if one patient is younger than the other by more than 4 years'."
+        "Avoid technical terms like 'threshold', 'exit class', or 'purity'. Just explain the "
+        "condition in a way that feels natural and intuitive."
     )
     if node.get("refine"):
         tie_radius = _fmt_num(abs(node["threshold"]))
@@ -823,12 +830,13 @@ def explain_node_llm(node):
     else:
         user = (
             f"The step compares '{pretty}' between two patients (A and B) in an organ-allocation "
-            f"preference study. The rule is: (Patient A's value minus Patient B's value) "
-            f"{node['op']} {_fmt_num(node['threshold'])}. When that's true, the model immediately "
-            f"recommends {prefers}. Write the caption, following the pattern above "
-            f"exactly (e.g. 'If the {pretty} difference is {_OP_PHRASE.get(node['op'], node['op'])} "
-            f"{_fmt_num(node['threshold'])}, we choose {prefers}.')."
+            f"preference study. The rule is: absolute value of difference of Patient A's value vs Patient B's value "
+            f"{node['op']} {_fmt_num(node['threshold'])}. "
+            f"Write the caption for this condition, following the pattern above "
+            # f"exactly (e.g. 'If the {pretty} difference is {_OP_PHRASE.get(node['op'], node['op'])} "
+            # f"{_fmt_num(node['threshold'])}, we choose {prefers}.')."
         )
+    # print (system, user)
     return _groq_chat(system, user, max_tokens=90) or _fallback_node_explanation(node)
 
 
@@ -1046,7 +1054,7 @@ def train_fft(decisions_json, params, override_json=None, max_depth=4):
 
     # Attach/refresh the near-tie tie-breaker nodes against the real training
     # data (works whether the tree was just fit or loaded from a user override).
-    tree.attach_near_tie_refinements(F_aug.values, y_aug)
+    # tree.attach_near_tie_refinements(F_aug.values, y_aug)
     tree.recompute_stats(F_aug, y_aug)
 
     if not tree.nodes:
@@ -1150,4 +1158,6 @@ def train_fft(decisions_json, params, override_json=None, max_depth=4):
         "node_explanations":   node_explanations,
         "summary_explanation": summary_explanation,
     }
+
+    print (tree)
     return tree, nodes_df, stats, feat_names, None

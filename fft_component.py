@@ -14,44 +14,62 @@ test and reuse outside Streamlit.
 import html
 
 # ── Semantic direction labels ─────────────────────────────────────────────────
-# Full labels — used in edit panel toggles and plain-English descriptions.
+# Full, descriptive labels — used in the edit panel's outcome buttons ("when
+# this fires, prefer..."), phrased as a complete instruction so it's obvious
+# what choosing that button actually does.
 PARAM_DIRECTION_LABELS = {
-    "age":               ("older patient",      "younger patient"),
-    "years_waiting":     ("longer wait",        "shorter wait"),
-    "health_score":      ("healthier patient",  "less healthy patient"),
-    "dependents":        ("more dependents",    "fewer dependents"),
-    "prior_transplants": ("more transplants",   "fewer transplants"),
-    "urgency_score":     ("more urgent",        "less urgent"),
+    "age":               ("choose the older patient",              "choose the younger patient"),
+    "years_waiting":     ("choose the one who's waited longer",     "choose the one who's waited less time"),
+    "health_score":      ("choose the healthier patient",           "choose the less healthy patient"),
+    "dependents":        ("choose the one with more dependents",    "choose the one with fewer dependents"),
+    "prior_transplants": ("choose the one with more prior transplants", "choose the one with fewer prior transplants"),
+    "urgency_score":     ("choose the more urgent patient",         "choose the less urgent patient"),
 }
 
-# Compact labels — used inside SVG leaf boxes where space is tight.
+# Compact labels — used inside SVG leaf boxes where space is tight. Keep these
+# genuinely short (2-3 words): the leaf boxes are a fixed width and long
+# phrases here overflow the box (see _wrap_leaf_lines for the safety net).
 _PARAM_LABELS_SVG = {
-    "age":               ("Older",        "Younger"),
-    "years_waiting":     ("Longer wait",  "Shorter wait"),
-    "health_score":      ("Healthier",    "Less healthy"),
-    "dependents":        ("More deps.",   "Fewer deps."),
-    "prior_transplants": ("More tx.",     "Fewer tx."),
-    "urgency_score":     ("More urgent",  "Less urgent"),
+    "age":               ("Older",       "Younger"),
+    "years_waiting":     ("Longer wait", "Shorter wait"),
+    "health_score":      ("Healthier",   "Less healthy"),
+    "dependents":        ("More deps.",  "Fewer deps."),
+    "prior_transplants": ("More tx.",    "Fewer tx."),
+    "urgency_score":     ("More urgent", "Less urgent"),
 }
 
 
 def outcome_label(node, short=False):
     """
     Return the outcome label for a tree node's YES exit.
-    - If node has use_abs=True: returns a semantic label.
-    - Otherwise falls back to 'Prefer A' / 'Prefer B' from exit_class.
+    - If node has use_abs=True: returns a semantic label from PARAM_DIRECTION_LABELS.
+    - For legacy signed-diff nodes (use_abs missing/False): infers direction from
+      op/threshold/exit_class so a semantic label is always returned.
     `short=True` uses compact single/two-word labels for SVG boxes.
     """
+    base = node.get("feature", "").replace("_diff", "")
+    if short:
+        pair = _PARAM_LABELS_SVG.get(base, ("Higher", "Lower"))
+    else:
+        pair = PARAM_DIRECTION_LABELS.get(base, ("higher value", "lower value"))
+
     if node.get("use_abs"):
-        base = node["feature"].replace("_diff", "")
-        if short:
-            pair = _PARAM_LABELS_SVG.get(base, ("Higher", "Lower"))
+        prefer_higher = node.get("prefer_higher", True)
+    else:
+        # Legacy signed-diff node: infer which direction the YES branch favours.
+        # op=">=" thr>=0 → fires when A is notably higher → exit_class=1 means prefer A (higher).
+        # op="<=" thr<=0 → fires when B is notably higher → exit_class=0 means prefer B (higher).
+        op  = node.get("op", ">=")
+        thr = float(node.get("threshold", 0))
+        ec  = int(node.get("exit_class", 1))
+        if op == ">=" and thr >= 0:
+            prefer_higher = (ec == 1)
+        elif op == "<=" and thr <= 0:
+            prefer_higher = (ec == 0)
         else:
-            pair = PARAM_DIRECTION_LABELS.get(base, ("higher value", "lower value"))
-        label = pair[0] if node.get("prefer_higher", True) else pair[1]
-        return label
-    cls = node.get("exit_class", 1)
-    return "Prefer A" if cls == 1 else "Prefer B"
+            prefer_higher = (ec == 1)
+
+    return pair[0] if prefer_higher else pair[1]
 
 
 def _fmt_num(x, **_):
@@ -104,12 +122,92 @@ def _refine_branch_label(refine, is_true_branch):
 
 
 def _node_cond_text(node):
-    """Condition text for a node: '|Δ| ≥ X' for abs nodes, '≥ X' for legacy."""
-    op_sym = "≥" if node["op"] == ">=" else "≤"
+    """
+    Full plain condition text for a node, e.g.:
+      '|Urgency Score(A) - Urgency Score(B)| ≥ 1'   (abs nodes)
+      'Urgency Score(A) - Urgency Score(B) ≥ 1'     (legacy directional nodes)
+    """
     val = _fmt_num(node["threshold"])
+    feat = pretty_feature(node["feature"])
     if node.get("use_abs"):
-        return f"|Δ| ≥ {val}"
-    return f"{op_sym} {val}"
+        return f"|{feat}| ≥ {val}"
+    op_sym = "≥" if node["op"] == ">=" else "≤"
+    return f"{feat} {op_sym} {val}"
+
+
+def _wrap_leaf_lines(text, max_chars=15, max_lines=2):
+    """
+    Greedy word-wrap for text drawn inside a fixed-width leaf/mini box, so a
+    longer-than-expected label (e.g. a custom feature name) degrades to two
+    lines instead of overflowing the box.
+    """
+    words = str(text).split()
+    lines, cur = [], ""
+    for w in words:
+        trial = f"{cur} {w}".strip()
+        if len(trial) <= max_chars or not cur:
+            cur = trial
+        else:
+            lines.append(cur)
+            cur = w
+        if len(lines) == max_lines - 1 and len(cur) > max_chars:
+            break
+    if cur:
+        lines.append(cur)
+    if len(lines) > max_lines:
+        lines = lines[:max_lines]
+    if lines and len(lines[-1]) > max_chars:
+        lines[-1] = lines[-1][: max_chars - 1].rstrip() + "…"
+    return lines
+
+
+def _leaf_text_svg(cx, cy, text, fill, font_size=13, font_weight=700, max_chars=15):
+    """Centered, auto-wrapped (<=2 lines) SVG <text> for a fixed-width leaf box."""
+    lines = _wrap_leaf_lines(text, max_chars=max_chars)
+    line_h = font_size + 2
+    start_y = cy + font_size * 0.35 - (len(lines) - 1) * line_h / 2
+    out = []
+    for li, line in enumerate(lines):
+        out.append(
+            f'<text x="{cx}" y="{start_y + li * line_h}" font-size="{font_size}" '
+            f'text-anchor="middle" fill="{fill}" font-weight="{font_weight}">'
+            f'{html.escape(line)}</text>'
+        )
+    return "".join(out)
+
+
+def _default_outcome_label(tree, short=True):
+    """
+    Label for the fall-through (default) leaf, defined as the negation of the
+    final node's YES condition — i.e. "what happens on the NO branch of the
+    last check" — rather than an independently-computed 'best separating
+    feature' among the examples that fell through.
+    """
+    nodes = tree.get("nodes") or []
+    if not nodes:
+        # No nodes: use stored default_feature/prefer_higher if the backend set them,
+        # otherwise fall back to generic higher/lower text so "Prefer A/B" never leaks.
+        feat = tree.get("default_feature")
+        ph   = tree.get("default_prefer_higher")
+        if feat is not None and ph is not None:
+            return outcome_label({"use_abs": True, "prefer_higher": ph, "feature": feat}, short=short)
+        if short:
+            return "Higher" if tree.get("default_class", 1) == 1 else "Lower"
+        return "higher value" if tree.get("default_class", 1) == 1 else "lower value"
+    last = nodes[-1]
+    # Build the synthetic "opposite of last node" node and let outcome_label() handle
+    # both modern (use_abs) and legacy signed-diff nodes uniformly.
+    if last.get("use_abs"):
+        opposite_higher = not last.get("prefer_higher", True)
+        return outcome_label(
+            {"use_abs": True, "prefer_higher": opposite_higher, "feature": last["feature"]},
+            short=short,
+        )
+    # Legacy: negate the exit direction.
+    opp_exit = 0 if int(last.get("exit_class", 1)) == 1 else 1
+    opp_node = dict(last)
+    opp_node["exit_class"] = opp_exit
+    return outcome_label(opp_node, short=short)
 
 
 def _eval_path(tree, diffs):
@@ -221,24 +319,26 @@ def fft_svg(tree, palette, test_diffs=None, width=760):
         box_sw = 2.5 if is_exit else 1.2
         has_refine = bool(node.get("refine"))
 
-        # condition text: abs nodes use |Δ| ≥ X; refine nodes use symmetric closeness
+        # condition text: full plain-language check, e.g. "|Age(A) - Age(B)| >= 5"
         if has_refine:
-            cond_text = f"|A − B| ≤ {_fmt_num(abs(node['threshold']))}"
+            cond_text = f"|{pretty_feature(node['feature'])}| ≤ {_fmt_num(abs(node['threshold']))}"
         else:
             cond_text = _node_cond_text(node)
+        cond_lines = _wrap(cond_text, 46)
         s.append(
             f'<g opacity="{node_op}">'
             f'<rect x="{node_x}" y="{y}" rx="11" width="{node_w}" height="{node_h}" '
             f'fill="{p["card"]}" stroke="{box_stroke}" stroke-width="{box_sw}"/>'
             f'<text x="{node_x + 16}" y="{y + 22}" font-size="13" '
             f'fill="{p["muted"]}" font-weight="600">STEP {i + 1}</text>'
-            f'<text x="{node_x + 16}" y="{y + 44}" font-size="13" '
-            f'fill="{p["text"]}" font-weight="600">'
-            f'{html.escape(pretty_feature(node["feature"]))}</text>'
-            f'<text x="{node_x + 16}" y="{y + 60}" font-size="13" '
-            f'fill="{p["dim"]}" font-family="monospace">{cond_text}</text>'
-            f'</g>'
         )
+        for cli, cline in enumerate(cond_lines):
+            s.append(
+                f'<text x="{node_x + 16}" y="{y + 44 + cli * 16}" font-size="13" '
+                f'fill="{p["text"]}" font-weight="600" font-family="monospace">'
+                f'{html.escape(cline)}</text>'
+            )
+        s.append('</g>')
 
         # YES branch -> exit leaf, or (near-tie) the tie-breaker box, to the right
         yes_hl = is_exit
@@ -260,7 +360,7 @@ def fft_svg(tree, palette, test_diffs=None, width=760):
             else:
                 node_exit_cls = node.get("exit_class", 1)
             lf = leaf_fill(node_exit_cls)
-            leaf_lbl = html.escape(outcome_label(node, short=True))
+            leaf_lbl = outcome_label(node, short=True)
             leaf_op = node_op if (test_diffs is None or is_exit or not on_path) else 0.5
             if is_exit:
                 leaf_op = 1.0
@@ -271,9 +371,7 @@ def fft_svg(tree, palette, test_diffs=None, width=760):
                 f'<rect x="{leaf_x}" y="{cy - leaf_h / 2}" rx="10" width="{leaf_w}" '
                 f'height="{leaf_h}" fill="none" stroke="{lf}" '
                 f'stroke-width="{2.4 if is_exit else 1.4}"/>'
-                f'<text x="{leaf_x + leaf_w / 2}" y="{cy + 5}" font-size="13" '
-                f'text-anchor="middle" fill="{lf}" font-weight="700">'
-                f'{leaf_lbl}</text>'
+                f'{_leaf_text_svg(leaf_x + leaf_w / 2, cy, leaf_lbl, lf)}'
                 f'</g>'
             )
         else:
@@ -286,7 +384,7 @@ def fft_svg(tree, palette, test_diffs=None, width=760):
             r_op = 1.0 if (test_diffs is None or is_exit or not on_path) else 0.55
             ry = cy - refine_h / 2
 
-            _r_cond = (f'|Δ| ≥ {_fmt_num(refine["threshold"])}'
+            _r_cond = (f'|{pretty_feature(refine["feature"])}| ≥ {_fmt_num(refine["threshold"])}'
                        if refine.get("use_abs") else
                        f'{html.escape(refine.get("op",">="))} {_fmt_num(refine["threshold"])}')
             s.append(
@@ -361,25 +459,29 @@ def fft_svg(tree, palette, test_diffs=None, width=760):
     df = leaf_fill(dcls)
     d_hl = (kind == "default")
     d_op = 1.0 if d_hl else (0.4 if test_diffs is not None else 1.0)
-    _def_feat = tree.get("default_feature")
-    _def_ph   = tree.get("default_prefer_higher")
-    if _def_feat is not None and _def_ph is not None:
-        _def_lbl = outcome_label({"use_abs": True, "prefer_higher": _def_ph,
-                                  "feature": _def_feat}, short=True)
-    else:
-        _def_lbl = "Prefer A" if dcls == 1 else "Prefer B"
+    _def_lbl = _default_outcome_label(tree, short=True)
+    _def_lines = _wrap_leaf_lines(_def_lbl, max_chars=15)
+    def_box_h = max(leaf_h, 40 + len(_def_lines) * 16)
+    _def_cx = node_x + 24 + 14
+    _def_cy = y + 4 + def_box_h / 2
+    _def_line_h = 15
+    _def_start_y = _def_cy + 8 - (len(_def_lines) - 1) * _def_line_h / 2
     s.append(
         f'<g opacity="{d_op}">'
         f'<rect x="{node_x + 24 - leaf_w / 2 + 14}" y="{y + 4}" rx="10" '
-        f'width="{leaf_w}" height="{leaf_h}" fill="{df}" opacity="0.16"/>'
+        f'width="{leaf_w}" height="{def_box_h}" fill="{df}" opacity="0.16"/>'
         f'<rect x="{node_x + 24 - leaf_w / 2 + 14}" y="{y + 4}" rx="10" '
-        f'width="{leaf_w}" height="{leaf_h}" fill="none" stroke="{df}" '
+        f'width="{leaf_w}" height="{def_box_h}" fill="none" stroke="{df}" '
         f'stroke-width="{2.4 if d_hl else 1.4}"/>'
-        f'<text x="{node_x + 24 + 14}" y="{y + 4 + leaf_h / 2 + 5}" font-size="14" '
-        f'text-anchor="middle" fill="{df}" font-weight="700">'
-        f'Default · {html.escape(_def_lbl)}</text>'
-        f'</g>'
+        f'<text x="{_def_cx}" y="{y + 18}" font-size="10" text-anchor="middle" '
+        f'fill="{df}" opacity="0.75" font-weight="700" letter-spacing=".04em">OTHERWISE</text>'
     )
+    for li, line in enumerate(_def_lines):
+        s.append(
+            f'<text x="{_def_cx}" y="{_def_start_y + li * _def_line_h}" font-size="13.5" '
+            f'text-anchor="middle" fill="{df}" font-weight="700">{html.escape(line)}</text>'
+        )
+    s.append('</g>')
 
     s.append("</svg>")
     return "".join(s)
@@ -506,12 +608,19 @@ def fft_svg_explained(tree, palette=None, node_explanations=None,
     def leaf_fill(cls):
         return p["a"] if cls == 1 else p["b"]
 
-    # pre-compute each row's height (room for wrapped caption + refine box)
+    # pre-compute each row's height (room for wrapped caption + wrapped
+    # condition text + refine box)
     row_heights = []
     for i, node in enumerate(nodes):
         exp = node_explanations[i] if i < len(node_explanations) else {}
         cap_lines = _wrap(exp.get("explanation", ""), CAP_CHARS)
-        node_h = node_h_base + (len(cap_lines) * CAP_LINE_H if cap_lines else 0)
+        if node.get("refine"):
+            _ctext = f"|{pretty_feature(node['feature'])}| ≤ {_fmt_num(abs(node['threshold']))}"
+        else:
+            _ctext = _node_cond_text(node)
+        cond_extra = (len(_wrap(_ctext, 46)) - 1) * 14
+        node_h = (node_h_base + (len(cap_lines) * CAP_LINE_H if cap_lines else 0)
+                  + max(0, cond_extra))
         refine_extra = 0
         if node.get("refine"):
             rcap_lines = _wrap(exp.get("refine_explanation", ""), RCAP_CHARS)
@@ -562,9 +671,10 @@ def fft_svg_explained(tree, palette=None, node_explanations=None,
         box_sw = 2.5 if is_exit_here else 1.2
         has_refine = bool(node.get("refine"))
         if has_refine:
-            cond_text = f"|A − B| ≤ {_fmt_num(abs(node['threshold']))}"
+            cond_text = f"|{pretty_feature(node['feature'])}| ≤ {_fmt_num(abs(node['threshold']))}"
         else:
             cond_text = _node_cond_text(node)
+        cond_lines = _wrap(cond_text, 46)
 
         s.append(f'<g opacity="{node_op}">')
         s.append(
@@ -573,17 +683,16 @@ def fft_svg_explained(tree, palette=None, node_explanations=None,
             f'<text x="{node_x + 16}" y="{y + 22}" font-size="13" fill="{p["muted"]}" '
             f'font-weight="600">STEP {i + 1}</text>'
         )
-        # Text form first (primary) — then math below (secondary)
+        # Explanation caption first (primary) — then the exact condition below (secondary)
         for li, line in enumerate(cap_lines):
             s.append(f'<text x="{node_x + 16}" y="{y + 38 + li * CAP_LINE_H}" font-size="13.5" '
                      f'fill="{p["text"]}" font-weight="600">{html.escape(line)}</text>')
         _math_y = y + 38 + len(cap_lines) * CAP_LINE_H
-        s.append(
-            f'<text x="{node_x + 16}" y="{_math_y + 14}" font-size="12.5" fill="{p["muted"]}" '
-            f'font-weight="500">{html.escape(pretty_feature(node["feature"]))}</text>'
-            f'<text x="{node_x + 16}" y="{_math_y + 27}" font-size="12.5" fill="{p["dim"]}" '
-            f'font-family="monospace">{cond_text}</text>'
-        )
+        for cli, cline in enumerate(cond_lines):
+            s.append(
+                f'<text x="{node_x + 16}" y="{_math_y + 14 + cli * 14}" font-size="12.5" '
+                f'fill="{p["dim"]}" font-family="monospace">{html.escape(cline)}</text>'
+            )
         s.append('</g>')
 
         # YES branch
@@ -606,7 +715,7 @@ def fft_svg_explained(tree, palette=None, node_explanations=None,
             else:
                 _leaf_cls = node.get("exit_class", 1)
             lf = leaf_fill(_leaf_cls)
-            leaf_lbl = html.escape(outcome_label(node, short=True))
+            leaf_lbl = outcome_label(node, short=True)
             leaf_op = 1.0 if (test_diffs is None or is_exit_here) else 0.5
             s.append(
                 f'<g opacity="{leaf_op}">'
@@ -615,9 +724,8 @@ def fft_svg_explained(tree, palette=None, node_explanations=None,
                 f'<rect x="{leaf_x}" y="{cy - leaf_h / 2}" rx="10" width="{leaf_w}" '
                 f'height="{leaf_h}" fill="none" stroke="{lf}" '
                 f'stroke-width="{2.4 if is_exit_here else 1.4}"/>'
-                f'<text x="{leaf_x + leaf_w / 2}" y="{cy + 5}" font-size="13" '
-                f'text-anchor="middle" fill="{lf}" font-weight="700">'
-                f'{leaf_lbl}</text></g>'
+                f'{_leaf_text_svg(leaf_x + leaf_w / 2, cy, leaf_lbl, lf)}'
+                f'</g>'
             )
         else:
             refine = node["refine"]
@@ -644,7 +752,7 @@ def fft_svg_explained(tree, palette=None, node_explanations=None,
                          f'font-size="11.5" fill="{p["text"]}" font-weight="600">'
                          f'{html.escape(line)}</text>')
             _rmath_y = ry + 32 + len(rcap_lines) * RCAP_LINE_H
-            _r2_cond = (f'|Δ| ≥ {_fmt_num(refine["threshold"])}'
+            _r2_cond = (f'|A − B| ≥ {_fmt_num(refine["threshold"])}'
                         if refine.get("use_abs") else
                         f'{html.escape(refine.get("op",">="))} {_fmt_num(refine["threshold"])}')
             s.append(
@@ -715,28 +823,32 @@ def fft_svg_explained(tree, palette=None, node_explanations=None,
     df = leaf_fill(dcls)
     d_hl = (kind == "default")
     d_op = 1.0 if d_hl else (0.4 if test_diffs is not None else 1.0)
-    _def2_feat = tree.get("default_feature")
-    _def2_ph   = tree.get("default_prefer_higher")
-    if _def2_feat is not None and _def2_ph is not None:
-        _def2_lbl = outcome_label({"use_abs": True, "prefer_higher": _def2_ph,
-                                   "feature": _def2_feat}, short=True)
-    else:
-        _def2_lbl = "Prefer A" if dcls == 1 else "Prefer B"
+    _def2_lbl = _default_outcome_label(tree, short=True)
+    _def2_lines = _wrap_leaf_lines(_def2_lbl, max_chars=15)
+    def2_box_h = max(leaf_h, 40 + len(_def2_lines) * 16)
+    _def2_cx = node_x + 24 + 14
+    _def2_cy = y + 4 + def2_box_h / 2
+    _def2_line_h = 15
+    _def2_start_y = _def2_cy + 8 - (len(_def2_lines) - 1) * _def2_line_h / 2
     s.append(
         f'<g opacity="{d_op}">'
         f'<rect x="{node_x + 24 - leaf_w / 2 + 14}" y="{y + 4}" rx="10" width="{leaf_w}" '
-        f'height="{leaf_h}" fill="{df}" opacity="0.16"/>'
+        f'height="{def2_box_h}" fill="{df}" opacity="0.16"/>'
         f'<rect x="{node_x + 24 - leaf_w / 2 + 14}" y="{y + 4}" rx="10" width="{leaf_w}" '
-        f'height="{leaf_h}" fill="none" stroke="{df}" stroke-width="{2.4 if d_hl else 1.4}"/>'
-        f'<text x="{node_x + 24 + 14}" y="{y + 4 + leaf_h / 2 + 5}" font-size="14" '
-        f'text-anchor="middle" fill="{df}" font-weight="700">'
-        f'Default · {html.escape(_def2_lbl)}</text>'
-        f'</g>'
+        f'height="{def2_box_h}" fill="none" stroke="{df}" stroke-width="{2.4 if d_hl else 1.4}"/>'
+        f'<text x="{_def2_cx}" y="{y + 18}" font-size="10" text-anchor="middle" '
+        f'fill="{df}" opacity="0.75" font-weight="700" letter-spacing=".04em">OTHERWISE</text>'
     )
+    for li, line in enumerate(_def2_lines):
+        s.append(
+            f'<text x="{_def2_cx}" y="{_def2_start_y + li * _def2_line_h}" font-size="13.5" '
+            f'text-anchor="middle" fill="{df}" font-weight="700">{html.escape(line)}</text>'
+        )
+    s.append('</g>')
 
     # summary panel at the bottom (below the default leaf)
     if summary_lines:
-        sy = y + leaf_h + 30
+        sy = y + def2_box_h + 30
         s.append(
             f'<rect x="{node_x}" y="{sy}" rx="10" width="{out_width - node_x * 2}" '
             f'height="{summary_h - 10}" fill="{p["card"]}" stroke="{p["border"]}"/>'
