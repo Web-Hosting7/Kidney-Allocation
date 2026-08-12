@@ -13,12 +13,12 @@ from datetime import datetime
 import pandas as pd
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 
+import db
 from fft_model import train_fft
 from fft_component import fft_svg_explained, DEFAULT_FFT_PALETTE, PARAM_DIRECTION_LABELS
 
 APP_DIR       = os.path.dirname(os.path.abspath(__file__))
 RESPONSES_DIR = os.path.join(APP_DIR, "responses")
-USERS_FILE    = os.path.join(APP_DIR, "users.json")
 
 # Only these five features are used in this cut of the study.
 FEATURES = ["dependents", "age", "years_waiting", "urgency_score", "health_score"]
@@ -33,6 +33,9 @@ PARAM_DESCRIPTIONS = {
 
 PART1_N = 20
 PART2_N = 10
+
+# Create the SQL schema (and import users.json once, if present) at startup.
+db.init_db(FEATURES)
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev-secret-change-me")
@@ -96,21 +99,36 @@ def generate_scenarios(n, base_scenarios=BASE_SCENARIOS, seed=None):
     return out
 
 
+def shuffle_scenarios(scenarios):
+    """
+    Randomise the order in which a set of scenarios is presented.
+
+    A fresh, entropy-seeded RNG is drawn on every call (rather than reusing a
+    module-level `random` instance), so the presentation order is independently
+    randomised each time this runs — per participant, per run of the app.
+
+    Only the order changes: the scenario content and the generation logic that
+    produced it are left untouched. The shuffled order is persisted with the
+    participant's record, so the sequence stays stable if they resume a session
+    and the recorded `scenario` number keeps pointing at the same pair.
+    """
+    order = list(scenarios)
+    random.SystemRandom().shuffle(order)
+    return order
+
+
 # ── User persistence ──────────────────────────────────────────────────────────
 
 def load_users():
     try:
-        if os.path.exists(USERS_FILE):
-            with open(USERS_FILE) as f:
-                return json.load(f)
+        return db.load_all_users()
     except Exception:
         pass
     return {}
 
 
 def save_users(u):
-    with open(USERS_FILE, "w") as f:
-        json.dump(u, f, indent=2)
+    db.save_all_users(u)
 
 
 def get_user_record():
@@ -122,28 +140,20 @@ def get_user_record():
 
 
 def save_user_record(record):
-    users, _ = get_user_record()
-    users[session["username"]] = record
-    save_users(users)
+    db.save_user_record(session["username"], record)
 
 
 def save_fft_override(username, tree_dict):
-    u = load_users()
-    u.setdefault(username, {})
-    u[username]["fft_override"] = tree_dict
-    save_users(u)
+    db.set_fft_override(username, tree_dict)
     _train_cache.clear()
 
 
 def load_fft_override(username):
-    return load_users().get(username, {}).get("fft_override")
+    return db.get_fft_override(username)
 
 
 def clear_fft_override(username):
-    u = load_users()
-    if username in u and "fft_override" in u[username]:
-        del u[username]["fft_override"]
-        save_users(u)
+    db.delete_fft_override(username)
     _train_cache.clear()
 
 
@@ -200,11 +210,11 @@ def do_start():
 
     users, rec = get_user_record()
     if "part1_scenarios" not in rec:
-        rec["part1_scenarios"] = generate_scenarios(PART1_N)
+        rec["part1_scenarios"] = shuffle_scenarios(generate_scenarios(PART1_N))
         rec["part1"] = []
         rec["part1_index"] = 0
     if "part2_scenarios" not in rec:
-        rec["part2_scenarios"] = generate_scenarios(PART2_N)
+        rec["part2_scenarios"] = shuffle_scenarios(generate_scenarios(PART2_N))
         rec["part2"] = []
         rec["part2_index"] = 0
     save_user_record(rec)

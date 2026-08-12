@@ -19,7 +19,6 @@ sys.path.insert(0, BASE)
 from fft_component import outcome_label, _default_outcome_label, fft_svg_explained, DEFAULT_FFT_PALETTE
 
 BAD_STRINGS = ["Prefer A", "Prefer B"]
-USERS_FILE  = os.path.join(BASE, "users.json")
 
 MOCK_LEGACY_TREES = [
     # Legacy: use_abs missing, op/threshold/exit_class present
@@ -102,11 +101,18 @@ for i, t in enumerate(MOCK_LEGACY_TREES):
     audit_tree(t, name)
     audit_svg(t, name)
 
-# 2. Test real trees from users.json
-if os.path.exists(USERS_FILE):
-    print(f"\n[2] Real trees from {USERS_FILE}")
-    with open(USERS_FILE) as f:
-        users = json.load(f)
+# 2. Test real trees from the SQL store
+try:
+    import db
+    from app import FEATURES
+    db.init_db(FEATURES)
+    users = db.load_all_users()
+except Exception as e:
+    users = None
+    print(f"\n[2] Could not open the database ({e}) — skipping real-tree tests")
+
+if users is not None:
+    print(f"\n[2] Real trees from {db.DB_PATH}")
     for username, rec in users.items():
         for field in ("trained_tree", "override_tree", "fft_override"):
             t = rec.get(field)
@@ -116,8 +122,6 @@ if os.path.exists(USERS_FILE):
             print(f"  Checking {src} ...")
             audit_tree(t, src)
             audit_svg(t, src)
-else:
-    print(f"\n[2] {USERS_FILE} not found — skipping real-tree tests")
 
 # 3. Summary
 print("\n" + "=" * 60)

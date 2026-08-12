@@ -749,6 +749,130 @@ _OP_PHRASE = {
 }
 
 
+# ── Hardcoded prompts ────────────────────────────────────────────────────────
+#
+# Every prompt sent to the LLM is defined here, verbatim and in full. Nothing is
+# assembled at the call sites any more: a caller names a prompt and supplies the
+# data values it needs, and nothing else. The only runtime substitution is the
+# handful of numeric/label slots marked with {braces} — the wording, the
+# instructions and the max_tokens budget are all fixed constants.
+
+PROMPTS = {
+    # Caption for an ordinary node.
+    "node_plain": {
+        "max_tokens": 90,
+        "system": (
+            "Write a very simple plain-English one-sentence description of the mathematical condition in this "
+            "decision-tree step. The explanation should be easy for a lay user to understand while communicating the condition in a non-technical manner. "
+            "For example, if the condition is 'absolute value of age difference >= 4', you might say 'you check if one patient is younger than the other by more than 4 years'."
+            "Avoid technical terms like 'threshold', 'exit class', or 'purity'. Just explain the "
+            "condition in a way that feels natural and intuitive."
+        ),
+        "user": (
+            "The step compares '{pretty}' between two patients (A and B) in an organ-allocation "
+            "preference study. The rule is: absolute value of difference of Patient A's value vs Patient B's value "
+            "{op} {threshold}. "
+            "Write the caption for this condition, following the pattern above "
+        ),
+    },
+
+    # Caption for a node that is a near-tie cue and defers to a tie-breaker.
+    "node_near_tie": {
+        "max_tokens": 90,
+        "system": (
+            "Write a very simple plain-English one-sentence description of the mathematical condition in this "
+            "decision-tree step. The explanation should be easy for a lay user to understand while communicating the condition in a non-technical manner. "
+            "For example, if the condition is 'absolute value of age difference >= 4', you might say 'you check if one patient is younger than the other by more than 4 years'."
+            "Avoid technical terms like 'threshold', 'exit class', or 'purity'. Just explain the "
+            "condition in a way that feels natural and intuitive."
+        ),
+        "user": (
+            "The step checks how close the two patients (A and B) are on '{pretty}' in an "
+            "organ-allocation preference study: is the {pretty} difference {tie_radius} or "
+            "less, either direction? When they're that close, the model doesn't guess "
+            "outright — it uses a follow-up tie-breaker instead (shown separately). Write "
+            "one sentence, following the same 'If ... , we ...' style, saying that when the "
+            "{pretty} difference is that small we treat it as a close call and check one "
+            "more thing rather than choosing right away."
+        ),
+    },
+
+    # Caption for a near-tie tie-breaker sub-node.
+    "refine": {
+        "max_tokens": 100,
+        "system": (
+            "You write exactly one or two plain-English sentences for a decision-tree "
+            "'tie-breaker' step, aimed at non-technical first-time app users. Follow this literal "
+            "pattern: 'Since <first factor> was close, we look at <second factor>: if the "
+            "difference is <plain comparison>, we choose <patient>; otherwise we choose <the "
+            "other patient>.' No jargon, no markdown."
+        ),
+        "user": (
+            "On '{pretty_parent}' the two patients were a close call (within "
+            "{tie_radius} of each other), so instead of guessing, the "
+            "model checks '{pretty_r}' next. Rule: if the {pretty_r} difference (Patient A's "
+            "value minus Patient B's value) is {op_phrase} {threshold}, "
+            "recommend {prefers_t}; otherwise recommend {prefers_f}. Write the caption following "
+            "the pattern above exactly."
+        ),
+    },
+
+    # Whole-tree summary of what the participant seems to value.
+    "tree_summary": {
+        "max_tokens": 220,
+        "system": (
+            "You are summarising a study participant's own decision pattern, for the participant "
+            "themselves to read. Write 3-4 short, warm, plain-English sentences (no jargon, no "
+            "markdown, no bullet points) describing which factor(s) they seem to weigh most "
+            "heavily and in what direction, in the order the checks are applied. Be descriptive "
+            "and neutral, not judgmental."
+        ),
+        "user": "Here is the ordered list of checks in their model:\n{checks}",
+    },
+
+    # How the participant's model changed across two study phases.
+    "evolution_2phase": {
+        "max_tokens": 260,
+        "system": (
+            "You are summarising how a study participant's decision pattern evolved "
+            "across two rounds of an organ-allocation preference study, for the "
+            "participant themselves to read. Write 3-4 warm, plain-English sentences "
+            "(no jargon, no markdown, no bullet points). Describe what stayed stable, "
+            "what shifted, and in which direction. Be descriptive and neutral, not judgmental."
+        ),
+        "user": "What changed between Phase 1 and Phase 2:\n{diff_1_2}",
+    },
+
+    # How the participant's model changed across three study phases.
+    "evolution_3phase": {
+        "max_tokens": 260,
+        "system": (
+            "You are summarising how a study participant's decision pattern evolved "
+            "across three rounds of an organ-allocation preference study, for the "
+            "participant themselves to read. Write 3-4 warm, plain-English sentences "
+            "(no jargon, no markdown, no bullet points). Describe what stayed stable, "
+            "what shifted, and in which direction across all three phases. Be "
+            "descriptive and neutral, not judgmental."
+        ),
+        "user": (
+            "What changed between Phase 1 and Phase 2:\n{diff_1_2}\n\n"
+            "What changed between Phase 2 and Phase 3:\n{diff_2_3}"
+        ),
+    },
+}
+
+
+def _groq_chat_prompt(prompt_key, **fields):
+    """
+    Send one of the hardcoded PROMPTS. Callers pass only data values; the prompt
+    text and its token budget come from the constant above. Returns None on any
+    failure, exactly like _groq_chat, so the deterministic fallbacks still apply.
+    """
+    spec = PROMPTS[prompt_key]
+    return _groq_chat(spec["system"], spec["user"].format(**fields),
+                      max_tokens=spec["max_tokens"])
+
+
 def _fallback_node_explanation(node):
     pretty = _pretty(node["feature"]).lower()
     prefers = "Patient A" if node["exit_class"] == 1 else "Patient B"
@@ -809,35 +933,20 @@ def explain_node_llm(node):
     choose Patient A.'"""
     pretty = _pretty(node["feature"]).lower()
     prefers = "Patient A" if node["exit_class"] == 1 else "Patient B"
-    system = (
-        "Write a very simple plain-English one-sentence description of the mathematical condition in this "
-        "decision-tree step. The explanation should be easy for a lay user to understand while communicating the condition in a non-technical manner. "
-        "For example, if the condition is 'absolute value of age difference >= 4', you might say 'you check if one patient is younger than the other by more than 4 years'."
-        "Avoid technical terms like 'threshold', 'exit class', or 'purity'. Just explain the "
-        "condition in a way that feels natural and intuitive."
-    )
     if node.get("refine"):
-        tie_radius = _fmt_num(abs(node["threshold"]))
-        user = (
-            f"The step checks how close the two patients (A and B) are on '{pretty}' in an "
-            f"organ-allocation preference study: is the {pretty} difference {tie_radius} or "
-            f"less, either direction? When they're that close, the model doesn't guess "
-            f"outright — it uses a follow-up tie-breaker instead (shown separately). Write "
-            f"one sentence, following the same 'If ... , we ...' style, saying that when the "
-            f"{pretty} difference is that small we treat it as a close call and check one "
-            f"more thing rather than choosing right away."
+        text = _groq_chat_prompt(
+            "node_near_tie",
+            pretty=pretty,
+            tie_radius=_fmt_num(abs(node["threshold"])),
         )
     else:
-        user = (
-            f"The step compares '{pretty}' between two patients (A and B) in an organ-allocation "
-            f"preference study. The rule is: absolute value of difference of Patient A's value vs Patient B's value "
-            f"{node['op']} {_fmt_num(node['threshold'])}. "
-            f"Write the caption for this condition, following the pattern above "
-            # f"exactly (e.g. 'If the {pretty} difference is {_OP_PHRASE.get(node['op'], node['op'])} "
-            # f"{_fmt_num(node['threshold'])}, we choose {prefers}.')."
+        text = _groq_chat_prompt(
+            "node_plain",
+            pretty=pretty,
+            op=node["op"],
+            threshold=_fmt_num(node["threshold"]),
         )
-    # print (system, user)
-    return _groq_chat(system, user, max_tokens=90) or _fallback_node_explanation(node)
+    return text or _fallback_node_explanation(node)
 
 
 def explain_refine_llm(node, refine, near_tie_threshold):
@@ -848,22 +957,16 @@ def explain_refine_llm(node, refine, near_tie_threshold):
     prefers_t = "Patient A" if refine["true_class"] == 1 else "Patient B"
     prefers_f = "Patient A" if refine["false_class"] == 1 else "Patient B"
     op_phrase = _OP_PHRASE.get(refine["op"], refine["op"])
-    system = (
-        "You write exactly one or two plain-English sentences for a decision-tree "
-        "'tie-breaker' step, aimed at non-technical first-time app users. Follow this literal "
-        "pattern: 'Since <first factor> was close, we look at <second factor>: if the "
-        "difference is <plain comparison>, we choose <patient>; otherwise we choose <the "
-        "other patient>.' No jargon, no markdown."
+    text = _groq_chat_prompt(
+        "refine",
+        pretty_parent=pretty_parent,
+        pretty_r=pretty_r,
+        tie_radius=_fmt_num(abs(node["threshold"])),
+        op_phrase=op_phrase,
+        threshold=_fmt_num(refine["threshold"]),
+        prefers_t=prefers_t,
+        prefers_f=prefers_f,
     )
-    user = (
-        f"On '{pretty_parent}' the two patients were a close call (within "
-        f"{_fmt_num(abs(node['threshold']))} of each other), so instead of guessing, the "
-        f"model checks '{pretty_r}' next. Rule: if the {pretty_r} difference (Patient A's "
-        f"value minus Patient B's value) is {op_phrase} {_fmt_num(refine['threshold'])}, "
-        f"recommend {prefers_t}; otherwise recommend {prefers_f}. Write the caption following "
-        f"the pattern above exactly."
-    )
-    text = _groq_chat(system, user, max_tokens=100)
     return text or _fallback_refine_explanation(node, refine, near_tie_threshold)
 
 
@@ -889,15 +992,7 @@ def explain_tree_summary_llm(tree_dict):
     default_txt = "A" if tree_dict.get("default_class", 0) == 1 else "B"
     lines.append(f"Default (nothing above applied): prefer {default_txt}")
 
-    system = (
-        "You are summarising a study participant's own decision pattern, for the participant "
-        "themselves to read. Write 3-4 short, warm, plain-English sentences (no jargon, no "
-        "markdown, no bullet points) describing which factor(s) they seem to weigh most "
-        "heavily and in what direction, in the order the checks are applied. Be descriptive "
-        "and neutral, not judgmental."
-    )
-    user = "Here is the ordered list of checks in their model:\n" + "\n".join(lines)
-    text = _groq_chat(system, user, max_tokens=220)
+    text = _groq_chat_prompt("tree_summary", checks="\n".join(lines))
     return text or _fallback_summary_explanation(tree_dict)
 
 
@@ -983,15 +1078,7 @@ def explain_thinking_evolution_llm(part1_tree, part2_tree, part3_tree=None):
         nodes2 = part2_tree.get("nodes", [])
         if not nodes1 and not nodes2:
             return fallback
-        system = (
-            "You are summarising how a study participant's decision pattern evolved "
-            "across two rounds of an organ-allocation preference study, for the "
-            "participant themselves to read. Write 3-4 warm, plain-English sentences "
-            "(no jargon, no markdown, no bullet points). Describe what stayed stable, "
-            "what shifted, and in which direction. Be descriptive and neutral, not judgmental."
-        )
-        user = f"What changed between Phase 1 and Phase 2:\n{diff_1_2}"
-        return _groq_chat(system, user, max_tokens=260) or fallback
+        return _groq_chat_prompt("evolution_2phase", diff_1_2=diff_1_2) or fallback
 
     diff_2_3 = summarize_model_changes(part2_tree, part3_tree)
     fallback = (
@@ -1002,19 +1089,8 @@ def explain_thinking_evolution_llm(part1_tree, part2_tree, part3_tree=None):
     nodes3 = part3_tree.get("nodes", [])
     if not nodes1 and not nodes3:
         return fallback
-    system = (
-        "You are summarising how a study participant's decision pattern evolved "
-        "across three rounds of an organ-allocation preference study, for the "
-        "participant themselves to read. Write 3-4 warm, plain-English sentences "
-        "(no jargon, no markdown, no bullet points). Describe what stayed stable, "
-        "what shifted, and in which direction across all three phases. Be "
-        "descriptive and neutral, not judgmental."
-    )
-    user = (
-        f"What changed between Phase 1 and Phase 2:\n{diff_1_2}\n\n"
-        f"What changed between Phase 2 and Phase 3:\n{diff_2_3}"
-    )
-    return _groq_chat(system, user, max_tokens=260) or fallback
+    return _groq_chat_prompt("evolution_3phase",
+                             diff_1_2=diff_1_2, diff_2_3=diff_2_3) or fallback
 
 
 # ════════════════════════════════════════════════════════════════════════════
