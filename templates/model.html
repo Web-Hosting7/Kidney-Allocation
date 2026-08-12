@@ -336,6 +336,7 @@ body { padding: 0; }
 
       <div class="ep-field-label">Condition</div>
       <div class="ep-cond-row">
+        <span style="font-family:monospace;font-size:14px;color:#64748b;padding:6px 4px;white-space:nowrap">|Δ|</span>
         <select class="ep-select op" id="ep-op">
           <option value=">=">≥</option>
           <option value="<=">≤</option>
@@ -444,6 +445,91 @@ var labels       = {};   // { param_base: [higher_label, lower_label] }
 var selectedNode = null;  // index | null
 var nodeExplanations   = [];  // [{explanation, refine_explanation}]
 var summaryExplanation = '';
+
+// ── Client-side explanation templates ───────────────────────────────────────
+// Mirrors _fallback_node_explanation / _fallback_refine_explanation in fft_model.py.
+// Called by rebuildExplanations() so node cards update instantly on edit.
+
+var FEATURE_GAP = {
+  'age_diff':           ['age gap',          'years'],
+  'years_waiting_diff': ['waiting time gap', 'years'],
+  'health_score_diff':  ['health score gap', 'points'],
+  'dependents_diff':    ['dependents gap',   ''],
+  'urgency_score_diff': ['urgency score gap','points'],
+};
+var FEATURE_DIRECTION = {
+  'age_diff':           ['older patient',                'younger patient'],
+  'years_waiting_diff': ['longer-waiting patient',       'shorter-waiting patient'],
+  'health_score_diff':  ['healthier patient',            'less healthy patient'],
+  'dependents_diff':    ['patient with more dependents', 'patient with fewer dependents'],
+  'urgency_score_diff': ['more urgent patient',          'less urgent patient'],
+};
+
+function _unitStr(thr, unit) {
+  if (!unit) return '';
+  var singular = unit.replace(/s$/, '');
+  return ' ' + (thr === 1 ? singular : unit);
+}
+
+function _thrWithUnit(thr, unit, op) {
+  var qual;
+  if      (op === '>=') qual = 'or more';
+  else if (op === '<=') qual = 'or less';
+  else if (op === '>')  qual = 'more than ';
+  else                  qual = 'less than ';
+  if (op === '>' || op === '<') return qual + thr + (unit ? ' ' + (thr === 1 ? unit.replace(/s$/,'') : unit) : '');
+  var u = unit ? ' ' + (thr === 1 ? unit.replace(/s$/,'') : unit) : '';
+  return thr + u + ' ' + qual;
+}
+
+function buildNodeExplanation(nd) {
+  var feat = nd.feature || '';
+  var meta = FEATURE_GAP[feat] || [feat.replace('_diff','').replace(/_/g,' ') + ' gap', ''];
+  var gap  = meta[0], unit = meta[1];
+  var dirs = FEATURE_DIRECTION[feat];
+  var thr  = Math.round(Math.abs(nd.threshold || 0));
+  var preferHigh = nd.prefer_higher !== false;
+
+  if (nd.refine && nd.op === '<=') {
+    var base = feat.replace('_diff','').replace(/_/g,' ');
+    return 'When the ' + gap + ' is within ' + thr + _unitStr(thr, unit) +
+           ', it\'s too close to decide on ' + base + ' alone — we check one more factor below.';
+  }
+
+  var op   = nd.op || '>=';
+  var dir  = dirs ? (preferHigh ? dirs[0] : dirs[1]) : (nd.exit_class === 1 ? 'Patient A' : 'Patient B');
+  var comp = _thrWithUnit(thr, unit, op);
+  return 'When the ' + gap + ' is ' + comp + ', we prefer the ' + dir + '.';
+}
+
+function buildRefineExplanation(nd, refine) {
+  var feat = nd.feature || '';
+  var pm   = FEATURE_GAP[feat] || [feat.replace('_diff','').replace(/_/g,' ') + ' gap', ''];
+  var thr  = Math.round(Math.abs(nd.threshold || 0));
+  var pUnit= pm[1];
+
+  var rf   = refine.feature || '';
+  var rm   = FEATURE_GAP[rf] || [rf.replace('_diff','').replace(/_/g,' ') + ' gap', ''];
+  var rDir = FEATURE_DIRECTION[rf];
+  var rThr = Math.round(Math.abs(refine.threshold || 0));
+  var rPref= refine.prefer_higher !== false;
+  var dirT = rDir ? (rPref  ? rDir[0] : rDir[1]) : 'Patient A';
+  var dirF = rDir ? (!rPref ? rDir[0] : rDir[1]) : 'Patient B';
+  var rComp= _thrWithUnit(rThr, rm[1], refine.op || '>=');
+  var cName= rf.replace('_diff','').replace(/_/g,' ');
+
+  return 'When the ' + rm[0] + ' is ' + rComp +
+         ', we prefer the ' + dirT + '; otherwise the ' + dirF + '.';
+}
+
+function rebuildExplanations() {
+  nodeExplanations = tree.nodes.map(function(nd) {
+    var e = { explanation: buildNodeExplanation(nd) };
+    if (nd.refine) e.refine_explanation = buildRefineExplanation(nd, nd.refine);
+    return e;
+  });
+}
+// ── end explanation templates ────────────────────────────────────────────────
 var lastRows = [], lastDefY = 0, lastDefBoxH = LH;
 
 var APPLY_URL = {{ apply_url | tojson }};
@@ -456,7 +542,7 @@ var currentScore = {{ current_score | tojson }};
 var PAD  = 30, ROW_H = 110;
 var NX   = 36, NW = 372, NH = 66;
 var LX   = 540, LW = 150, LH = 46;
-var RX, RW = 190, RH = 54;   // refine box
+var RX, RW = 260, RH = 54;   // refine box
 var MX, MW = 108, MH = 34;   // mini leaves
 RX = LX + LW + 34;
 MX = RX + RW + 26;
@@ -517,9 +603,9 @@ function outcomeLabel(node, short) {
 
 function nodeCondText(node) {
   var feat = prettyFeature(node ? node.feature : '');
-  if (node && node.use_abs) return '|' + feat + '| \u2265 ' + fmt(node.threshold);
-  var op = (node && node.op === '>=') ? '\u2265' : '\u2264';
-  return feat + ' ' + op + ' ' + fmt(node ? node.threshold : 0);
+  var sym = (node && node.op === '<=') ? '\u2264' : '\u2265';
+  if (node && node.use_abs) return '|' + feat + '| ' + sym + ' ' + fmt(Math.abs(node.threshold));
+  return feat + ' ' + sym + ' ' + fmt(node ? node.threshold : 0);
 }
 
 // Default (fall-through) leaf label = negation of the last node's YES
@@ -649,20 +735,20 @@ function nodeRowInfo(nd, i) {
   var capLines = wrapText(exp.explanation, CAP_CHARS);
   var hR = nd.refine;
   var condText = hR
-    ? ('|' + prettyFeature(nd.feature) + '| \u2264 ' + fmt(Math.abs(nd.threshold)))
+    ? ('|' + prettyFeature(nd.feature) + '| ' + (nd.op === '<=' ? '\u2264' : '\u2265') + ' ' + fmt(Math.abs(nd.threshold)))
     : nodeCondText(nd);
   var condLines = wrapText(condText, COND_CHARS);
   var nodeH = NODE_H_BASE + (capLines.length ? capLines.length * CAP_LINE_H : 0)
-            + Math.max(0, (condLines.length - 1) * COND_LINE_H)
-            + 18;
+            + Math.max(0, (condLines.length - 1) * COND_LINE_H);
   var refineExtra = 0;
+  var effRh = RH;
   if (hR) {
-    var rcapLines = wrapText(exp.refine_explanation, 28);
-    var effRh = Math.max(RH, 32 + rcapLines.length * 14 + 26);
+    var rcapLines = wrapText(exp.refine_explanation, 36);
+    effRh = Math.max(RH, 14 + rcapLines.length * CAP_LINE_H + 40);
     refineExtra = effRh + 20;
   }
   var rowH = Math.max(nodeH, refineExtra) + 56;
-  return {rowH: rowH, capLines: capLines, condLines: condLines, nodeH: nodeH};
+  return {rowH: rowH, capLines: capLines, condLines: condLines, nodeH: nodeH, effRh: effRh};
 }
 
 function buildSVG() {
@@ -674,7 +760,7 @@ function buildSVG() {
   var y = PAD;
   for (var ri = 0; ri < n; ri++) {
     var info = nodeRowInfo(tree.nodes[ri], ri);
-    rows.push({y: y, h: info.rowH, capLines: info.capLines, condLines: info.condLines, nodeH: info.nodeH});
+    rows.push({y: y, h: info.rowH, capLines: info.capLines, condLines: info.condLines, nodeH: info.nodeH, effRh: info.effRh});
     y += info.rowH;
   }
   var defY = y;
@@ -688,8 +774,11 @@ function buildSVG() {
   lastDefY = defY;
   lastDefBoxH = defBoxH;
 
-  var summaryLines = summaryExplanation ? wrapText(summaryExplanation, 96) : [];
-  var summaryH = summaryLines.length ? (26 + summaryLines.length * 19 + 20) : 0;
+  // "WHAT YOU SEEM TO VALUE" summary panel disabled
+  // var summaryLines = summaryExplanation ? wrapText(summaryExplanation, 96) : [];
+  // var summaryH = summaryLines.length ? (26 + summaryLines.length * 19 + 20) : 0;
+  var summaryLines = [];
+  var summaryH = 0;
   var H = defY + defBoxH + 40 + (summaryLines.length ? summaryH + 30 : 0);
 
   var s  = [];
@@ -732,10 +821,11 @@ function buildSVG() {
       s.push('<text x="'+(NX+16)+'" y="'+(mathY + 14 + li*COND_LINE_H)+'" font-size="12.5" '
            + 'fill="'+C.dim+'" font-family="monospace">'+esc(line)+'</text>');
     });
-    var statY = mathY + 14 + Math.max(0, (row.condLines.length - 1) * COND_LINE_H) + 16;
-    var stat = ruleStatText(nd);
-    s.push('<circle cx="'+(NX+13)+'" cy="'+(statY-4)+'" r="3.5" fill="'+stat.color+'"/>');
-    s.push('<text x="'+(NX+22)+'" y="'+statY+'" font-size="11.5" fill="'+stat.color+'" font-weight="600">'+esc(stat.text)+'</text>');
+    // match/scenarios stat line disabled
+    // var statY = mathY + 14 + Math.max(0, (row.condLines.length - 1) * COND_LINE_H) + 16;
+    // var stat = ruleStatText(nd);
+    // s.push('<circle cx="'+(NX+13)+'" cy="'+(statY-4)+'" r="3.5" fill="'+stat.color+'"/>');
+    // s.push('<text x="'+(NX+22)+'" y="'+statY+'" font-size="11.5" fill="'+stat.color+'" font-weight="600">'+esc(stat.text)+'</text>');
     s.push('</g>');
     // Edit pencil (left) and reorder buttons (right) — editing mode only.
     // Kept on opposite sides so they never overlap, and drawn as filled,
@@ -779,28 +869,40 @@ function buildSVG() {
       }
       s.push('</g>');
     } else {
-      var r=hR, ry=cy-RH/2, tcy=cy-30, fcy=cy+30;
-      var tf=lf(r.true_class), ff=lf(r.false_class);
+      var r = hR;
+      var rEff = row.effRh;
+      var ry   = cy - rEff / 2;
+      var tcy  = ry + Math.round(rEff * 0.25);
+      var fcy  = ry + Math.round(rEff * 0.75);
+      var tf = lf(r.true_class), ff = lf(r.false_class);
       var refineCur = editing ? ' style="cursor:pointer"' : '';
+      // Refine box \u2014 full feature name + operator respects r.op
+      var rSym  = (r.op === '<=') ? '\u2264' : '\u2265';
+      var rShortName = (r.feature || '').replace('_diff','').replace(/_/g,' ').replace(/\b\w/g, function(c){ return c.toUpperCase(); });
+      var rCond = '|\u0394 ' + rShortName + '| ' + rSym + ' ' + fmt(Math.abs(r.threshold));
+      var rcExp   = (nodeExplanations[i] || {}).refine_explanation || '';
+      var rcLines = wrapText(rcExp, 36);
       s.push('<g data-refine="'+i+'"'+refineCur+'>');
-      s.push('<rect x="'+RX+'" y="'+ry+'" rx="10" width="'+RW+'" height="'+RH+'" '
+      s.push('<rect x="'+RX+'" y="'+ry+'" rx="10" width="'+RW+'" height="'+rEff+'" '
            + 'fill="'+C.card+'" stroke="'+(editing?C.accent:C.border)+'" stroke-width="'+(editing?'1.8':'1.3')+'" stroke-dasharray="4 3"/>');
-      var rCond = r.use_abs ? ('|A \u2212 B| \u2265 ' + fmt(Math.abs(r.threshold))) : (esc(r.op||'>=') + ' ' + fmt(r.threshold));
-      s.push('<text x="'+(RX+12)+'" y="'+(ry+18)+'" font-size="11.5" fill="'+C.muted+'" font-weight="700">CLOSE CALL \u2014 TIE-BREAKER</text>');
-      s.push('<text x="'+(RX+12)+'" y="'+(ry+36)+'" font-size="13" fill="'+C.text+'" font-weight="600">'+esc(prettyFeature(r.feature))+'</text>');
-      s.push('<text x="'+(RX+12)+'" y="'+(ry+51)+'" font-size="12.5" fill="'+C.dim+'" font-family="monospace">'+rCond+'</text>');
+      var rcTextY = ry + 16;
+      rcLines.forEach(function(line, li) {
+        s.push('<text x="'+(RX+12)+'" y="'+(rcTextY + li*CAP_LINE_H)+'" font-size="13" fill="'+C.text+'" font-weight="600">'+esc(line)+'</text>');
+      });
+      var rcCondY = rcTextY + rcLines.length * CAP_LINE_H + 12;
+      s.push('<text x="'+(RX+12)+'" y="'+rcCondY+'" font-size="12.5" fill="'+C.dim+'" font-family="monospace">'+rCond+'</text>');
       if (editing) {
         s.push(editBadgeSVG(RX+RW-12, ry+12, 10, 11));
       }
       s.push('</g>');
       // YES mini
-      s.push('<line x1="'+(RX+RW)+'" y1="'+(ry+12)+'" x2="'+(MX-6)+'" y2="'+tcy+'" stroke="'+C.muted+'" stroke-width="1.2" marker-end="url(#ah)"/>');
+      s.push('<line x1="'+(RX+RW)+'" y1="'+tcy+'" x2="'+(MX-6)+'" y2="'+tcy+'" stroke="'+C.muted+'" stroke-width="1.2" marker-end="url(#ah)"/>');
       s.push('<text x="'+(RX+RW+6)+'" y="'+(tcy-6)+'" font-size="11.5" fill="'+C.muted+'" font-weight="600">YES</text>');
       s.push('<rect x="'+MX+'" y="'+(tcy-MH/2)+'" rx="8" width="'+MW+'" height="'+MH+'" fill="'+tf+'" opacity=".16"/>');
       s.push('<rect x="'+MX+'" y="'+(tcy-MH/2)+'" rx="8" width="'+MW+'" height="'+MH+'" fill="none" stroke="'+tf+'" stroke-width="1.3"/>');
       s.push('<text x="'+(MX+MW/2)+'" y="'+(tcy+5)+'" font-size="12" text-anchor="middle" fill="'+tf+'" font-weight="700">'+esc(refineOutcomeLabel(r,true))+'</text>');
       // NO mini
-      s.push('<line x1="'+(RX+RW)+'" y1="'+(ry+RH-12)+'" x2="'+(MX-6)+'" y2="'+fcy+'" stroke="'+C.muted+'" stroke-width="1.2" marker-end="url(#ah)"/>');
+      s.push('<line x1="'+(RX+RW)+'" y1="'+fcy+'" x2="'+(MX-6)+'" y2="'+fcy+'" stroke="'+C.muted+'" stroke-width="1.2" marker-end="url(#ah)"/>');
       s.push('<text x="'+(RX+RW+6)+'" y="'+(fcy+16)+'" font-size="11.5" fill="'+C.muted+'" font-weight="600">NO</text>');
       s.push('<rect x="'+MX+'" y="'+(fcy-MH/2)+'" rx="8" width="'+MW+'" height="'+MH+'" fill="'+ff+'" opacity=".16"/>');
       s.push('<rect x="'+MX+'" y="'+(fcy-MH/2)+'" rx="8" width="'+MW+'" height="'+MH+'" fill="none" stroke="'+ff+'" stroke-width="1.3"/>');
@@ -835,15 +937,15 @@ function buildSVG() {
   }
   s.push('</g>');
 
-  // Summary panel
-  if (summaryLines.length) {
-    var sy = defY + defBoxH + 34;
-    s.push('<rect x="'+NX+'" y="'+sy+'" rx="10" width="'+(W-NX*2)+'" height="'+(summaryH-10)+'" fill="'+C.card+'" stroke="'+C.border+'"/>');
-    s.push('<text x="'+(NX+16)+'" y="'+(sy+20)+'" font-size="13.5" font-weight="700" fill="'+C.muted+'">WHAT YOU SEEM TO VALUE</text>');
-    summaryLines.forEach(function(line, li) {
-      s.push('<text x="'+(NX+16)+'" y="'+(sy+40+li*19)+'" font-size="15" fill="'+C.text+'">'+esc(line)+'</text>');
-    });
-  }
+  // "WHAT YOU SEEM TO VALUE" summary panel — disabled
+  // if (summaryLines.length) {
+  //   var sy = defY + defBoxH + 34;
+  //   s.push('<rect x="'+NX+'" y="'+sy+'" rx="10" width="'+(W-NX*2)+'" height="'+(summaryH-10)+'" fill="'+C.card+'" stroke="'+C.border+'"/>');
+  //   s.push('<text x="'+(NX+16)+'" y="'+(sy+20)+'" font-size="13.5" font-weight="700" fill="'+C.muted+'">WHAT YOU SEEM TO VALUE</text>');
+  //   summaryLines.forEach(function(line, li) {
+  //     s.push('<text x="'+(NX+16)+'" y="'+(sy+40+li*19)+'" font-size="15" fill="'+C.text+'">'+esc(line)+'</text>');
+  //   });
+  // }
 
   s.push('</svg>');
   return s.join('');
@@ -859,6 +961,7 @@ function render() {
     return;
   }
 
+  rebuildExplanations();
   document.getElementById('svg-canvas').innerHTML = buildSVG();
   document.getElementById('edit-hint').style.display  = editing ? 'block' : 'none';
   document.getElementById('toolbar').style.display    = editing ? 'flex'  : 'none';
@@ -891,26 +994,7 @@ function openPanel(i) {
     featSel.appendChild(opt);
   });
 
-  // For abs nodes op is always >=; show a fixed label instead of the dropdown
-  var opRow = document.querySelector('.ep-cond-row');
-  var opSel = document.getElementById('ep-op');
-  if (nd.use_abs) {
-    opSel.style.display = 'none';
-    var absLbl = document.getElementById('ep-abs-label');
-    if (!absLbl) {
-      absLbl = document.createElement('span');
-      absLbl.id = 'ep-abs-label';
-      absLbl.style.cssText = 'font-family:monospace;font-size:14px;color:#64748b;padding:6px 4px;white-space:nowrap';
-      opRow.insertBefore(absLbl, opRow.firstChild);
-    }
-    absLbl.textContent = '|Δ| ≥';
-    absLbl.style.display = '';
-  } else {
-    opSel.style.display = '';
-    var absLbl2 = document.getElementById('ep-abs-label');
-    if (absLbl2) absLbl2.style.display = 'none';
-    opSel.value = nd.op || '>=';
-  }
+  document.getElementById('ep-op').value = nd.op || '>=';
   document.getElementById('ep-thr').value = Math.round(Math.abs(nd.threshold));
 
   // Outcome toggle: use prefer_higher for abs nodes, exit_class for legacy
@@ -976,6 +1060,7 @@ function updateSVG() {
   saveLeafPanel();
   saveRefinePanel();
   saveDefaultPanel();
+  rebuildExplanations();
   document.getElementById('svg-canvas').innerHTML = buildSVG();
   reAttachNodeClicks();
   updateHeight();
@@ -998,7 +1083,7 @@ function savePanel() {
   var nd = tree.nodes[i];
 
   nd.feature    = document.getElementById('ep-feat').value;
-  nd.op         = nd.use_abs ? '>=' : (document.getElementById('ep-op').value || '>=');
+  nd.op         = document.getElementById('ep-op').value || '>=';
   var tv        = parseFloat(document.getElementById('ep-thr').value);
   if (!isNaN(tv)) nd.threshold = Math.round(Math.abs(tv));
   var aOn = document.getElementById('ep-out-a').classList.contains('ep-on');
@@ -1050,6 +1135,7 @@ function buildRefine(nodeIdx, refine) {
       buildRefine(nodeIdx, null);
       // Restore parent outcome section now that tie-breaker is gone
       document.getElementById('ep-outcome-section').style.display = '';
+      rebuildExplanations();
       document.getElementById('svg-canvas').innerHTML = buildSVG();
       reAttachNodeClicks();
       updateHeight();
@@ -1103,27 +1189,29 @@ function buildRefine(nodeIdx, refine) {
       setOutcomeToggle('ep-r-out-a','ep-r-out-b',true);
       var nd2 = tree.nodes[nodeIdx];
       if (nd2.refine) _refreshRefineTrueLabels(nd2.refine, 'ep-r-out-a', 'ep-r-out-b');
+      updateSVG();
     });
     rBtnB.addEventListener('click', function(){
       setOutcomeToggle('ep-r-out-a','ep-r-out-b',false);
       var nd2 = tree.nodes[nodeIdx];
       if (nd2.refine) _refreshRefineTrueLabels(nd2.refine, 'ep-r-out-a', 'ep-r-out-b');
+      updateSVG();
     });
-    // Refresh labels when refine feature changes
     rFeat.addEventListener('change', function() {
       var nd2 = tree.nodes[nodeIdx];
       if (nd2.refine) {
         nd2.refine.feature = this.value;
         _refreshRefineTrueLabels(nd2.refine, 'ep-r-out-a', 'ep-r-out-b');
       }
+      updateSVG();
     });
-    // Refresh labels when refine op or threshold changes (direction may flip)
     rOp.addEventListener('change', function() {
       var nd2 = tree.nodes[nodeIdx];
       if (nd2.refine) {
         nd2.refine.op = this.value;
         _refreshRefineTrueLabels(nd2.refine, 'ep-r-out-a', 'ep-r-out-b');
       }
+      updateSVG();
     });
     rThr.addEventListener('change', function() {
       var nd2 = tree.nodes[nodeIdx];
@@ -1132,6 +1220,7 @@ function buildRefine(nodeIdx, refine) {
         if (!isNaN(tv)) nd2.refine.threshold = Math.round(tv);
         _refreshRefineTrueLabels(nd2.refine, 'ep-r-out-a', 'ep-r-out-b');
       }
+      updateSVG();
     });
 
   } else {
@@ -1143,6 +1232,7 @@ function buildRefine(nodeIdx, refine) {
       buildRefine(nodeIdx, tree.nodes[nodeIdx].refine);
       // Hide parent outcome when tie-breaker is present
       document.getElementById('ep-outcome-section').style.display = 'none';
+      rebuildExplanations();
       document.getElementById('svg-canvas').innerHTML = buildSVG();
       reAttachNodeClicks();
       updateHeight();
@@ -1483,6 +1573,7 @@ document.getElementById('leaf-panel').addEventListener('click', function(e) { e.
 document.getElementById('rp-close').addEventListener('click', function() {
   saveRefinePanel();
   closeRefinePanel();
+  rebuildExplanations();
   document.getElementById('svg-canvas').innerHTML = buildSVG();
   reAttachNodeClicks();
   updateHeight();

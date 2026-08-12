@@ -597,8 +597,11 @@ def fft_svg_explained(tree, palette=None, node_explanations=None,
     mini_gap, mini_w, mini_h = 26, 108, 34
     mini_x = refine_x + refine_w + mini_gap
 
-    summary_lines = _wrap(summary_explanation, 96) if summary_explanation else []
-    summary_h = (26 + len(summary_lines) * 19 + 20) if summary_lines else 0
+    # "WHAT YOU SEEM TO VALUE" summary panel disabled
+    # summary_lines = _wrap(summary_explanation, 96) if summary_explanation else []
+    # summary_h = (26 + len(summary_lines) * 19 + 20) if summary_lines else 0
+    summary_lines = []
+    summary_h = 0
     pad_top = (44 if test_diffs is not None else 20)
 
     kind, exit_i, pred_class, refine_branch = (None, -2, None, None)
@@ -846,18 +849,18 @@ def fft_svg_explained(tree, palette=None, node_explanations=None,
         )
     s.append('</g>')
 
-    # summary panel at the bottom (below the default leaf)
-    if summary_lines:
-        sy = y + def2_box_h + 30
-        s.append(
-            f'<rect x="{node_x}" y="{sy}" rx="10" width="{out_width - node_x * 2}" '
-            f'height="{summary_h - 10}" fill="{p["card"]}" stroke="{p["border"]}"/>'
-            f'<text x="{node_x + 16}" y="{sy + 20}" font-size="13.5" font-weight="700" '
-            f'fill="{p["muted"]}">WHAT YOU SEEM TO VALUE</text>'
-        )
-        for li, line in enumerate(summary_lines):
-            s.append(f'<text x="{node_x + 16}" y="{sy + 40 + li * 19}" font-size="15" '
-                     f'fill="{p["text"]}">{html.escape(line)}</text>')
+    # "WHAT YOU SEEM TO VALUE" summary panel disabled
+    # if summary_lines:
+    #     sy = y + def2_box_h + 30
+    #     s.append(
+    #         f'<rect x="{node_x}" y="{sy}" rx="10" width="{out_width - node_x * 2}" '
+    #         f'height="{summary_h - 10}" fill="{p["card"]}" stroke="{p["border"]}"/>'
+    #         f'<text x="{node_x + 16}" y="{sy + 20}" font-size="13.5" font-weight="700" '
+    #         f'fill="{p["muted"]}">WHAT YOU SEEM TO VALUE</text>'
+    #     )
+    #     for li, line in enumerate(summary_lines):
+    #         s.append(f'<text x="{node_x + 16}" y="{sy + 40 + li * 19}" font-size="15" '
+    #                  f'fill="{p["text"]}">{html.escape(line)}</text>')
 
     s.append("</svg>")
     return "".join(s)

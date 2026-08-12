@@ -684,62 +684,67 @@ def explain_prediction(tree, params, feat_names, d, pred):
 
 
 # ════════════════════════════════════════════════════════════════════════════
-# PLAIN-ENGLISH EXPLANATIONS  (Groq LLM, with a deterministic fallback)
+# PLAIN-ENGLISH EXPLANATIONS  (deterministic templates)
 # ════════════════════════════════════════════════════════════════════════════
 #
 # Two things are generated here, per the study's requirements:
 #   1. explain_node_llm / explain_refine_llm — a short, non-technical caption
-#      for every node (and every tie-breaker), like the "here's what this
-#      feature does" tooltip you'd see the first time you open a new app.
-#   2. explain_tree_summary_llm — one short paragraph summarising, in plain
-#      English, what the participant seems to value overall.
+#      for every node (and every tie-breaker).
+#   2. explain_tree_summary_llm — one short paragraph summarising what the
+#      participant seems to value overall.
 #
-# If GROQ_API_KEY isn't set, or the call fails for any reason, everything
-# falls back to a deterministic template — the app never breaks or blocks on
-# the network call.
+# All explanations are built from deterministic templates — no network calls.
 
-_groq_client = None
-_groq_unavailable = False
-
-
-def _get_groq_client():
-    global _groq_client, _groq_unavailable
-    if _groq_client is not None or _groq_unavailable:
-        return _groq_client
-    try:
-        from groq import Groq
-        api_key = os.environ.get("GROQ_API_KEY", "")
-        if not api_key:
-            _groq_unavailable = True
-            print("[LLM] GROQ_API_KEY not set — explanations will use fallback text.")
-            return None
-        _groq_client = Groq(api_key=api_key)
-        return _groq_client
-    except Exception as e:
-        _groq_unavailable = True
-        print(f"[LLM] Failed to initialise Groq client: {e}")
-        return None
-
-def _groq_chat(system, user, max_tokens=180):
-    client = _get_groq_client()
-    if client is None:
-        return None
-    try:
-        resp = client.chat.completions.create(
-            model="llama-3.1-8b-instant",
-            messages=[
-                {"role": "system", "content": system},
-                {"role": "user", "content": user},
-            ],
-            max_tokens=max_tokens,
-            temperature=0.4,
-        )
-        text = resp.choices[0].message.content
-        return text.strip() if text else None
-    except Exception as e:
-        print(f"[LLM] _groq_chat failed: {e}")
-        return None
-
+# ── LLM infrastructure disabled ─────────────────────────────────────────────
+# The Groq LLM client and associated prompt definitions are kept here for
+# reference but are not used. To re-enable, uncomment this block and restore
+# the _groq_chat_prompt() calls in the explain_* functions below.
+#
+# _groq_client = None
+# _groq_unavailable = False
+#
+# def _get_groq_client():
+#     global _groq_client, _groq_unavailable
+#     if _groq_client is not None or _groq_unavailable:
+#         return _groq_client
+#     try:
+#         from groq import Groq
+#         api_key = os.environ.get("GROQ_API_KEY", "")
+#         if not api_key:
+#             _groq_unavailable = True
+#             return None
+#         _groq_client = Groq(api_key=api_key)
+#         return _groq_client
+#     except Exception as e:
+#         _groq_unavailable = True
+#         return None
+#
+# def _groq_chat(system, user, max_tokens=180):
+#     client = _get_groq_client()
+#     if client is None:
+#         return None
+#     try:
+#         resp = client.chat.completions.create(
+#             model="llama-3.1-8b-instant",
+#             messages=[
+#                 {"role": "system", "content": system},
+#                 {"role": "user", "content": user},
+#             ],
+#             max_tokens=max_tokens,
+#             temperature=0.4,
+#         )
+#         text = resp.choices[0].message.content
+#         return text.strip() if text else None
+#     except Exception as e:
+#         return None
+#
+# PROMPTS = { ... }  # see git history for full prompt definitions
+#
+# def _groq_chat_prompt(prompt_key, **fields):
+#     spec = PROMPTS[prompt_key]
+#     return _groq_chat(spec["system"], spec["user"].format(**fields),
+#                       max_tokens=spec["max_tokens"])
+# ── end LLM block ────────────────────────────────────────────────────────────
 
 _OP_PHRASE = {
     ">=": "greater than or equal to",
@@ -748,159 +753,101 @@ _OP_PHRASE = {
     "<":  "less than",
 }
 
+# Compact, readable comparison phrases used in explanation templates.
+_OP_READABLE = {
+    ">=": lambda t: f"{t} or more",
+    "<=": lambda t: f"{t} or less",
+    ">":  lambda t: f"more than {t}",
+    "<":  lambda t: f"less than {t}",
+}
 
-# ── Hardcoded prompts ────────────────────────────────────────────────────────
-#
-# Every prompt sent to the LLM is defined here, verbatim and in full. Nothing is
-# assembled at the call sites any more: a caller names a prompt and supplies the
-# data values it needs, and nothing else. The only runtime substitution is the
-# handful of numeric/label slots marked with {braces} — the wording, the
-# instructions and the max_tokens budget are all fixed constants.
+# Maps base feature name → (gap phrase, unit)
+_FEATURE_GAP = {
+    "age":           ("age gap",           "years"),
+    "years_waiting": ("waiting time gap",  "years"),
+    "health_score":  ("health score gap",  "points"),
+    "dependents":    ("dependents gap",    ""),
+    "urgency_score": ("urgency score gap", "points"),
+}
 
-PROMPTS = {
-    # Caption for an ordinary node.
-    "node_plain": {
-        "max_tokens": 90,
-        "system": (
-            "Write a very simple plain-English one-sentence description of the mathematical condition in this "
-            "decision-tree step. The explanation should be easy for a lay user to understand while communicating the condition in a non-technical manner. "
-            "For example, if the condition is 'absolute value of age difference >= 4', you might say 'you check if one patient is younger than the other by more than 4 years'."
-            "Avoid technical terms like 'threshold', 'exit class', or 'purity'. Just explain the "
-            "condition in a way that feels natural and intuitive."
-        ),
-        "user": (
-            "The step compares '{pretty}' between two patients (A and B) in an organ-allocation "
-            "preference study. The rule is: absolute value of difference of Patient A's value vs Patient B's value "
-            "{op} {threshold}. "
-            "Write the caption for this condition, following the pattern above "
-        ),
-    },
-
-    # Caption for a node that is a near-tie cue and defers to a tie-breaker.
-    "node_near_tie": {
-        "max_tokens": 90,
-        "system": (
-            "Write a very simple plain-English one-sentence description of the mathematical condition in this "
-            "decision-tree step. The explanation should be easy for a lay user to understand while communicating the condition in a non-technical manner. "
-            "For example, if the condition is 'absolute value of age difference >= 4', you might say 'you check if one patient is younger than the other by more than 4 years'."
-            "Avoid technical terms like 'threshold', 'exit class', or 'purity'. Just explain the "
-            "condition in a way that feels natural and intuitive."
-        ),
-        "user": (
-            "The step checks how close the two patients (A and B) are on '{pretty}' in an "
-            "organ-allocation preference study: is the {pretty} difference {tie_radius} or "
-            "less, either direction? When they're that close, the model doesn't guess "
-            "outright — it uses a follow-up tie-breaker instead (shown separately). Write "
-            "one sentence, following the same 'If ... , we ...' style, saying that when the "
-            "{pretty} difference is that small we treat it as a close call and check one "
-            "more thing rather than choosing right away."
-        ),
-    },
-
-    # Caption for a near-tie tie-breaker sub-node.
-    "refine": {
-        "max_tokens": 100,
-        "system": (
-            "You write exactly one or two plain-English sentences for a decision-tree "
-            "'tie-breaker' step, aimed at non-technical first-time app users. Follow this literal "
-            "pattern: 'Since <first factor> was close, we look at <second factor>: if the "
-            "difference is <plain comparison>, we choose <patient>; otherwise we choose <the "
-            "other patient>.' No jargon, no markdown."
-        ),
-        "user": (
-            "On '{pretty_parent}' the two patients were a close call (within "
-            "{tie_radius} of each other), so instead of guessing, the "
-            "model checks '{pretty_r}' next. Rule: if the {pretty_r} difference (Patient A's "
-            "value minus Patient B's value) is {op_phrase} {threshold}, "
-            "recommend {prefers_t}; otherwise recommend {prefers_f}. Write the caption following "
-            "the pattern above exactly."
-        ),
-    },
-
-    # Whole-tree summary of what the participant seems to value.
-    "tree_summary": {
-        "max_tokens": 220,
-        "system": (
-            "You are summarising a study participant's own decision pattern, for the participant "
-            "themselves to read. Write 3-4 short, warm, plain-English sentences (no jargon, no "
-            "markdown, no bullet points) describing which factor(s) they seem to weigh most "
-            "heavily and in what direction, in the order the checks are applied. Be descriptive "
-            "and neutral, not judgmental."
-        ),
-        "user": "Here is the ordered list of checks in their model:\n{checks}",
-    },
-
-    # How the participant's model changed across two study phases.
-    "evolution_2phase": {
-        "max_tokens": 260,
-        "system": (
-            "You are summarising how a study participant's decision pattern evolved "
-            "across two rounds of an organ-allocation preference study, for the "
-            "participant themselves to read. Write 3-4 warm, plain-English sentences "
-            "(no jargon, no markdown, no bullet points). Describe what stayed stable, "
-            "what shifted, and in which direction. Be descriptive and neutral, not judgmental."
-        ),
-        "user": "What changed between Phase 1 and Phase 2:\n{diff_1_2}",
-    },
-
-    # How the participant's model changed across three study phases.
-    "evolution_3phase": {
-        "max_tokens": 260,
-        "system": (
-            "You are summarising how a study participant's decision pattern evolved "
-            "across three rounds of an organ-allocation preference study, for the "
-            "participant themselves to read. Write 3-4 warm, plain-English sentences "
-            "(no jargon, no markdown, no bullet points). Describe what stayed stable, "
-            "what shifted, and in which direction across all three phases. Be "
-            "descriptive and neutral, not judgmental."
-        ),
-        "user": (
-            "What changed between Phase 1 and Phase 2:\n{diff_1_2}\n\n"
-            "What changed between Phase 2 and Phase 3:\n{diff_2_3}"
-        ),
-    },
+# Maps base feature name → (label when prefer_higher=True, label when prefer_higher=False)
+# Each label is a full noun phrase used as "we prefer the {label}."
+_FEATURE_DIRECTION = {
+    "age":           ("older patient",                    "younger patient"),
+    "years_waiting": ("longer-waiting patient",           "shorter-waiting patient"),
+    "health_score":  ("healthier patient",                "less healthy patient"),
+    "dependents":    ("patient with more dependents",     "patient with fewer dependents"),
+    "urgency_score": ("more urgent patient",              "less urgent patient"),
 }
 
 
-def _groq_chat_prompt(prompt_key, **fields):
-    """
-    Send one of the hardcoded PROMPTS. Callers pass only data values; the prompt
-    text and its token budget come from the constant above. Returns None on any
-    failure, exactly like _groq_chat, so the deterministic fallbacks still apply.
-    """
-    spec = PROMPTS[prompt_key]
-    return _groq_chat(spec["system"], spec["user"].format(**fields),
-                      max_tokens=spec["max_tokens"])
+def _feature_meta(feature, prefer_higher):
+    """Return (gap_phrase, unit, direction_label) for a feature name."""
+    base = feature.replace("_diff", "")
+    gap_phrase, unit = _FEATURE_GAP.get(base, (_pretty(feature).lower() + " gap", ""))
+    dirs = _FEATURE_DIRECTION.get(base)
+    if dirs:
+        direction = dirs[0] if prefer_higher else dirs[1]
+    else:
+        direction = None
+    return gap_phrase, unit, direction
+
+
+def _unit_str(threshold_str, unit):
+    """Return the correct singular/plural unit string."""
+    if not unit:
+        return ""
+    singular = unit.rstrip("s") if unit.endswith("s") else unit
+    u = singular if threshold_str == "1" else unit
+    return f" {u}"
+
+
+def _threshold_with_unit(threshold_str, unit, op=">="):
+    """Format threshold + unit into a readable comparison phrase."""
+    readable_fn = _OP_READABLE.get(op, lambda t: t)
+    qualifier = readable_fn(threshold_str).split(threshold_str, 1)[-1].strip()  # e.g. "or more"
+    if unit:
+        u = _unit_str(threshold_str, unit).strip()
+        return f"{threshold_str} {u} {qualifier}"
+    return f"{threshold_str} {qualifier}"
 
 
 def _fallback_node_explanation(node):
-    pretty = _pretty(node["feature"]).lower()
-    prefers = "Patient A" if node["exit_class"] == 1 else "Patient B"
-    if node.get("refine"):
-        tie_radius = _fmt_num(abs(node["threshold"]))
+    gap_phrase, unit, direction = _feature_meta(node["feature"], node.get("prefer_higher", True))
+    tie_radius = _fmt_num(abs(node["threshold"]))
+
+    if node.get("refine") and node.get("op", ">=") == "<=":
+        unit_str = _unit_str(tie_radius, unit)
+        base_name = _pretty(node["feature"].replace("_diff", "")).lower()
         return (
-            f"If the {pretty} difference between Patient A and Patient B is small — "
-            f"{tie_radius} or less either way — we treat it as a close call and use one "
-            f"more check (below) instead of guessing."
+            f"When the {gap_phrase} is within {tie_radius}{unit_str}, "
+            f"it's too close to decide on {base_name} alone — we check one more factor below."
         )
-    op_phrase = _OP_PHRASE.get(node["op"], node["op"])
-    return (
-        f"If the {pretty} difference (Patient A minus Patient B) is {op_phrase} "
-        f"{_fmt_num(node['threshold'])}, we choose {prefers}."
-    )
+
+    comparison = _threshold_with_unit(tie_radius, unit, node.get("op", ">="))
+    if direction:
+        return f"When the {gap_phrase} is {comparison}, we prefer the {direction}."
+    # fallback for unknown features
+    prefers = "Patient A" if node["exit_class"] == 1 else "Patient B"
+    return f"When the {gap_phrase} is {comparison}, we prefer {prefers}."
 
 
 def _fallback_refine_explanation(node, refine, near_tie_threshold):
-    pretty_parent = _pretty(node["feature"]).lower()
-    pretty_r = _pretty(refine["feature"]).lower()
+    r_gap, r_unit, r_dir_true = _feature_meta(refine["feature"], refine.get("prefer_higher", True))
+    _, _, r_dir_false = _feature_meta(refine["feature"], not refine.get("prefer_higher", True))
+    r_comparison = _threshold_with_unit(_fmt_num(refine["threshold"]), r_unit, refine.get("op", ">="))
+
+    if r_dir_true:
+        return (
+            f"When the {r_gap} is {r_comparison}, we prefer the {r_dir_true}; "
+            f"otherwise the {r_dir_false}."
+        )
+    # fallback for unknown features
     prefers_t = "Patient A" if refine["true_class"] == 1 else "Patient B"
     prefers_f = "Patient A" if refine["false_class"] == 1 else "Patient B"
-    op_phrase = _OP_PHRASE.get(refine["op"], refine["op"])
-    tie_radius = _fmt_num(abs(node["threshold"]))
     return (
-        f"Since the {pretty_parent} difference was small (within {tie_radius}), we look at "
-        f"{pretty_r} instead: if that difference is {op_phrase} {_fmt_num(refine['threshold'])}, "
-        f"we choose {prefers_t}; otherwise we choose {prefers_f}."
+        f"When the {r_gap} is {r_comparison}, we prefer {prefers_t}; "
+        f"otherwise {prefers_f}."
     )
 
 
@@ -927,73 +874,22 @@ def _fallback_summary_explanation(tree_dict):
 
 
 def explain_node_llm(node):
-    """One-sentence, plain-English caption for a single tree node, always in the
-    literal pattern: 'If the <factor> difference is <plain comparison>, we choose
-    <patient>.' — e.g. 'If the age difference is less than or equal to 4, we
-    choose Patient A.'"""
-    pretty = _pretty(node["feature"]).lower()
-    prefers = "Patient A" if node["exit_class"] == 1 else "Patient B"
-    if node.get("refine"):
-        text = _groq_chat_prompt(
-            "node_near_tie",
-            pretty=pretty,
-            tie_radius=_fmt_num(abs(node["threshold"])),
-        )
-    else:
-        text = _groq_chat_prompt(
-            "node_plain",
-            pretty=pretty,
-            op=node["op"],
-            threshold=_fmt_num(node["threshold"]),
-        )
-    return text or _fallback_node_explanation(node)
+    """Plain-English caption for a single tree node."""
+    return _fallback_node_explanation(node)
 
 
 def explain_refine_llm(node, refine, near_tie_threshold):
-    """One-sentence caption for a near-tie tie-breaker node, same literal
-    'If the <factor> difference is <comparison>, we choose <patient>' pattern."""
-    pretty_parent = _pretty(node["feature"]).lower()
-    pretty_r = _pretty(refine["feature"]).lower()
-    prefers_t = "Patient A" if refine["true_class"] == 1 else "Patient B"
-    prefers_f = "Patient A" if refine["false_class"] == 1 else "Patient B"
-    op_phrase = _OP_PHRASE.get(refine["op"], refine["op"])
-    text = _groq_chat_prompt(
-        "refine",
-        pretty_parent=pretty_parent,
-        pretty_r=pretty_r,
-        tie_radius=_fmt_num(abs(node["threshold"])),
-        op_phrase=op_phrase,
-        threshold=_fmt_num(refine["threshold"]),
-        prefers_t=prefers_t,
-        prefers_f=prefers_f,
-    )
-    return text or _fallback_refine_explanation(node, refine, near_tie_threshold)
+    """Plain-English caption for a near-tie tie-breaker node."""
+    return _fallback_refine_explanation(node, refine, near_tie_threshold)
 
 
 def explain_tree_summary_llm(tree_dict):
     """A short paragraph summarising what the participant seems to value overall."""
-    nodes = tree_dict.get("nodes", [])
-    if not nodes:
-        return "Not enough decisions yet to summarise a clear pattern."
-    lines = []
-    for i, n in enumerate(nodes):
-        prefers = "A" if n["exit_class"] == 1 else "B"
-        lines.append(
-            f"{i + 1}. {_pretty(n['feature'])}: (A-B) {n['op']} {_fmt_num(n['threshold'])} "
-            f"-> prefer {prefers} (matched {n['purity']:.0%} of choices, covers "
-            f"{n['support']:.0%})"
-        )
-        if n.get("refine"):
-            r = n["refine"]
-            lines.append(
-                f"   near-tie tie-breaker: {_pretty(r['feature'])} {r['op']} "
-                f"{_fmt_num(r['threshold'])} -> A={r['true_class'] == 1}, else B"
-            )
-    default_txt = "A" if tree_dict.get("default_class", 0) == 1 else "B"
-    lines.append(f"Default (nothing above applied): prefer {default_txt}")
-
-    text = _groq_chat_prompt("tree_summary", checks="\n".join(lines))
-    return text or _fallback_summary_explanation(tree_dict)
+    # LLM summary disabled — using deterministic template.
+    # To re-enable: uncomment the lines below and restore _groq_chat_prompt.
+    # text = _groq_chat_prompt("tree_summary", checks=<formatted node list>)
+    # return text or _fallback_summary_explanation(tree_dict)
+    return _fallback_summary_explanation(tree_dict)
 
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -1073,24 +969,17 @@ def explain_thinking_evolution_llm(part1_tree, part2_tree, part3_tree=None):
     diff_1_2 = summarize_model_changes(part1_tree, part2_tree)
 
     if part3_tree is None:
-        fallback = diff_1_2
-        nodes1 = part1_tree.get("nodes", [])
-        nodes2 = part2_tree.get("nodes", [])
-        if not nodes1 and not nodes2:
-            return fallback
-        return _groq_chat_prompt("evolution_2phase", diff_1_2=diff_1_2) or fallback
+        # LLM summary disabled — returning deterministic diff text.
+        # To re-enable: return _groq_chat_prompt("evolution_2phase", diff_1_2=diff_1_2) or diff_1_2
+        return diff_1_2
 
     diff_2_3 = summarize_model_changes(part2_tree, part3_tree)
-    fallback = (
+    # LLM summary disabled — returning deterministic diff text.
+    # To re-enable: return _groq_chat_prompt("evolution_3phase", diff_1_2=diff_1_2, diff_2_3=diff_2_3) or fallback
+    return (
         f"After the Part 2 scenarios: {diff_1_2} "
         f"After the Part 3 scenarios: {diff_2_3}"
     )
-    nodes1 = part1_tree.get("nodes", [])
-    nodes3 = part3_tree.get("nodes", [])
-    if not nodes1 and not nodes3:
-        return fallback
-    return _groq_chat_prompt("evolution_3phase",
-                             diff_1_2=diff_1_2, diff_2_3=diff_2_3) or fallback
 
 
 # ════════════════════════════════════════════════════════════════════════════
