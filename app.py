@@ -2,13 +2,16 @@
 Preference Elicitation Portal — Flask edition
 SURA 2026 · IIT Delhi
 
-Run:  flask --app app run --debug
+Run:  gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --timeout 120
 """
 
 import json
 import os
 import random
 from datetime import datetime
+
+from dotenv import load_dotenv
+load_dotenv()
 
 import pandas as pd
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
@@ -18,7 +21,7 @@ from fft_model import train_fft
 from fft_component import fft_svg_explained, DEFAULT_FFT_PALETTE, PARAM_DIRECTION_LABELS
 
 APP_DIR       = os.path.dirname(os.path.abspath(__file__))
-RESPONSES_DIR = os.path.join(APP_DIR, "responses")
+RESPONSES_DIR = os.environ.get("RESPONSES_DIR") or os.path.join(APP_DIR, "responses")
 
 # Only these five features are used in this cut of the study.
 FEATURES = ["dependents", "age", "years_waiting", "urgency_score", "health_score"]
@@ -38,7 +41,7 @@ PART2_N = 10
 db.init_db(FEATURES)
 
 app = Flask(__name__)
-app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev-secret-change-me")
+app.secret_key = os.environ["FLASK_SECRET_KEY"]
 
 _train_cache = {}
 
@@ -120,11 +123,7 @@ def shuffle_scenarios(scenarios):
 # ── User persistence ──────────────────────────────────────────────────────────
 
 def load_users():
-    try:
-        return db.load_all_users()
-    except Exception:
-        pass
-    return {}
+    return db.load_all_users()
 
 
 def save_users(u):

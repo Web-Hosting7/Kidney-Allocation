@@ -30,7 +30,7 @@ import os
 import sqlite3
 
 APP_DIR      = os.path.dirname(os.path.abspath(__file__))
-DB_PATH      = os.path.join(APP_DIR, "portal.db")
+DB_PATH      = os.environ.get("DB_PATH") or os.path.join(APP_DIR, "portal.db")
 LEGACY_JSON  = os.path.join(APP_DIR, "users.json")
 
 # Set by init_db() — the parameter list the A_/B_ columns are built from.
