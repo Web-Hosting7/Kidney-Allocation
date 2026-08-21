@@ -271,7 +271,7 @@ body {
     <button class="ep-toggle ep-toggle-a" id="lp-out-a">→ A</button>
     <button class="ep-toggle ep-toggle-b" id="lp-out-b">→ B</button>
   </div>
-  <button class="btn-insert-step" id="lp-insert">＋ Insert a decision step here</button>
+  <button class="btn-insert-step" id="lp-insert">＋ Add a rule after this step</button>
 </div>
 
 <!-- Tie-breaker (refine) edit panel -->
@@ -651,17 +651,15 @@ function openPanel(i) {
 // Set semantic text on outcome toggle buttons based on node feature
 function _refreshOutcomeLabels(feature, idA, idB) {
   var base = (feature || '').replace('_diff', '');
-  var pair = labels[base];
+  var pair = SHORT_LABELS[base];
   var btnA = document.getElementById(idA);
   var btnB = document.getElementById(idB);
   if (btnA && btnB && pair) {
-    var hi = pair[0].charAt(0).toUpperCase() + pair[0].slice(1);
-    var lo = pair[1].charAt(0).toUpperCase() + pair[1].slice(1);
-    btnA.textContent = '→ ' + hi;
-    btnB.textContent = '→ ' + lo;
+    btnA.textContent = pair[0];
+    btnB.textContent = pair[1];
   } else if (btnA && btnB) {
-    btnA.textContent = '→ A';
-    btnB.textContent = '→ B';
+    btnA.textContent = 'A';
+    btnB.textContent = 'B';
   }
 }
 
@@ -844,23 +842,11 @@ function buildRefine(nodeIdx, refine) {
 
   } else {
     var addBtn = document.createElement('button');
-    addBtn.className = 'ep-add-refine'; addBtn.textContent = '＋ Add tie-breaker';
+    addBtn.className = 'ep-add-refine';
+    addBtn.textContent = '＋ Add a rule after this step';
     addBtn.addEventListener('click', function() {
       savePanel();
-      var used = [tree.nodes[nodeIdx].feature];
-      var rf2 = null;
-      for (var pi=0; pi<params.length; pi++) {
-        if (used.indexOf(params[pi]+'_diff')===-1){ rf2=params[pi]+'_diff'; break; }
-      }
-      if (!rf2) rf2 = (params[0]||'age')+'_diff';
-      tree.nodes[nodeIdx].refine = {feature:rf2,op:'>=',threshold:0,true_class:1,false_class:0,
-        support:0,false_support:0,purity:.5,false_purity:.5,manual:true};
-      buildRefine(nodeIdx, tree.nodes[nodeIdx].refine);
-      // Hide parent outcome when tie-breaker is present
-      document.getElementById('ep-outcome-section').style.display = 'none';
-      document.getElementById('svg-wrap').innerHTML = buildSVG();
-      reAttachNodeClicks();
-      updateHeight();
+      insertStepAt(nodeIdx);
     });
     sec.appendChild(addBtn);
   }
@@ -991,6 +977,20 @@ function moveNode(i, dir) {
   tree.nodes[j] = tmp;
   selectedNode = null;
   render();
+}
+
+// ── Attach tie-breaker to a node's YES exit ───────────────────────
+function addTieBreakerToNode(nodeIdx) {
+  var used = [tree.nodes[nodeIdx].feature];
+  var rf2 = null;
+  for (var pi = 0; pi < params.length; pi++) {
+    if (used.indexOf(params[pi] + '_diff') === -1) { rf2 = params[pi] + '_diff'; break; }
+  }
+  if (!rf2) rf2 = (params[0] || 'age') + '_diff';
+  tree.nodes[nodeIdx].refine = {
+    feature: rf2, op: '>=', threshold: 0, true_class: 1, false_class: 0,
+    support: 0, false_support: 0, purity: .5, false_purity: .5, manual: true
+  };
 }
 
 // ── Insert step at position ────────────────────────────────────────
@@ -1134,7 +1134,13 @@ document.getElementById('lp-out-b').addEventListener('click', function() {
 });
 document.getElementById('lp-insert').addEventListener('click', function() {
   saveLeafPanel();
-  if (leafPanelNode !== null) insertStepAt(leafPanelNode);
+  if (leafPanelNode !== null) {
+    var nodeIdx = leafPanelNode;
+    addTieBreakerToNode(nodeIdx);
+    closeLeafPanel();
+    render();
+    openPanel(nodeIdx);
+  }
 });
 document.getElementById('leaf-panel').addEventListener('click', function(e) { e.stopPropagation(); });
 
@@ -1183,10 +1189,10 @@ document.getElementById('btn-add').addEventListener('click', function() {
   savePanel(); closePanel(); closeDefaultPanel();
   var used = tree.nodes.map(function(nd){ return nd.feature; });
   var rf = null;
-  for (var pi=0; pi<params.length; pi++) {
-    if (used.indexOf(params[pi]+'_diff')===-1){ rf=params[pi]+'_diff'; break; }
+  for (var pi = 0; pi < params.length; pi++) {
+    if (used.indexOf(params[pi]) === -1) { rf = params[pi]; break; }
   }
-  if (!rf) rf = (params[0]||'age')+'_diff';
+  if (!rf) rf = params[0] || 'age_diff';
   tree.nodes.push({feature:rf,op:'>=',threshold:0,use_abs:true,prefer_higher:true,exit_class:1,support:0,purity:.5});
   render();
 });

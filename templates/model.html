@@ -136,6 +136,8 @@ body {
   cursor: pointer;
   font-family: inherit;
   transition: background .12s;
+  margin-top: 8px;
+  display: block;
 }
 .ep-add-refine:hover { background: #eff6ff; }
 .ep-rm-refine {
@@ -742,13 +744,10 @@ function defaultOutcomeLabel() {
     return (tree && tree.default_class === 1) ? 'Higher' : 'Lower';
   }
   var last = nodes[nodes.length - 1];
-  if (last.use_abs) {
-    var opposite = !(last.prefer_higher !== false);
-    return outcomeLabel({use_abs: true, prefer_higher: opposite, feature: last.feature}, true);
-  }
-  // Legacy: negate exit direction and let outcomeLabel infer semantics.
-  var oppExit = (last.exit_class === 1) ? 0 : 1;
-  return outcomeLabel({use_abs: false, feature: last.feature, op: last.op, threshold: last.threshold, exit_class: oppExit}, true);
+  // Use default_class to determine direction — this only changes when the user
+  // explicitly edits the OTHERWISE panel, so it stays independent of the last node.
+  var preferHigher = (tree && tree.default_class === 1);
+  return outcomeLabel({use_abs: true, prefer_higher: preferHigher, feature: last.feature}, true);
 }
 
 // Greedy word-wrap, mirrors Python _wrap(text, max_chars).
@@ -1147,14 +1146,12 @@ function openPanel(i) {
 // Set semantic text on outcome toggle buttons based on node feature
 function _refreshOutcomeLabels(feature, idA, idB) {
   var base = (feature || '').replace('_diff', '');
-  var pair = labels[base];
+  var pair = SHORT_LABELS[base];
   var btnA = document.getElementById(idA);
   var btnB = document.getElementById(idB);
   if (btnA && btnB && pair) {
-    var hi = pair[0].charAt(0).toUpperCase() + pair[0].slice(1);
-    var lo = pair[1].charAt(0).toUpperCase() + pair[1].slice(1);
-    btnA.textContent = hi;
-    btnB.textContent = lo;
+    btnA.textContent = pair[0];
+    btnB.textContent = pair[1];
   } else if (btnA && btnB) {
     btnA.textContent = 'Choose A';
     btnB.textContent = 'Choose B';
@@ -1343,22 +1340,19 @@ function buildRefine(nodeIdx, refine) {
       updateSVG();
     });
 
-  } else {
-    var addBtn = document.createElement('button');
-    addBtn.className = 'ep-add-refine'; addBtn.textContent = '＋ Add tie-breaker';
-    addBtn.addEventListener('click', function() {
-      savePanel();
-      addTieBreakerToNode(nodeIdx);
-      buildRefine(nodeIdx, tree.nodes[nodeIdx].refine);
-      // Hide parent outcome when tie-breaker is present
-      document.getElementById('ep-outcome-section').style.display = 'none';
-      rebuildExplanations();
-      document.getElementById('svg-canvas').innerHTML = buildSVG();
-      reAttachNodeClicks();
-      updateHeight();
-    });
-    sec.appendChild(addBtn);
   }
+
+  var addBtn = document.createElement('button');
+  addBtn.className = 'ep-add-refine';
+  addBtn.textContent = '＋ Add a rule after this step';
+  addBtn.addEventListener('click', function() {
+    savePanel();
+    closePanel();
+    var newIdx = insertRuleAfter(nodeIdx);
+    render();
+    openPanel(newIdx);
+  });
+  sec.appendChild(addBtn);
 }
 
 // Insert a plain, general decision rule right after a given node — a normal
@@ -1544,12 +1538,12 @@ function openDefaultPanel() {
     var base = (last.feature || '').replace('_diff', '');
     var sp = SHORT_LABELS[base];
     if (sp) {
-      // YES direction = sp[0] if prefer_higher, sp[1] if not
-      // Default (OTHERWISE) = opposite of last node's YES
+      // Button A (red) = class-1 direction = same as last YES.
+      // Button B (blue) = class-0 direction = opposite = natural otherwise.
       var lastPrefHigh = last.use_abs ? (last.prefer_higher !== false)
                        : (last.op === '>=' ? last.exit_class === 1 : last.exit_class === 0);
-      var defLblA = lastPrefHigh ? sp[1] : sp[0];  // opposite of YES
-      var defLblB = lastPrefHigh ? sp[0] : sp[1];
+      var defLblA = lastPrefHigh ? sp[0] : sp[1];  // class 1 direction
+      var defLblB = lastPrefHigh ? sp[1] : sp[0];  // class 0 direction (natural otherwise)
       btnA.textContent = defLblA;
       btnB.textContent = defLblB;
     } else {
@@ -1571,10 +1565,17 @@ function closeDefaultPanel() {
   document.getElementById('default-panel').style.display = 'none';
 }
 function saveDefaultPanel() {
-  tree.default_class = document.getElementById('def-out-a').classList.contains('ep-on') ? 1 : 0;
-  // Clear the computed semantic label — backend will recompute on next Apply
-  tree.default_feature        = undefined;
-  tree.default_prefer_higher  = undefined;
+  var aIsOn = document.getElementById('def-out-a').classList.contains('ep-on');
+  tree.default_class = aIsOn ? 1 : 0;
+  var nodes = (tree && tree.nodes) || [];
+  if (nodes.length) {
+    var last = nodes[nodes.length - 1];
+    var lastPrefHigh = last.use_abs ? (last.prefer_higher !== false)
+                     : (last.op === '>=' ? last.exit_class === 1 : last.exit_class === 0);
+    // A = class-1 direction = lastPrefHigh; B = class-0 direction = !lastPrefHigh
+    tree.default_prefer_higher = aIsOn ? lastPrefHigh : !lastPrefHigh;
+    tree.default_feature = last.feature;
+  }
 }
 
 // ── Outcome toggle helper ─────────────────────────────────────────
@@ -1659,6 +1660,7 @@ document.getElementById('def-out-b').addEventListener('click', function() {
 document.getElementById('def-close').addEventListener('click', function() {
   saveDefaultPanel();
   closeDefaultPanel();
+  rebuildExplanations();
   document.getElementById('svg-canvas').innerHTML = buildSVG();
   reAttachNodeClicks();
   updateHeight();
@@ -1681,10 +1683,11 @@ document.getElementById('lp-out-b').addEventListener('click', function() {
 document.getElementById('lp-insert').addEventListener('click', function() {
   saveLeafPanel();
   if (leafPanelNode !== null) {
-    var newIdx = insertRuleAfter(leafPanelNode);
+    var nodeIdx = leafPanelNode;
+    addTieBreakerToNode(nodeIdx);
     closeLeafPanel();
     render();
-    openPanel(newIdx);
+    openPanel(nodeIdx);
   }
 });
 document.getElementById('leaf-panel').addEventListener('click', function(e) { e.stopPropagation(); });
@@ -1735,10 +1738,10 @@ document.getElementById('btn-add').addEventListener('click', function() {
   savePanel(); closePanel(); closeDefaultPanel();
   var used = tree.nodes.map(function(nd){ return nd.feature; });
   var rf = null;
-  for (var pi=0; pi<params.length; pi++) {
-    if (used.indexOf(params[pi]+'_diff')===-1){ rf=params[pi]+'_diff'; break; }
+  for (var pi = 0; pi < params.length; pi++) {
+    if (used.indexOf(params[pi]) === -1) { rf = params[pi]; break; }
   }
-  if (!rf) rf = (params[0]||'age')+'_diff';
+  if (!rf) rf = params[0] || 'age_diff';
   tree.nodes.push({feature:rf,op:'>=',threshold:0,use_abs:true,prefer_higher:true,exit_class:1,support:0,purity:.5});
   render();
 });
