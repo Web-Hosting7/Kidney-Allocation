@@ -296,6 +296,104 @@ body { padding: 0; }
   white-space: nowrap; transition: background .12s;
 }
 .btn-continue:hover { background: #1d4ed8; }
+
+/* ── Scenario audit panel ─────────────────────────────────────── */
+.audit-card {
+  background: #f5f3ff; border: 1px solid #ddd6fe; border-radius: 16px;
+  margin-top: 22px; overflow: hidden;
+}
+.audit-toggle-header {
+  width: 100%; display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; padding: 18px 22px; background: none; border: none; cursor: pointer;
+  text-align: left;
+}
+.audit-toggle-title { font-size: 15.5px; font-weight: 600; color: #0f172a; }
+.audit-chevron { font-style: normal; font-size: 13px; color: #7c6ee0; transition: transform .15s; }
+.audit-chevron.open { transform: rotate(180deg); }
+.audit-body { border-top: 1px solid #ddd6fe; padding: 20px 22px 22px; position: relative; }
+
+.audit-disabled-note {
+  background: #fff; border: 1px solid #ddd6fe; border-radius: 10px;
+  padding: 14px 16px; font-size: 14px; color: #64748b; text-align: center;
+}
+
+.btn-try-new {
+  width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 11px; margin-bottom: 16px; border: 1.5px dashed #93c5fd; border-radius: 10px;
+  background: #fff; cursor: pointer; font-size: 14px; font-weight: 600; color: #2563eb;
+  transition: background .12s, border-color .12s;
+}
+.btn-try-new:hover { background: #eff6ff; border-color: #2563eb; }
+
+.audit-grid {
+  display: grid; gap: 6px; margin-bottom: 18px;
+}
+.audit-chip {
+  aspect-ratio: 1; min-width: 0; border-radius: 7px; font-size: 11.5px; font-weight: 700;
+  cursor: pointer; border: 2px solid transparent; transition: transform .08s;
+  display: flex; align-items: center; justify-content: center; padding: 0;
+}
+.audit-chip:hover { transform: scale(1.08); }
+.audit-chip.match    { background: #f0fdf4; color: #15803d; }
+.audit-chip.mismatch { background: #fef2f2; color: #b91c1c; }
+.audit-chip.selected { border-color: #0f172a; }
+
+.audit-detail {
+  background: #fff; border: 1px solid #ddd6fe; border-radius: 12px; padding: 16px 18px;
+}
+.audit-detail-title { font-size: 14px; font-weight: 600; color: #0f172a; margin: 0 0 12px; }
+
+.audit-scenario-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+.audit-patient-card { border-radius: 10px; padding: 14px 14px 12px; }
+.audit-patient-card.a { background: #fef2f2; border-left: 4px solid #b91c1c; }
+.audit-patient-card.b { background: #eff6ff; border-left: 4px solid #1d4ed8; }
+.audit-patient-label {
+  font-weight: 700; font-size: 12px; letter-spacing: .04em; text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.audit-patient-label.a { color: #b91c1c; }
+.audit-patient-label.b { color: #1d4ed8; }
+.audit-feature-row { margin-bottom: 8px; }
+.audit-feature-row:last-child { margin-bottom: 0; }
+.audit-feature-name {
+  font-size: 10.5px; color: #64748b; text-transform: uppercase; letter-spacing: .05em;
+  margin-bottom: 2px;
+}
+.audit-feature-value { font-size: 17px; font-weight: 600; font-family: monospace; }
+
+.audit-outcome-row {
+  display: flex; justify-content: space-between; font-size: 13.5px; padding: 6px 0;
+}
+.audit-outcome-row .lbl { color: #64748b; }
+.audit-outcome-row .val { font-weight: 600; }
+.audit-banner {
+  margin-top: 10px; text-align: center; padding: 9px; border-radius: 8px;
+  font-size: 13px; font-weight: 600;
+}
+.audit-banner.match    { background: #f0fdf4; color: #15803d; }
+.audit-banner.mismatch { background: #fef2f2; color: #b91c1c; }
+.audit-why { font-size: 12.5px; color: #64748b; margin-top: 8px; line-height: 1.5; }
+
+.audit-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 14px; }
+.audit-form-col-title {
+  font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
+  margin-bottom: 8px;
+}
+.audit-form-col-title.a { color: #b91c1c; }
+.audit-form-col-title.b { color: #1d4ed8; }
+.audit-field { margin-bottom: 8px; }
+.audit-field label { display: block; font-size: 12px; color: #64748b; margin-bottom: 3px; }
+.audit-field input {
+  width: 100%; font-size: 13.5px; padding: 7px 9px; border: 1px solid #e2e8f0;
+  border-radius: 6px; background: #fff;
+}
+.audit-field input:focus { outline: none; border-color: #2563eb; }
+.audit-field-error { font-size: 12px; color: #b91c1c; margin-top: 3px; display: none; }
+.btn-see-prediction {
+  width: 100%; padding: 10px; border: none; border-radius: 8px; background: #2563eb;
+  color: #fff; font-size: 13.5px; font-weight: 600; cursor: pointer;
+}
+.btn-see-prediction:hover { background: #1d4ed8; }
 </style>
 </head>
 <body>
@@ -432,6 +530,27 @@ body { padding: 0; }
     </div>
     <button class="btn-continue" id="btn-continue">Continue to Part 2 →</button>
   </div>
+
+  <div class="audit-card" id="audit-card">
+    <button id="audit-toggle" class="audit-toggle-header" type="button">
+      <span class="audit-toggle-title" id="audit-toggle-title">Check when the model makes the same choice as you</span>
+      <i class="audit-chevron" id="audit-chevron">▾</i>
+    </button>
+
+    <div class="audit-body" id="audit-body" style="display:none">
+      <div class="audit-disabled-note" id="audit-disabled-note" style="display:none">
+        You're editing the model — this will be available again once you apply your changes.
+      </div>
+
+      <div id="audit-interactive">
+        <button id="audit-try-new" class="btn-try-new" type="button">
+          <span>＋</span> Try a new scenario
+        </button>
+        <div class="audit-grid" id="audit-grid"></div>
+        <div class="audit-detail" id="audit-detail"></div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -537,6 +656,7 @@ var RESET_URL = {{ reset_url | tojson }};
 var RATE_URL = {{ rate_url | tojson }};
 var CONTINUE_URL = {{ continue_url | tojson }};
 var currentScore = {{ current_score | tojson }};
+var pastScenarios = {{ past_scenarios_json | tojson }};
 
 // ── SVG geometry (mirrors Python fft_svg) ─────────────────────────
 var PAD  = 30, ROW_H = 110;
@@ -1683,6 +1803,7 @@ function setMode(nextEditing) {
     banner.style.display = 'none';
     if (currentScore) { showPostRatingActions(); } else { postRow.style.display = 'none'; }
   }
+  setAuditEnabled(!editing);
   selectedNode = null; leafPanelNode = null; refinePanelNode = null;
   document.getElementById('edit-panel').style.display    = 'none';
   document.getElementById('default-panel').style.display = 'none';
@@ -1746,6 +1867,190 @@ document.getElementById('btn-continue').addEventListener('click', function() {
   window.location.href = CONTINUE_URL;
 });
 
+// ── Scenario audit panel ─────────────────────────────────────────
+// Re-evaluates the current tree against the person's own past answers
+// (and, optionally, a scenario they build themselves) entirely client-side.
+var auditSelected = pastScenarios.length ? 0 : null;   // index, 'custom', or null
+
+function getFeatureBase() {
+  return params.map(function(p) { return p.replace('_diff', ''); });
+}
+
+function diffsFromAB(a, b) {
+  var d = {};
+  getFeatureBase().forEach(function(f) {
+    d[f + '_diff'] = (parseFloat(a[f]) || 0) - (parseFloat(b[f]) || 0);
+  });
+  return d;
+}
+
+// Mirrors FastFrugalTree._row_predict in fft_model.py exactly: walk nodes in
+// order, first one whose condition holds decides it (via its follow-up check
+// if it has one); nothing firing falls through to the default class.
+function evalTreeRow(diffs) {
+  var nodes = (tree && tree.nodes) || [];
+  for (var i = 0; i < nodes.length; i++) {
+    var node = nodes[i];
+    var x = diffs[node.feature] || 0;
+    var cond = node.use_abs
+      ? (Math.abs(x) >= node.threshold)
+      : (node.op === '>=' ? (x >= node.threshold) : (x <= node.threshold));
+    if (!cond) continue;
+    var refine = node.refine;
+    if (refine) {
+      var rx = diffs[refine.feature] || 0;
+      var rcond, cls;
+      if (refine.use_abs) {
+        rcond = Math.abs(rx) >= refine.threshold;
+        cls = rcond ? ((rx > 0) === refine.prefer_higher ? 1 : 0) : refine.false_class;
+      } else {
+        rcond = refine.op === '>=' ? (rx >= refine.threshold) : (rx <= refine.threshold);
+        cls = rcond ? refine.true_class : refine.false_class;
+      }
+      return {cls: cls, exitIndex: i, refineFired: rcond};
+    }
+    return {cls: ((x > 0) === node.prefer_higher ? 1 : 0), exitIndex: i, refineFired: null};
+  }
+  return {cls: (tree && tree.default_class) || 0, exitIndex: -1, refineFired: null};
+}
+
+function auditWhyText(result) {
+  if (result.exitIndex === -1) return 'No step matched \u2014 used the default choice.';
+  var stepNum = result.exitIndex + 1;
+  if (result.refineFired !== null) {
+    return 'Decided at step ' + stepNum + '\u2019s follow-up check \u2014 the main condition was a close call.';
+  }
+  return 'Decided at step ' + stepNum + '.';
+}
+
+function renderAuditGrid() {
+  var grid = document.getElementById('audit-grid');
+  grid.style.gridTemplateColumns = 'repeat(' + Math.max(1, pastScenarios.length) + ', minmax(0, 1fr))';
+  grid.innerHTML = '';
+  var matchCount = 0;
+  pastScenarios.forEach(function(sc, idx) {
+    var result = evalTreeRow(diffsFromAB(sc.A, sc.B));
+    var modelChoice = result.cls === 1 ? 'A' : 'B';
+    var isMatch = modelChoice === sc.choice;
+    if (isMatch) matchCount++;
+    var chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = 'audit-chip ' + (isMatch ? 'match' : 'mismatch') + (auditSelected === idx ? ' selected' : '');
+    chip.textContent = idx + 1;
+    chip.title = 'Scenario ' + (idx + 1);
+    chip.addEventListener('click', function() {
+      auditSelected = idx;
+      renderAuditGrid();
+      renderAuditDetail();
+    });
+    grid.appendChild(chip);
+  });
+  var titleEl = document.getElementById('audit-toggle-title');
+  if (pastScenarios.length) {
+    titleEl.textContent = 'Matches ' + matchCount + ' of your ' + pastScenarios.length + ' answers';
+  } else {
+    titleEl.textContent = 'Check when the model makes the same choice as you';
+  }
+}
+
+function patientCardHTML(side, vals) {
+  var label = side === 'a' ? 'Patient A' : 'Patient B';
+  var html = '<div class="audit-patient-card ' + side + '">'
+           + '<div class="audit-patient-label ' + side + '">' + label + '</div>';
+  getFeatureBase().forEach(function(f) {
+    html += '<div class="audit-feature-row">'
+          + '<div class="audit-feature-name">' + esc(pretty(f)) + '</div>'
+          + '<div class="audit-feature-value">' + esc(vals[f]) + '</div>'
+          + '</div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function renderAuditDetail() {
+  var detail = document.getElementById('audit-detail');
+  if (auditSelected === 'custom') { renderCustomForm(detail); return; }
+  if (auditSelected === null || !pastScenarios.length) {
+    detail.innerHTML = '<div style="font-size:13px;color:#94a3b8;text-align:center;padding:8px">Click a scenario above to see the details.</div>';
+    return;
+  }
+  var sc = pastScenarios[auditSelected];
+  var result = evalTreeRow(diffsFromAB(sc.A, sc.B));
+  var modelChoice = result.cls === 1 ? 'A' : 'B';
+  var isMatch = modelChoice === sc.choice;
+
+  var html = '<div class="audit-detail-title">Scenario ' + (auditSelected + 1) + '</div>';
+  html += '<div class="audit-scenario-grid">'
+        + patientCardHTML('a', sc.A) + patientCardHTML('b', sc.B)
+        + '</div>';
+  html += '<div class="audit-outcome-row"><span class="lbl">You chose</span><span class="val">Patient ' + esc(sc.choice) + '</span></div>';
+  html += '<div class="audit-outcome-row"><span class="lbl">Model predicts</span><span class="val">Patient ' + modelChoice + '</span></div>';
+  html += '<div class="audit-banner ' + (isMatch ? 'match' : 'mismatch') + '">'
+        + (isMatch ? 'Model agrees with your choice' : 'Model disagrees with your choice') + '</div>';
+  html += '<div class="audit-why">' + esc(auditWhyText(result)) + '</div>';
+  detail.innerHTML = html;
+}
+
+function renderCustomForm(detail) {
+  var html = '<div class="audit-detail-title">Try your own scenario</div><div class="audit-form-grid">';
+  ['a', 'b'].forEach(function(side) {
+    html += '<div><div class="audit-form-col-title ' + side + '">Patient ' + side.toUpperCase() + '</div>';
+    getFeatureBase().forEach(function(f) {
+      html += '<div class="audit-field"><label>' + esc(pretty(f)) + '</label>'
+            + '<input type="number" id="audit-in-' + side + '-' + f + '"></div>';
+    });
+    html += '</div>';
+  });
+  html += '</div>';
+  html += '<div class="audit-field-error" id="audit-form-error">Fill in every field first.</div>';
+  html += '<button class="btn-see-prediction" id="audit-see-pred" type="button">See prediction</button>';
+  html += '<div id="audit-custom-result"></div>';
+  detail.innerHTML = html;
+
+  document.getElementById('audit-see-pred').addEventListener('click', function() {
+    var a = {}, b = {}, missing = false;
+    getFeatureBase().forEach(function(f) {
+      var av = document.getElementById('audit-in-a-' + f).value;
+      var bv = document.getElementById('audit-in-b-' + f).value;
+      if (av === '' || bv === '') missing = true;
+      a[f] = av; b[f] = bv;
+    });
+    var errEl = document.getElementById('audit-form-error');
+    if (missing) { errEl.style.display = 'block'; return; }
+    errEl.style.display = 'none';
+
+    var result = evalTreeRow(diffsFromAB(a, b));
+    var modelChoice = result.cls === 1 ? 'A' : 'B';
+    document.getElementById('audit-custom-result').innerHTML =
+      '<div class="audit-outcome-row" style="margin-top:10px"><span class="lbl">Model predicts</span><span class="val">Patient ' + modelChoice + '</span></div>'
+      + '<div class="audit-why">' + esc(auditWhyText(result)) + '</div>';
+  });
+}
+
+document.getElementById('audit-toggle').addEventListener('click', function() {
+  var body = document.getElementById('audit-body');
+  var chev = document.getElementById('audit-chevron');
+  var open = body.style.display === 'block';
+  body.style.display = open ? 'none' : 'block';
+  chev.classList.toggle('open', !open);
+});
+
+document.getElementById('audit-try-new').addEventListener('click', function() {
+  auditSelected = 'custom';
+  renderAuditGrid();
+  renderAuditDetail();
+});
+
+function setAuditEnabled(enabled) {
+  document.getElementById('audit-disabled-note').style.display = enabled ? 'none' : 'block';
+  document.getElementById('audit-interactive').style.display = enabled ? '' : 'none';
+}
+
+function renderAudit() {
+  renderAuditGrid();
+  renderAuditDetail();
+}
+
 // ── Init: data is injected server-side (see bottom of this template) ──
 function initEditor(initTree, initParams, initLabels, initNodeExplanations, initSummary) {
   tree    = initTree ? JSON.parse(JSON.stringify(initTree)) : null;
@@ -1760,6 +2065,7 @@ function initEditor(initTree, initParams, initLabels, initNodeExplanations, init
   document.getElementById('default-panel').style.display = 'none';
   document.getElementById('leaf-panel').classList.remove('visible');
   document.getElementById('refine-panel').classList.remove('visible');
+  renderAudit();
   setMode(false);
 }
 

@@ -2,7 +2,7 @@
 Preference Elicitation Portal — Flask edition
 SURA 2026 · IIT Delhi
 
-Run:  gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --timeout 120
+Run:  gunicorn app:app --bind 0.0.0.0:5001 --workers 1 --timeout 120
 """
 
 import json
@@ -278,6 +278,22 @@ def _train_for(rec, decisions_field, override):
     return stats, decisions
 
 
+def _scenarios_for_audit(decisions):
+    """
+    Compact A/B/choice-only view of past decisions, in the order they were
+    answered, for the client-side "check the model against your answers"
+    panel. Only what's needed to re-evaluate the tree in the browser.
+    """
+    out = []
+    for d in decisions:
+        out.append({
+            "A": {p: d.get(f"A_{p}") for p in FEATURES},
+            "B": {p: d.get(f"B_{p}") for p in FEATURES},
+            "choice": d.get("choice"),
+        })
+    return out
+
+
 @app.route("/results")
 def results():
     guard = _require_user()
@@ -303,6 +319,7 @@ def results():
         labels_json=PARAM_DIRECTION_LABELS,
         node_explanations_json=stats.get("node_explanations") or [],
         summary_explanation_json=stats.get("summary_explanation") or "",
+        past_scenarios_json=_scenarios_for_audit(decisions),
     )
 
 
