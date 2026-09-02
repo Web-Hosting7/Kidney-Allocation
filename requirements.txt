@@ -1,7 +1,0 @@
-flask
-pandas
-numpy
-scikit-learn
-groq
-python-dotenv
-gunicorn

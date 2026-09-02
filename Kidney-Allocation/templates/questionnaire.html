@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="progress-track"><div class="progress-fill" style="width:{{ (idx / n_total * 100) | round(1) }}%"></div></div>
+<div class="muted" style="font-size:15px; font-weight:500; margin-top:12px; margin-bottom:26px;">
+  Scenario {{ idx + 1 }} of {{ n_total }}
+</div>
+
+<h2>{{ heading }}</h2>
+{% if subheading %}
+<div class="muted" style="font-size:15px; margin-bottom:16px; line-height:1.6;">{{ subheading }}</div>
+{% endif %}
+<div class="spacer-16"></div>
+
+<div class="scenario-grid">
+  <div class="patient-card a">
+    <div class="patient-label a">Patient A</div>
+    {% for p in features %}
+    <div class="feature-row">
+      <div class="feature-name">{{ p.replace('_',' ')|title }}</div>
+      <div class="feature-value">{{ sc.A[p] | round(1) if sc.A[p] % 1 else sc.A[p]|int }}</div>
+    </div>
+    {% endfor %}
+  </div>
+  <div class="patient-card b">
+    <div class="patient-label b">Patient B</div>
+    {% for p in features %}
+    <div class="feature-row">
+      <div class="feature-name">{{ p.replace('_',' ')|title }}</div>
+      <div class="feature-value">{{ sc.B[p] | round(1) if sc.B[p] % 1 else sc.B[p]|int }}</div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="spacer-32"></div>
+<div class="btn-row">
+  <form method="post" action="{{ url_for('answer', part=part) }}" class="inline">
+    <input type="hidden" name="choice" value="A">
+    <button type="submit" class="btn btn-primary btn-block">Choose Patient A</button>
+  </form>
+  <form method="post" action="{{ url_for('answer', part=part) }}" class="inline">
+    <input type="hidden" name="choice" value="B">
+    <button type="submit" class="btn btn-primary btn-block">Choose Patient B</button>
+  </form>
+</div>
+{% endblock %}

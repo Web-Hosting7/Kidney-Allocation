@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>A few more answers first</h2>
+<div class="spacer-16"></div>
+
+<div class="alert alert-warning">
+  Building your model takes at least 6 answered scenarios. You've answered
+  {{ n_decisions }} so far.
+</div>
+
+<p class="muted">
+  Keep going and the model will appear as soon as there's enough to work with.
+</p>
+
+<div class="spacer-24"></div>
+<a href="{{ url_for('questionnaire', part=1) }}" class="btn btn-primary">
+  Continue answering scenarios →
+</a>
+{% endblock %}

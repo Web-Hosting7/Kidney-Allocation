@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+
+{% block extra_head %}
+<style>
+.wrap { max-width: 1040px; }
+
+.version-block { margin-bottom: 34px; }
+.version-head {
+  display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+.version-title { font-size: 1.15rem; font-weight: 600; }
+.version-tag {
+  font-size: 11.5px; font-weight: 700; letter-spacing: .06em;
+  text-transform: uppercase; padding: 3px 9px; border-radius: 20px;
+}
+.version-tag.current { background: var(--accent-soft); color: var(--accent); }
+.version-tag.past    { background: var(--surface-alt); color: var(--text-secondary); }
+.version-summary { font-size: 14.5px; color: var(--text-secondary); margin-bottom: 16px; }
+
+.review-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+.review-col-head {
+  display: flex; align-items: center; gap: 9px; font-size: 13px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .05em; margin-bottom: 12px;
+}
+.review-col-head.agree    { color: var(--success); }
+.review-col-head.disagree { color: var(--a); }
+.count-pill {
+  font-size: 12px; padding: 2px 9px; border-radius: 20px; letter-spacing: 0;
+}
+.count-pill.agree    { background: var(--success-soft); color: var(--success); }
+.count-pill.disagree { background: var(--a-soft); color: var(--a); }
+
+.trial-item {
+  border-radius: 12px; padding: 14px 16px; margin-bottom: 12px;
+  border: 1px solid var(--border); background: #fff;
+}
+.trial-item.agree    { border-left: 4px solid var(--success); }
+.trial-item.disagree { border-left: 4px solid var(--a); }
+.trial-when { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
+
+.trial-values {
+  display: grid; grid-template-columns: auto 1fr 1fr; gap: 3px 12px;
+  font-size: 13px; margin-bottom: 10px;
+}
+.trial-values .hdr {
+  font-size: 11px; text-transform: uppercase; letter-spacing: .05em;
+  font-weight: 700; padding-bottom: 3px;
+}
+.trial-values .hdr.a { color: var(--a); }
+.trial-values .hdr.b { color: var(--b); }
+.trial-values .name { color: var(--text-secondary); }
+.trial-values .num  { font-family: monospace; font-weight: 600; }
+
+.trial-verdict { font-size: 13.5px; margin-bottom: 4px; }
+.trial-verdict .pick { font-weight: 700; }
+.trial-verdict .pick.a { color: var(--a); }
+.trial-verdict .pick.b { color: var(--b); }
+.trial-reason { font-size: 12.5px; color: var(--text-secondary); line-height: 1.55; }
+.trial-reasoning {
+  margin-top: 10px; padding: 10px 12px; border-radius: 8px;
+  background: var(--surface); font-size: 13px; line-height: 1.6;
+  color: var(--text); border: 1px solid var(--border);
+}
+.trial-reasoning .lbl {
+  display: block; font-size: 11px; text-transform: uppercase; letter-spacing: .05em;
+  color: var(--text-muted); font-weight: 700; margin-bottom: 4px;
+}
+
+.empty-note {
+  border: 1px dashed var(--border-strong); border-radius: 12px; padding: 18px;
+  font-size: 13.5px; color: var(--text-secondary); text-align: center;
+}
+.page-actions { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 8px; }
+
+@media (max-width: 720px) {
+  .review-columns { grid-template-columns: 1fr; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<h1>Agreements and disagreements</h1>
+<div class="spacer-14"></div>
+<p class="muted">
+  Every scenario you've tried since your model was built, split by whether the
+  model made the same call you did. Each version of your model keeps its own
+  record, so editing the model starts a fresh set rather than rewriting the old one.
+</p>
+
+<div class="spacer-24"></div>
+<div class="page-actions">
+  <a href="{{ back_url }}" class="btn btn-secondary">← Back to your model</a>
+  <a href="{{ back_url }}?try=1" class="btn btn-primary">Try a new scenario</a>
+</div>
+<div class="spacer-32"></div>
+
+{% set ns = namespace(any=false) %}
+{% for g in groups %}
+  {% if g.total %}{% set ns.any = true %}{% endif %}
+{% endfor %}
+
+{% if not ns.any %}
+  <div class="empty-note">
+    No scenarios tried yet. Use “Try a new scenario” above and your agreements
+    and disagreements will collect here.
+  </div>
+{% endif %}
+
+{% for g in groups %}
+  {% if g.total %}
+  <div class="version-block">
+    <div class="version-head">
+      <span class="version-title">
+        {% if g.version == 0 %}Your original model{% else %}Model version {{ g.version + 1 }}{% endif %}
+      </span>
+      <span class="version-tag {{ 'current' if g.is_current else 'past' }}">
+        {{ 'Current' if g.is_current else 'Earlier version' }}
+      </span>
+    </div>
+    <div class="version-summary">
+      Agreed on {{ g.agreements|length }} of {{ g.total }}
+      scenario{{ '' if g.total == 1 else 's' }}.
+    </div>
+
+    <div class="review-columns">
+      {# Two columns, same markup, different slice — the only differences are
+         the label, the accent and which list is rendered. #}
+      {# `rows` rather than `items`: on a Jinja dict, `.items` resolves to the
+         dict method instead of the key. #}
+      {% for col in [
+          {'key': 'agree',    'title': 'Agreements',    'rows': g.agreements},
+          {'key': 'disagree', 'title': 'Disagreements', 'rows': g.disagreements}
+        ] %}
+      <div>
+        <div class="review-col-head {{ col.key }}">
+          {{ col.title }}
+          <span class="count-pill {{ col.key }}">{{ col.rows|length }}</span>
+        </div>
+
+        {% if not col.rows %}
+          <div class="empty-note">
+            {% if col.key == 'agree' %}
+              The model hasn't matched your choice here yet.
+            {% else %}
+              No disagreements — the model matched you every time.
+            {% endif %}
+          </div>
+        {% endif %}
+
+        {% for t in col.rows %}
+        <div class="trial-item {{ col.key }}">
+          <div class="trial-when">{{ t.created_at[:16]|replace('T', ' at ') }}</div>
+
+          <div class="trial-values">
+            <div class="hdr"></div>
+            <div class="hdr a">Patient A</div>
+            <div class="hdr b">Patient B</div>
+            {% for p in features %}
+              <div class="name">{{ p.replace('_', ' ')|title }}</div>
+              <div class="num">{{ t.A[p]|round|int }}</div>
+              <div class="num">{{ t.B[p]|round|int }}</div>
+            {% endfor %}
+          </div>
+
+          <div class="trial-verdict">
+            You chose
+            <span class="pick {{ t.user_choice|lower }}">Patient {{ t.user_choice }}</span>
+            · model chose
+            <span class="pick {{ t.model_choice|lower }}">Patient {{ t.model_choice }}</span>
+          </div>
+          {% if t.exit_reason %}
+          <div class="trial-reason">{{ t.exit_reason }}</div>
+          {% endif %}
+
+          {% if t.reasoning %}
+          <div class="trial-reasoning">
+            <span class="lbl">In your words</span>{{ t.reasoning }}
+          </div>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+{% endfor %}
+
+{% endblock %}

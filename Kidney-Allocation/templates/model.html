@@ -1,0 +1,2545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="{{ url_for('static', filename='fft_tree.js') }}"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #f8fafc;
+  color: #0f172a;
+  padding: 8px 0 28px;
+}
+
+/* SVG container */
+#svg-wrap { position: relative; width: 100%; }
+#svg-wrap svg { display: block; width: 100%; }
+
+/* Card that frames the tree visualization itself */
+.tree-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 28px 26px 22px;
+  box-shadow: 0 1px 2px rgba(15,23,42,.04), 0 8px 24px rgba(15,23,42,.04);
+}
+
+/* Edit hint */
+#edit-hint {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-bottom: 10px;
+  display: none;
+}
+
+/* Floating edit panel */
+#edit-panel {
+  display: none;
+  position: absolute;
+  background: #fff;
+  border: 1.5px solid #2563eb;
+  border-radius: 10px;
+  padding: 14px 16px 16px;
+  box-shadow: 0 4px 24px rgba(37,99,235,.15), 0 1px 4px rgba(0,0,0,.08);
+  z-index: 100;
+  min-width: 340px;
+  max-width: 420px;
+}
+
+.ep-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.ep-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: #94a3b8;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.ep-actions { display: flex; gap: 6px; align-items: center; }
+.ep-icon-btn {
+  border: none;
+  background: transparent;
+  color: #94a3b8;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 3px 6px;
+  border-radius: 5px;
+  line-height: 1;
+  transition: color .12s, background .12s;
+}
+.ep-icon-btn:hover { color: #0f172a; background: #f1f5f9; }
+.ep-icon-btn.del:hover { color: #b91c1c; background: #fef2f2; }
+
+.ep-field-label {
+  font-size: 11px;
+  color: #94a3b8;
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
+.ep-select, .ep-input {
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-family: inherit;
+  font-size: 14px;
+  color: #0f172a;
+  background: #fff;
+  outline: none;
+  transition: border-color .12s;
+}
+.ep-select:focus, .ep-input:focus { border-color: #2563eb; }
+.ep-select.feat { width: 100%; margin-bottom: 10px; }
+.ep-cond-row { display: flex; gap: 8px; margin-bottom: 10px; }
+.ep-select.op  { width: 64px; }
+.ep-input.thr  { width: 90px; font-family: monospace; }
+
+.ep-outcome-label { font-size: 11px; color: #94a3b8; font-weight: 500; margin-bottom: 6px; }
+.ep-outcome-row { display: flex; flex-direction: column; gap: 6px; }
+.ep-toggle { text-align: left; width: 100%; }
+.ep-toggle {
+  padding: 6px 14px;
+  border-radius: 5px;
+  border: 1.5px solid;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  background: transparent;
+  font-family: inherit;
+  transition: background .12s, color .12s;
+}
+.ep-toggle-a         { color: #b91c1c; border-color: #b91c1c; }
+.ep-toggle-a.ep-on   { background: #b91c1c; color: #fff; }
+.ep-toggle-b         { color: #1d4ed8; border-color: #1d4ed8; }
+.ep-toggle-b.ep-on   { background: #1d4ed8; color: #fff; }
+
+.ep-sep { border: none; border-top: 1px dashed #e2e8f0; margin: 12px 0; }
+
+.ep-refine-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.ep-add-refine {
+  font-size: 12px;
+  color: #2563eb;
+  background: transparent;
+  border: 1px dashed #93c5fd;
+  border-radius: 5px;
+  padding: 4px 10px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background .12s;
+  margin-top: 8px;
+  display: block;
+}
+.ep-add-refine:hover { background: #eff6ff; }
+.ep-rm-refine {
+  font-size: 11px;
+  color: #94a3b8;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: color .12s;
+}
+.ep-rm-refine:hover { color: #b91c1c; }
+
+/* Bottom toolbar */
+#toolbar { display: none; flex-direction: column; gap: 8px; margin-top: 18px; }
+
+.btn-add {
+  width: 100%;
+  padding: 10px;
+  background: transparent;
+  color: #2563eb;
+  border: 1.5px dashed #93c5fd;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background .12s, border-color .12s;
+}
+.btn-add:hover { background: #eff6ff; border-color: #2563eb; }
+
+.btn-apply {
+  width: 100%;
+  padding: 13px;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background .12s;
+}
+.btn-apply:hover { background: #1d4ed8; }
+.btn-apply.saved { background: #15803d; }
+
+/* Default leaf click area highlight */
+.fft-default-clickable { cursor: pointer; }
+
+/* Shared sub-panel style (leaf panel, refine panel) */
+.sub-panel {
+  display: none;
+  position: absolute;
+  background: #fff;
+  border: 1.5px solid #2563eb;
+  border-radius: 10px;
+  padding: 12px 14px 14px;
+  box-shadow: 0 4px 20px rgba(37,99,235,.15), 0 1px 4px rgba(0,0,0,.08);
+  z-index: 100;
+  min-width: 260px;
+}
+.sub-panel.visible { display: block; }
+
+.btn-insert-step {
+  width: 100%;
+  margin-top: 10px;
+  padding: 8px;
+  background: transparent;
+  color: #2563eb;
+  border: 1.5px dashed #93c5fd;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background .12s, border-color .12s;
+}
+.btn-insert-step:hover { background: #eff6ff; border-color: #2563eb; }
+
+/* ── Page chrome (header, mode toggle, rating) ─────────────────── */
+body { padding: 0; }
+.page-wrap { max-width: 980px; margin: 0 auto; padding: 36px 40px 56px; }
+.header-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; flex-wrap: wrap; }
+.eyebrow {
+  font-size: 13px; color: #94a3b8; text-transform: uppercase;
+  letter-spacing: .08em; font-weight: 600;
+}
+.page-wrap h2 { font-size: 1.5rem; font-weight: 600; letter-spacing: -0.01em;
+  color: #0f172a; margin: 8px 0 0; }
+#mode-caption { font-size: 15px; color: #475569; line-height: 1.6; margin: 14px 0 20px; max-width: 720px; }
+
+.mode-bar { display: none; }
+.btn-mode {
+  font-size: 15px; font-weight: 600; padding: 11px 20px; border-radius: 10px;
+  border: 1.5px solid #2563eb; background: #2563eb; color: #fff; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 8px; flex-shrink: 0; margin-top: 4px;
+  box-shadow: 0 1px 3px rgba(37,99,235,.25);
+  transition: background .15s, transform .05s;
+}
+.btn-mode:hover { background: #1d4ed8; }
+.btn-mode:active { transform: scale(0.99); }
+.btn-mode.editing-active { background: #fff; color: #2563eb; }
+.btn-mode.editing-active:hover { background: #eff6ff; }
+
+.editing-banner {
+  display: none; align-items: center;
+  background: #eff6ff; border: 1px solid #bfdbfe; color: #1d4ed8;
+  border-radius: 10px; padding: 14px 18px; font-size: 14px; font-weight: 500;
+  margin-bottom: 18px;
+}
+.legend-row { display: flex; gap: 22px; flex-wrap: wrap; align-items: center; }
+.legend-item { display: flex; align-items: center; gap: 9px; font-size: 13.5px; color: #1d4ed8; font-weight: 600; }
+.legend-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 24px; height: 24px; border-radius: 50%; color: #fff; font-size: 12px;
+  font-weight: 700; flex-shrink: 0;
+}
+.legend-badge.accent { background: #2563eb; }
+.legend-badge.dark { background: #0f172a; font-size: 10px; letter-spacing: -1px; }
+.legend-dash {
+  display: inline-block; width: 22px; height: 14px; border-radius: 5px;
+  border: 2px dashed #2563eb; flex-shrink: 0;
+}
+
+.section-hr { border: none; border-top: 1px solid #e2e8f0; margin: 40px 0 28px; }
+.rating-card {
+  background: #fff; border: 1px solid #e2e8f0; border-radius: 16px;
+  padding: 26px 26px 24px; margin-top: 22px;
+  box-shadow: 0 1px 2px rgba(15,23,42,.04);
+}
+.rating-title { font-size: 1.15rem; font-weight: 600; color: #0f172a; margin: 0 0 6px; }
+.rating-sub { font-size: 14.5px; color: #475569; margin-bottom: 16px; }
+.score-row-7 { display: flex; gap: 8px; }
+.score-btn-7 {
+  flex: 1; padding: 12px 0; text-align: center; border-radius: 10px;
+  border: 1.5px solid #e2e8f0; background: #fff; color: #0f172a;
+  font-size: 15px; font-weight: 600; cursor: pointer; transition: all .12s;
+}
+.score-btn-7:hover { border-color: #cbd5e1; background: #f8fafc; }
+.score-btn-7.selected { background: #2563eb; border-color: #2563eb; color: #fff; }
+
+.post-rating-row {
+  display: none; justify-content: space-between; align-items: center; gap: 16px;
+  flex-wrap: wrap; margin-top: 22px;
+}
+.post-rating-row .btn-mode { margin-top: 0; }
+.post-rating-left { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.btn-reset {
+  font-size: 14px; font-weight: 600; color: #b91c1c; background: none;
+  border: none; cursor: pointer; padding: 4px 2px; text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.btn-reset:hover { color: #991b1b; }
+.btn-continue {
+  font-size: 15.5px; font-weight: 600; padding: 12px 26px; border-radius: 10px;
+  border: 1px solid #2563eb; background: #2563eb; color: #fff; cursor: pointer;
+  white-space: nowrap; transition: background .12s;
+}
+.btn-continue:hover { background: #1d4ed8; }
+
+/* ── Scenario audit panel ─────────────────────────────────────── */
+.audit-card {
+  background: #f5f3ff; border: 1px solid #ddd6fe; border-radius: 16px;
+  margin-top: 22px; overflow: hidden;
+}
+.audit-toggle-header {
+  width: 100%; display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; padding: 18px 22px; background: none; border: none; cursor: pointer;
+  text-align: left;
+}
+.audit-toggle-title { font-size: 15.5px; font-weight: 600; color: #0f172a; }
+.audit-chevron { font-style: normal; font-size: 13px; color: #7c6ee0; transition: transform .15s; }
+.audit-chevron.open { transform: rotate(180deg); }
+.audit-body { border-top: 1px solid #ddd6fe; padding: 20px 22px 22px; position: relative; }
+
+.audit-disabled-note {
+  background: #fff; border: 1px solid #ddd6fe; border-radius: 10px;
+  padding: 14px 16px; font-size: 14px; color: #64748b; text-align: center;
+}
+
+.btn-try-new {
+  width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 11px; margin-bottom: 16px; border: 1.5px dashed #93c5fd; border-radius: 10px;
+  background: #fff; cursor: pointer; font-size: 14px; font-weight: 600; color: #2563eb;
+  transition: background .12s, border-color .12s;
+}
+.btn-try-new:hover { background: #eff6ff; border-color: #2563eb; }
+
+.audit-grid {
+  display: grid; gap: 6px; margin-bottom: 18px;
+}
+.audit-chip {
+  aspect-ratio: 1; min-width: 0; border-radius: 7px; font-size: 11.5px; font-weight: 700;
+  cursor: pointer; border: 2px solid transparent; transition: transform .08s;
+  display: flex; align-items: center; justify-content: center; padding: 0;
+}
+.audit-chip:hover { transform: scale(1.08); }
+.audit-chip.match    { background: #f0fdf4; color: #15803d; }
+.audit-chip.mismatch { background: #fef2f2; color: #b91c1c; }
+.audit-chip.selected { border-color: #0f172a; }
+
+.audit-detail {
+  background: #fff; border: 1px solid #ddd6fe; border-radius: 12px; padding: 16px 18px;
+}
+.audit-detail-title { font-size: 14px; font-weight: 600; color: #0f172a; margin: 0 0 12px; }
+
+.audit-scenario-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+.audit-patient-card { border-radius: 10px; padding: 14px 14px 12px; }
+.audit-patient-card.a { background: #fef2f2; border-left: 4px solid #b91c1c; }
+.audit-patient-card.b { background: #eff6ff; border-left: 4px solid #1d4ed8; }
+.audit-patient-label {
+  font-weight: 700; font-size: 12px; letter-spacing: .04em; text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.audit-patient-label.a { color: #b91c1c; }
+.audit-patient-label.b { color: #1d4ed8; }
+.audit-feature-row { margin-bottom: 8px; }
+.audit-feature-row:last-child { margin-bottom: 0; }
+.audit-feature-name {
+  font-size: 10.5px; color: #64748b; text-transform: uppercase; letter-spacing: .05em;
+  margin-bottom: 2px;
+}
+.audit-feature-value { font-size: 17px; font-weight: 600; font-family: monospace; }
+
+.audit-outcome-row {
+  display: flex; justify-content: space-between; font-size: 13.5px; padding: 6px 0;
+}
+.audit-outcome-row .lbl { color: #64748b; }
+.audit-outcome-row .val { font-weight: 600; }
+.audit-banner {
+  margin-top: 10px; text-align: center; padding: 9px; border-radius: 8px;
+  font-size: 13px; font-weight: 600;
+}
+.audit-banner.match    { background: #f0fdf4; color: #15803d; }
+.audit-banner.mismatch { background: #fef2f2; color: #b91c1c; }
+.audit-why { font-size: 12.5px; color: #64748b; margin-top: 8px; line-height: 1.5; }
+
+.audit-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 14px; }
+.audit-form-col-title {
+  font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
+  margin-bottom: 8px;
+}
+.audit-form-col-title.a { color: #b91c1c; }
+.audit-form-col-title.b { color: #1d4ed8; }
+.audit-field { margin-bottom: 8px; }
+.audit-field label { display: block; font-size: 12px; color: #64748b; margin-bottom: 3px; }
+.audit-field input {
+  width: 100%; font-size: 13.5px; padding: 7px 9px; border: 1px solid #e2e8f0;
+  border-radius: 6px; background: #fff;
+}
+.audit-field input:focus { outline: none; border-color: #2563eb; }
+.audit-field-error { font-size: 12px; color: #b91c1c; margin-top: 3px; display: none; }
+.btn-see-prediction {
+  width: 100%; padding: 10px; border: none; border-radius: 8px; background: #2563eb;
+  color: #fff; font-size: 13.5px; font-weight: 600; cursor: pointer;
+}
+.btn-see-prediction:hover { background: #1d4ed8; }
+
+/* ── Wider canvas ──────────────────────────────────────────────────
+   The tree is the point of this page, so it gets the room. */
+.page-wrap { max-width: 1180px; }
+
+/* ── Edit controls, now at the top of the tree interface ───────── */
+.edit-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap; margin: 4px 0 16px;
+}
+.edit-bar-left  { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.edit-bar-right { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.btn-link {
+  font-size: 14px; font-weight: 600; color: #2563eb; background: none;
+  border: none; cursor: pointer; padding: 4px 2px; text-decoration: underline;
+  text-underline-offset: 2px; font-family: inherit;
+}
+.btn-link:hover { color: #1d4ed8; }
+
+/* Editing toolbar sits above the tree, not below it */
+#toolbar {
+  display: none; flex-direction: row; gap: 10px; align-items: center;
+  flex-wrap: wrap; margin: 0 0 16px; padding-bottom: 16px;
+  border-bottom: 1px solid #e2e8f0;
+}
+#toolbar .btn-add   { width: auto; flex: 0 0 auto; padding: 9px 16px; }
+#toolbar .btn-apply { width: auto; flex: 0 0 auto; padding: 10px 20px; font-size: 14px; }
+.limit-note {
+  font-size: 13px; font-weight: 600; padding: 7px 12px; border-radius: 8px;
+  background: #fffbeb; color: #b45309; border: 1px solid #fde68a;
+}
+.limit-note.ok { background: #f8fafc; color: #64748b; border-color: #e2e8f0; }
+
+/* ── Zoom + scroll around the tree ─────────────────────────────── */
+.tree-toolbar {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; margin-bottom: 12px; flex-wrap: wrap;
+}
+.zoom-controls { display: flex; align-items: center; gap: 6px; }
+.zoom-btn {
+  width: 32px; height: 32px; border-radius: 8px; border: 1px solid #e2e8f0;
+  background: #fff; color: #0f172a; font-size: 16px; font-weight: 600;
+  cursor: pointer; display: inline-flex; align-items: center;
+  justify-content: center; font-family: inherit; transition: background .12s;
+}
+.zoom-btn:hover { background: #f1f5f9; }
+.zoom-btn.wide { width: auto; padding: 0 12px; font-size: 13px; }
+.zoom-level { font-size: 13px; color: #64748b; min-width: 44px; text-align: center; }
+
+#svg-scroll { overflow: auto; max-height: 74vh; padding-bottom: 4px; }
+#svg-wrap svg { display: block; }
+
+/* ── Sliders (threshold + scenario values) ─────────────────────── */
+.slider-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.slider-row input[type="range"] {
+  flex: 1; min-width: 0; height: 4px; -webkit-appearance: none; appearance: none;
+  background: #e2e8f0; border-radius: 3px; outline: none; cursor: pointer;
+}
+.slider-row input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none; width: 18px; height: 18px;
+  border-radius: 50%; background: #2563eb; cursor: pointer;
+  border: 2px solid #fff; box-shadow: 0 1px 3px rgba(15,23,42,.3);
+}
+.slider-row input[type="range"]::-moz-range-thumb {
+  width: 18px; height: 18px; border-radius: 50%; background: #2563eb;
+  cursor: pointer; border: 2px solid #fff; box-shadow: 0 1px 3px rgba(15,23,42,.3);
+}
+.slider-value {
+  font-family: monospace; font-size: 14px; font-weight: 700; color: #0f172a;
+  min-width: 34px; text-align: right;
+}
+.slider-caption { font-size: 11.5px; color: #94a3b8; margin: -4px 0 10px; }
+
+/* ── Tutorial ──────────────────────────────────────────────────── */
+#tutorial-backdrop {
+  display: none; position: fixed; inset: 0; background: rgba(15,23,42,.45);
+  z-index: 500; align-items: center; justify-content: center; padding: 20px;
+}
+#tutorial-backdrop.visible { display: flex; }
+.tutorial-card {
+  background: #fff; border-radius: 16px; max-width: 460px; width: 100%;
+  padding: 26px 26px 20px; box-shadow: 0 18px 48px rgba(15,23,42,.25);
+}
+.tutorial-step-count {
+  font-size: 12px; font-weight: 700; color: #94a3b8; letter-spacing: .07em;
+  text-transform: uppercase; margin-bottom: 8px;
+}
+.tutorial-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 8px; }
+.tutorial-body { font-size: 14.5px; color: #475569; line-height: 1.65; }
+.tutorial-actions {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; margin-top: 20px;
+}
+.tutorial-dots { display: flex; gap: 6px; }
+.tutorial-dot { width: 7px; height: 7px; border-radius: 50%; background: #e2e8f0; }
+.tutorial-dot.on { background: #2563eb; }
+.btn-help {
+  width: 32px; height: 32px; border-radius: 50%; border: 1px solid #e2e8f0;
+  background: #fff; color: #475569; font-size: 14px; font-weight: 700;
+  cursor: pointer; font-family: inherit;
+}
+.btn-help:hover { background: #f1f5f9; }
+
+.tutorial-nudge {
+  display: none; align-items: center; justify-content: space-between; gap: 14px;
+  background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af;
+  border-radius: 12px; padding: 12px 16px; font-size: 14px; margin-bottom: 16px;
+}
+.tutorial-nudge.visible { display: flex; }
+
+/* ── Try-a-new-scenario flow ───────────────────────────────────── */
+.trial-card {
+  background: #fff; border: 1px solid #ddd6fe; border-radius: 12px;
+  padding: 18px 20px 20px;
+}
+.trial-choice-row { display: flex; gap: 14px; margin-top: 16px; }
+.btn-choose {
+  flex: 1; padding: 12px; border-radius: 10px; font-size: 14.5px;
+  font-weight: 600; cursor: pointer; font-family: inherit; border: 1.5px solid;
+  background: #fff; transition: background .12s, color .12s;
+}
+.btn-choose.a { color: #b91c1c; border-color: #b91c1c; }
+.btn-choose.a:hover { background: #b91c1c; color: #fff; }
+.btn-choose.b { color: #1d4ed8; border-color: #1d4ed8; }
+.btn-choose.b:hover { background: #1d4ed8; color: #fff; }
+
+.feedback-block { margin-top: 16px; }
+.feedback-block label {
+  display: block; font-size: 13.5px; font-weight: 600; color: #0f172a;
+  margin-bottom: 6px;
+}
+.feedback-block textarea {
+  width: 100%; min-height: 74px; padding: 10px 12px; border-radius: 8px;
+  border: 1px solid #e2e8f0; font-family: inherit; font-size: 14px;
+  color: #0f172a; resize: vertical;
+}
+.feedback-block textarea:focus { outline: none; border-color: #2563eb; }
+.feedback-row { display: flex; align-items: center; gap: 12px; margin-top: 10px; }
+.feedback-status { font-size: 13px; color: #15803d; font-weight: 600; }
+.btn-save-feedback {
+  padding: 9px 18px; border: none; border-radius: 8px; background: #2563eb;
+  color: #fff; font-size: 13.5px; font-weight: 600; cursor: pointer;
+  font-family: inherit;
+}
+.btn-save-feedback:hover { background: #1d4ed8; }
+.btn-save-feedback:disabled { background: #cbd5e1; cursor: default; }
+
+@media (max-width: 720px) {
+  .page-wrap { padding: 24px 18px 44px; }
+  .audit-scenario-grid, .audit-form-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="page-wrap">
+  <div class="header-row">
+    <div>
+<!--      <div class="eyebrow">SURA 2026 · IIT Delhi</div>-->
+      <h2>Your preference model</h2>
+    </div>
+  </div>
+  <p id="mode-caption"></p>
+
+  <div id="editing-banner" class="editing-banner">
+    <div class="legend-row">
+      <span class="legend-item"><span class="legend-badge accent">✎</span> Click to edit this rule</span>
+      <span class="legend-item"><span class="legend-badge dark">▲▼</span> Move this rule up or down</span>
+      <span class="legend-item"><span class="legend-dash"></span> Dashed outline = you can click this</span>
+    </div>
+  </div>
+
+  <div id="edit-hint" style="display:none"></div>
+
+  <div class="tutorial-nudge" id="tutorial-nudge">
+    <span id="tutorial-nudge-text">
+      Reminder: you can edit any check in this tree, and test it against a new scenario below.
+    </span>
+    <button class="btn-link" id="tutorial-nudge-open" type="button">Show me how</button>
+  </div>
+
+  <!-- Editing controls live at the top of the tree interface. Hidden until the
+       participant has rated the model, which is the same gate as before. -->
+  <div class="edit-bar" id="edit-bar" style="display:none">
+    <div class="edit-bar-left">
+      <button id="mode-toggle" class="btn-mode">✎ Edit the model</button>
+      {% if has_override %}
+      <button id="reset-model" class="btn-reset" type="button">↺ Reset to original model</button>
+      {% endif %}
+    </div>
+    <div class="edit-bar-right">
+      <a class="btn-link" href="{{ review_url }}">Review agreements &amp; disagreements →</a>
+      <button class="btn-help" id="btn-help" type="button" title="Show the walkthrough">?</button>
+    </div>
+  </div>
+
+  <div class="tree-card">
+    <div id="toolbar">
+      <button class="btn-add"   id="btn-add">＋ Add decision step</button>
+      <button class="btn-apply" id="btn-apply">✓ Done editing</button>
+      <span class="limit-note ok" id="limit-note"></span>
+    </div>
+
+    <div class="tree-toolbar">
+      <span class="muted" style="font-size:13px;color:#94a3b8">
+        Reads top to bottom — YES branches left to an outcome, NO continues down.
+      </span>
+      <div class="zoom-controls">
+        <button class="zoom-btn" id="zoom-out" type="button" title="Zoom out">−</button>
+        <span class="zoom-level" id="zoom-level">100%</span>
+        <button class="zoom-btn" id="zoom-in" type="button" title="Zoom in">+</button>
+        <button class="zoom-btn wide" id="zoom-fit" type="button" title="Fit the whole tree">Fit</button>
+      </div>
+    </div>
+
+    <div id="svg-scroll">
+    <div id="svg-wrap">
+      <div id="svg-canvas"></div>
+      <!-- Floating edit panel (shared, repositioned per node) -->
+    <div id="edit-panel">
+      <div class="ep-header">
+        <span class="ep-title" id="ep-step-label">STEP 1</span>
+        <div class="ep-actions">
+          <button class="ep-icon-btn del" id="ep-del" title="Delete this step">🗑</button>
+          <button class="ep-icon-btn"    id="ep-close" title="Close">✕</button>
+        </div>
+      </div>
+
+      <div class="ep-field-label">Factor</div>
+      <select class="ep-select feat" id="ep-feat"></select>
+
+      <div class="ep-field-label">Condition</div>
+      <div class="ep-cond-row" style="align-items:center">
+        <span style="font-family:monospace;font-size:14px;color:#64748b;padding:6px 4px;white-space:nowrap">|Δ|</span>
+        <select class="ep-select op" id="ep-op">
+          <option value=">=">≥</option>
+          <option value="<=">≤</option>
+        </select>
+        <span class="slider-value" id="ep-thr-out">0</span>
+      </div>
+      <div class="slider-row">
+        <input type="range" id="ep-thr" min="0" max="20" step="1" value="0">
+      </div>
+      <div class="slider-caption" id="ep-thr-caption"></div>
+
+      <div id="ep-outcome-section">
+        <div class="ep-outcome-label">When YES, prefer:</div>
+        <div class="ep-outcome-row">
+          <button class="ep-toggle ep-toggle-a" id="ep-out-a">→ A</button>
+          <button class="ep-toggle ep-toggle-b" id="ep-out-b">→ B</button>
+        </div>
+      </div>
+
+      <hr class="ep-sep">
+      <div id="ep-refine"></div>
+    </div>
+
+    <!-- Default-class mini panel -->
+    <div id="default-panel" style="display:none;position:absolute;left:36px;background:#fff;
+      border:1.5px solid #2563eb;border-radius:8px;padding:10px 14px;
+      box-shadow:0 4px 16px rgba(37,99,235,.15);z-index:100">
+      <div class="ep-field-label" style="margin-bottom:6px">Default preference (when no step fires):</div>
+      <div class="ep-outcome-row">
+        <button class="ep-toggle ep-toggle-a" id="def-out-a">Prefer Patient A</button>
+        <button class="ep-toggle ep-toggle-b" id="def-out-b">Prefer Patient B</button>
+      </div>
+      <div style="margin-top:10px;text-align:right">
+        <button class="ep-icon-btn" id="def-close">Done ✓</button>
+      </div>
+    </div>
+
+    <!-- YES-leaf panel: toggle outcome or insert a step here -->
+    <div id="leaf-panel" class="sub-panel">
+      <div class="ep-header">
+        <span class="ep-title" id="lp-title">STEP 1 · YES EXIT</span>
+        <button class="ep-icon-btn" id="lp-close">✕</button>
+      </div>
+      <div class="ep-outcome-label">Outcome when YES fires:</div>
+      <div class="ep-outcome-row">
+        <button class="ep-toggle ep-toggle-a" id="lp-out-a">→ A</button>
+        <button class="ep-toggle ep-toggle-b" id="lp-out-b">→ B</button>
+      </div>
+      <button class="btn-insert-step" id="lp-insert">＋ Add a rule after this step</button>
+    </div>
+
+    <!-- Tie-breaker (refine) edit panel -->
+    <div id="refine-panel" class="sub-panel">
+      <div class="ep-header">
+        <span class="ep-title" id="rp-title">TIE-BREAKER · STEP 1</span>
+        <div class="ep-actions">
+          <button class="ep-icon-btn del" id="rp-del" title="Remove tie-breaker">🗑</button>
+          <button class="ep-icon-btn" id="rp-close">✕</button>
+        </div>
+      </div>
+      <div class="ep-field-label">Factor</div>
+      <select class="ep-select feat" id="rp-feat"></select>
+      <div class="ep-field-label">Condition</div>
+      <div class="ep-cond-row" style="align-items:center">
+        <select class="ep-select op" id="rp-op">
+          <option value=">=">≥</option>
+          <option value="<=">≤</option>
+        </select>
+        <span class="slider-value" id="rp-thr-out">0</span>
+      </div>
+      <div class="slider-row">
+        <input type="range" id="rp-thr" min="0" max="20" step="1" value="0">
+      </div>
+      <div class="slider-caption" id="rp-thr-caption"></div>
+      <div class="ep-outcome-label" id="rp-outcome-label">Prefer when condition fires:</div>
+      <div class="ep-outcome-row">
+        <button class="ep-toggle ep-toggle-a" id="rp-out-a">→ A</button>
+        <button class="ep-toggle ep-toggle-b" id="rp-out-b">→ B</button>
+      </div>
+    </div>
+  </div>
+
+    </div><!-- /#svg-scroll -->
+  </div><!-- /.tree-card -->
+
+  <div class="rating-card" id="rating-card">
+    <div class="rating-title">How well does this match your thinking?</div>
+    <div class="rating-sub">1 = not at all &nbsp;&nbsp;·&nbsp;&nbsp; 7 = perfectly</div>
+    <div class="score-row-7" id="score-row-7"></div>
+  </div>
+
+  <div class="post-rating-row" id="post-rating-row" style="display:none">
+    <div class="post-rating-left"></div>
+    <button class="btn-continue" id="btn-continue">Continue to Part 2 →</button>
+  </div>
+
+  <div class="audit-card" id="audit-card">
+    <button id="audit-toggle" class="audit-toggle-header" type="button">
+      <span class="audit-toggle-title" id="audit-toggle-title">Check when the model makes the same choice as you</span>
+      <i class="audit-chevron" id="audit-chevron">▾</i>
+    </button>
+
+    <div class="audit-body" id="audit-body" style="display:none">
+      <div class="audit-disabled-note" id="audit-disabled-note" style="display:none">
+        You're editing the model — this comes back once you're done editing.
+      </div>
+
+      <div id="audit-interactive">
+        <button id="audit-try-new" class="btn-try-new" type="button">
+          <span>＋</span> Try a new scenario
+        </button>
+        <div id="trial-area"></div>
+        <div class="audit-grid" id="audit-grid"></div>
+        <div class="audit-detail" id="audit-detail"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Tutorial ─────────────────────────────────────────────────── -->
+<div id="tutorial-backdrop">
+  <div class="tutorial-card" role="dialog" aria-modal="true" aria-labelledby="tutorial-title">
+    <div class="tutorial-step-count" id="tutorial-step-count">Step 1 of 4</div>
+    <div class="tutorial-title" id="tutorial-title">Title</div>
+    <div class="tutorial-body" id="tutorial-body">Body</div>
+    <div class="tutorial-actions">
+      <div class="tutorial-dots" id="tutorial-dots"></div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <button class="btn-link" id="tutorial-skip" type="button">Skip</button>
+        <button class="btn-apply" id="tutorial-next"
+                style="width:auto;padding:9px 20px;font-size:14px">Next</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+// ── State ─────────────────────────────────────────────────────────
+var tree         = null;
+var editing      = false;
+var params       = [];
+var labels       = {};   // { param_base: [higher_label, lower_label] }
+var selectedNode = null;  // index | null
+var nodeExplanations   = [];  // [{explanation, refine_explanation}]
+var summaryExplanation = '';
+
+// ── Client-side explanation templates ───────────────────────────────────────
+// Mirrors _fallback_node_explanation / _fallback_refine_explanation in fft_model.py.
+// Called by rebuildExplanations() so node cards update instantly on edit.
+
+var FEATURE_GAP = {
+  'age_diff':           ['age gap',          'years'],
+  'years_waiting_diff': ['waiting time gap', 'years'],
+  'health_score_diff':  ['health score gap', 'points'],
+  'dependents_diff':    ['dependents gap',   ''],
+  'urgency_score_diff': ['urgency score gap','points'],
+};
+var FEATURE_DIRECTION = {
+  'age_diff':           ['older patient',                'younger patient'],
+  'years_waiting_diff': ['longer-waiting patient',       'shorter-waiting patient'],
+  'health_score_diff':  ['healthier patient',            'less healthy patient'],
+  'dependents_diff':    ['patient with more dependents', 'patient with fewer dependents'],
+  'urgency_score_diff': ['more urgent patient',          'less urgent patient'],
+};
+
+function _unitStr(thr, unit) {
+  if (!unit) return '';
+  var singular = unit.replace(/s$/, '');
+  return ' ' + (thr === 1 ? singular : unit);
+}
+
+function _thrWithUnit(thr, unit, op) {
+  var qual;
+  if      (op === '>=') qual = 'or more';
+  else if (op === '<=') qual = 'or less';
+  else if (op === '>')  qual = 'more than ';
+  else                  qual = 'less than ';
+  if (op === '>' || op === '<') return qual + thr + (unit ? ' ' + (thr === 1 ? unit.replace(/s$/,'') : unit) : '');
+  var u = unit ? ' ' + (thr === 1 ? unit.replace(/s$/,'') : unit) : '';
+  return thr + u + ' ' + qual;
+}
+
+function buildNodeExplanation(nd) {
+  var feat = nd.feature || '';
+  var meta = FEATURE_GAP[feat] || [feat.replace('_diff','').replace(/_/g,' ') + ' gap', ''];
+  var gap  = meta[0], unit = meta[1];
+  var dirs = FEATURE_DIRECTION[feat];
+  var thr  = Math.round(Math.abs(nd.threshold || 0));
+  var preferHigh = nd.prefer_higher !== false;
+
+  if (nd.refine && nd.op === '<=') {
+    var base = feat.replace('_diff','').replace(/_/g,' ');
+    return 'When the ' + gap + ' is within ' + thr + _unitStr(thr, unit) +
+           ', it\'s too close to decide on ' + base + ' alone — we check one more factor below.';
+  }
+
+  var op   = nd.op || '>=';
+  var dir  = dirs ? (preferHigh ? dirs[0] : dirs[1]) : (nd.exit_class === 1 ? 'Patient A' : 'Patient B');
+  var comp = _thrWithUnit(thr, unit, op);
+  return 'When the ' + gap + ' is ' + comp + ', we prefer the ' + dir + '.';
+}
+
+function buildRefineExplanation(nd, refine) {
+  var feat = nd.feature || '';
+  var pm   = FEATURE_GAP[feat] || [feat.replace('_diff','').replace(/_/g,' ') + ' gap', ''];
+  var thr  = Math.round(Math.abs(nd.threshold || 0));
+  var pUnit= pm[1];
+
+  var rf   = refine.feature || '';
+  var rm   = FEATURE_GAP[rf] || [rf.replace('_diff','').replace(/_/g,' ') + ' gap', ''];
+  var rDir = FEATURE_DIRECTION[rf];
+  var rThr = Math.round(Math.abs(refine.threshold || 0));
+  var rPref= refine.prefer_higher !== false;
+  var dirT = rDir ? (rPref  ? rDir[0] : rDir[1]) : 'Patient A';
+  var dirF = rDir ? (!rPref ? rDir[0] : rDir[1]) : 'Patient B';
+  var rComp= _thrWithUnit(rThr, rm[1], refine.op || '>=');
+  var cName= rf.replace('_diff','').replace(/_/g,' ');
+
+  return 'When the ' + rm[0] + ' is ' + rComp +
+         ', we prefer the ' + dirT + '; otherwise the ' + dirF + '.';
+}
+
+function rebuildExplanations() {
+  nodeExplanations = tree.nodes.map(function(nd) {
+    var e = { explanation: buildNodeExplanation(nd) };
+    if (nd.refine) e.refine_explanation = buildRefineExplanation(nd, nd.refine);
+    return e;
+  });
+}
+// ── end explanation templates ────────────────────────────────────────────────
+// Geometry produced by the last render, keyed by node index. The floating
+// HTML panels position themselves against this rather than against fixed
+// row heights, so they stay attached to their box at any zoom level.
+var lastLayout = {nodes: {}, leaves: {}, refines: {}, defaultLeaf: null,
+                  width: 0, height: 0};
+
+var APPLY_URL = {{ apply_url | tojson }};
+var RESET_URL = {{ reset_url | tojson }};
+var RATE_URL = {{ rate_url | tojson }};
+var CONTINUE_URL = {{ continue_url | tojson }};
+var REVIEW_URL = {{ review_url | tojson }};
+var NEW_SCENARIO_URL = {{ new_scenario_url | tojson }};
+var ANSWER_SCENARIO_URL = {{ answer_scenario_url | tojson }};
+var FEEDBACK_URL = {{ feedback_url | tojson }};
+var LOG_URL = {{ log_url | tojson }};
+var TUTORIAL_SEEN_URL = {{ tutorial_seen_url | tojson }};
+var currentScore = {{ current_score | tojson }};
+var pastScenarios = {{ past_scenarios_json | tojson }};
+var FEATURE_RANGES = {{ feature_ranges_json | tojson }};
+var MAX_NEW_FEATURES = {{ max_new_features | tojson }};
+var TUTORIAL_MODE = {{ tutorial_mode | tojson }};
+
+// How many nodes the model had when this page loaded. The "add at most two
+// checks at a time" limit is measured against this, so it survives panel
+// opens, re-renders and reorderings.
+var baselineNodeCount = 0;
+
+// Zoom, applied by sizing the SVG in CSS pixels. Panels multiply their SVG
+// coordinates by the same factor, which keeps them pinned to their boxes.
+var zoom = 1;
+var ZOOM_MIN = 0.4, ZOOM_MAX = 2.0;
+
+var C = {
+  text: '#0f172a', card: '#f8fafc', border: '#e2e8f0',
+  dim:  '#64748b', muted: '#94a3b8', accent: '#2563eb',
+  a: '#b91c1c', b: '#1d4ed8',
+};
+
+// ── Helpers ────────────────────────────────────────────────────────
+function esc(s) {
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+function fmt(x) {
+  return String(Math.round(parseFloat(x)));
+}
+function lf(cls)   { return cls === 1 ? C.a : C.b; }
+function lt(cls)   { return cls === 1 ? 'Prefer A' : 'Prefer B'; }
+
+// Compact SVG labels that fit inside tight leaf boxes
+var SHORT_LABELS = {
+  age:               ['Older',        'Younger'],
+  years_waiting:     ['Longer wait',  'Shorter wait'],
+  health_score:      ['Healthier',    'Less healthy'],
+  dependents:        ['More deps.',   'Fewer deps.'],
+  prior_transplants: ['More tx.',     'Fewer tx.'],
+  urgency_score:     ['More urgent',  'Less urgent'],
+};
+
+function outcomeLabel(node, short) {
+  if (!node) return short ? 'Higher' : 'Higher value';
+  var base = (node.feature || '').replace('_diff', '');
+  var preferHigher;
+  if (node.use_abs) {
+    preferHigher = node.prefer_higher !== false;
+  } else {
+    // Legacy signed-diff node: infer direction from op/threshold/exit_class.
+    var op = node.op || '>=', thr = parseFloat(node.threshold) || 0, ec = node.exit_class;
+    if (op === '>=' && thr >= 0)      preferHigher = (ec === 1);
+    else if (op === '<=' && thr <= 0) preferHigher = (ec === 0);
+    else                              preferHigher = (ec === 1);
+  }
+  if (short) {
+    var sp = SHORT_LABELS[base];
+    if (sp) return preferHigher ? sp[0] : sp[1];
+    return preferHigher ? 'Higher' : 'Lower';
+  }
+  var pair = labels[base];
+  if (pair) {
+    var lbl = preferHigher ? pair[0] : pair[1];
+    return lbl.charAt(0).toUpperCase() + lbl.slice(1);
+  }
+  return preferHigher ? 'Higher value' : 'Lower value';
+}
+
+function nodeCondText(node) {
+  var feat = prettyFeature(node ? node.feature : '');
+  var sym = (node && node.op === '<=') ? '\u2264' : '\u2265';
+  if (node && node.use_abs) return '|' + feat + '| ' + sym + ' ' + fmt(Math.abs(node.threshold));
+  return feat + ' ' + sym + ' ' + fmt(node ? node.threshold : 0);
+}
+
+// Default (fall-through) leaf label = negation of the last node's YES
+// condition — mirrors fft_component._default_outcome_label in Python.
+function defaultOutcomeLabel() {
+  var nodes = (tree && tree.nodes) || [];
+  if (!nodes.length) {
+    // No nodes: use stored default_feature/prefer_higher if available.
+    var df = tree && tree.default_feature;
+    var dp = tree && tree.default_prefer_higher;
+    if (df != null && dp != null) {
+      return outcomeLabel({use_abs: true, prefer_higher: dp, feature: df}, true);
+    }
+    return (tree && tree.default_class === 1) ? 'Higher' : 'Lower';
+  }
+  var last = nodes[nodes.length - 1];
+  // Use default_class to determine direction — this only changes when the user
+  // explicitly edits the OTHERWISE panel, so it stays independent of the last node.
+  var preferHigher = (tree && tree.default_class === 1);
+  return outcomeLabel({use_abs: true, prefer_higher: preferHigher, feature: last.feature}, true);
+}
+
+// Greedy word-wrap, mirrors Python _wrap(text, max_chars).
+function wrapText(text, maxChars) {
+  if (!text) return [];
+  var words = String(text).split(/\s+/);
+  var lines = [], cur = '';
+  words.forEach(function(w) {
+    var trial = (cur + ' ' + w).trim();
+    if (trial.length <= maxChars || !cur) { cur = trial; }
+    else { lines.push(cur); cur = w; }
+  });
+  if (cur) lines.push(cur);
+  return lines;
+}
+
+function refineOutcomeLabel(r, isTrueBranch) {
+  var feature = r.feature || '';
+  var base = feature.replace('_diff', '');
+  var preferHigher;
+  if (r.use_abs) {
+    // Abs refine: prefer_higher is stored directly
+    // TRUE branch: fires when |diff| >= threshold; direction from prefer_higher + sign(diff)
+    // For labelling, "trueBranch" = condition fires → prefer the higher/lower one
+    preferHigher = isTrueBranch ? (r.prefer_higher !== false) : !(r.prefer_higher !== false);
+  } else {
+    var op  = r.op  || '>=';
+    var thr = parseFloat(r.threshold) || 0;
+    var tc  = r.true_class;
+    var phTrue;
+    if (op === '>=' && thr > 0)      phTrue = (tc === 1);
+    else if (op === '<=' && thr < 0) phTrue = (tc === 0);
+    else                              phTrue = (tc === 1);
+    preferHigher = isTrueBranch ? phTrue : !phTrue;
+  }
+  var sp = SHORT_LABELS[base];
+  if (sp) return preferHigher ? sp[0] : sp[1];
+  return preferHigher ? 'Higher' : 'Lower';
+}
+
+function pretty(f) {
+  var base = f.endsWith('_diff') ? f.slice(0,-5) : f;
+  return base.replace(/_/g,' ').replace(/\b\w/g, function(c){ return c.toUpperCase(); });
+}
+// Label used specifically in the "Factor" dropdowns — every value here is a
+// difference (A minus B), so say that explicitly instead of leaving it implicit.
+function dropdownLabel(f) {
+  return 'Difference in ' + pretty(f);
+}
+function prettyFeature(f) {
+  var name = pretty(f);
+  return name + '(A) - ' + name + '(B)';
+}
+function getSVGScale() {
+  // Panels are positioned in SVG coordinates, then scaled by the zoom factor.
+  return zoom;
+}
+
+// ── SVG builder ────────────────────────────────────────────────────
+// Layout and drawing now live in static/fft_tree.js, which renders the model
+// as a conventional top-down decision tree. This file keeps ownership of the
+// wording (labels, explanations, units) and hands it to the renderer as
+// helpers, so the renderer stays purely about geometry.
+
+function treeHelpers() {
+  return {
+    esc: esc,
+    fmt: fmt,
+    wrapText: wrapText,
+    prettyFeature: prettyFeature,
+    nodeCondText: nodeCondText,
+    outcomeLabel: outcomeLabel,
+    refineOutcomeLabel: refineOutcomeLabel,
+    defaultOutcomeLabel: defaultOutcomeLabel
+  };
+}
+
+function buildSVG() {
+  var out = window.FFTTree.build(tree, {
+    editing: editing,
+    selectedNode: selectedNode,
+    explanations: nodeExplanations,
+    nodeCount: (tree.nodes || []).length,
+    canAddMore: canAddMoreFeatures(),
+    helpers: treeHelpers()
+  });
+  lastLayout = out.layout;
+  return out.svg;
+}
+
+// ── Zoom ───────────────────────────────────────────────────────────
+function applyZoom() {
+  var svg = document.querySelector('#svg-wrap svg');
+  var wrap = document.getElementById('svg-wrap');
+  if (!svg || !lastLayout.width) return;
+  var w = Math.round(lastLayout.width * zoom);
+  var h = Math.round(lastLayout.height * zoom);
+  svg.setAttribute('width', w);
+  svg.setAttribute('height', h);
+  wrap.style.width = w + 'px';
+  wrap.style.height = h + 'px';
+  var lvl = document.getElementById('zoom-level');
+  if (lvl) lvl.textContent = Math.round(zoom * 100) + '%';
+}
+
+function setZoom(next, reason) {
+  zoom = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, next));
+  applyZoom();
+  closeAllPanels();
+  if (reason) logEvent('zoom_changed', {zoom: Math.round(zoom * 100), via: reason});
+}
+
+// Fit the tree to the available width, but never below a readable size — a
+// tree that fits but can't be read is not actually fitted.
+function fitZoom(silent) {
+  var scroll = document.getElementById('svg-scroll');
+  if (!scroll || !lastLayout.width) return;
+  var next = (scroll.clientWidth - 8) / lastLayout.width;
+  zoom = Math.max(0.55, Math.min(ZOOM_MAX, next));
+  applyZoom();
+  if (!silent) logEvent('zoom_changed', {zoom: Math.round(zoom * 100), via: 'fit'});
+}
+
+
+
+// ── Render ────────────────────────────────────────────────────────
+function render() {
+  if (!tree || !tree.nodes || !tree.nodes.length) {
+    document.getElementById('svg-canvas').innerHTML =
+      '<div style="color:#94a3b8;font-size:14px;padding:12px">No model available.</div>';
+    updateHeight();
+    return;
+  }
+
+  rebuildExplanations();
+  document.getElementById('svg-canvas').innerHTML = buildSVG();
+  document.getElementById('edit-hint').style.display  = editing ? 'block' : 'none';
+  document.getElementById('toolbar').style.display    = editing ? 'flex'  : 'none';
+  document.getElementById('leaf-panel').classList.remove('visible');
+  document.getElementById('refine-panel').classList.remove('visible');
+
+  applyZoom();
+  updateLimitNote();
+
+  // Clicks are attached in both modes: in view mode only the tree itself is
+  // interactive, but the handlers are harmless and keep one code path.
+  reAttachNodeClicks();
+
+  updateHeight();
+}
+
+// Re-render without losing an open panel's scroll position.
+function redraw() {
+  document.getElementById('svg-canvas').innerHTML = buildSVG();
+  applyZoom();
+  reAttachNodeClicks();
+  updateHeight();
+}
+
+// ── Feature-addition limit ────────────────────────────────────────
+// A participant may add at most MAX_NEW_FEATURES checks per editing pass.
+// Counting against the node count the page loaded with (rather than a
+// per-click tally) means deleting a check you just added gives the allowance
+// back, which is what people expect.
+function newFeaturesAdded() {
+  return Math.max(0, ((tree && tree.nodes) || []).length - baselineNodeCount);
+}
+
+function canAddMoreFeatures() {
+  return newFeaturesAdded() < MAX_NEW_FEATURES;
+}
+
+function updateLimitNote() {
+  var note = document.getElementById('limit-note');
+  var addBtn = document.getElementById('btn-add');
+  if (!note) return;
+  var added = newFeaturesAdded();
+  var atLimit = !canAddMoreFeatures();
+  note.textContent = atLimit
+    ? 'Limit reached — you can add ' + MAX_NEW_FEATURES + ' checks at a time. Apply these, then add more.'
+    : 'You can add ' + (MAX_NEW_FEATURES - added) + ' more ' +
+      (MAX_NEW_FEATURES - added === 1 ? 'check' : 'checks') + ' in this pass.';
+  note.className = 'limit-note' + (atLimit ? '' : ' ok');
+  if (addBtn) {
+    addBtn.disabled = atLimit;
+    addBtn.style.opacity = atLimit ? '.5' : '';
+    addBtn.style.cursor = atLimit ? 'default' : 'pointer';
+  }
+}
+
+// Shown when someone tries to add a third check.
+function flashLimitReached() {
+  var note = document.getElementById('limit-note');
+  if (!note) return;
+  updateLimitNote();
+  note.style.transition = 'none';
+  note.style.transform = 'scale(1.06)';
+  setTimeout(function () {
+    note.style.transition = 'transform .2s ease';
+    note.style.transform = 'scale(1)';
+  }, 10);
+  logEvent('feature_limit_hit', {limit: MAX_NEW_FEATURES});
+}
+
+function closeAllPanels() {
+  closePanel(); closeLeafPanel(); closeRefinePanel(); closeDefaultPanel();
+}
+
+// ── Interaction logging ───────────────────────────────────────────
+// Best-effort: a logging failure must never interrupt what's being logged.
+function logEvent(name, detail) {
+  try {
+    fetch(LOG_URL, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({event: name, detail: detail || null})
+    }).catch(function () {});
+  } catch (e) { /* ignore */ }
+}
+
+// ── Edit panel ────────────────────────────────────────────────────
+function openPanel(i) {
+  closeLeafPanel(); closeRefinePanel(); closeDefaultPanel();
+  selectedNode = i;
+  var nd = tree.nodes[i];
+
+  document.getElementById('ep-step-label').textContent = 'STEP ' + (i + 1);
+  document.getElementById('ep-del').style.display = tree.nodes.length > 1 ? '' : 'none';
+
+  // Feature
+  var featSel = document.getElementById('ep-feat');
+  featSel.innerHTML = '';
+  params.forEach(function(p) {
+    var opt = document.createElement('option');
+    opt.value = p; opt.textContent = dropdownLabel(p);
+    if (opt.value === nd.feature) opt.selected = true;
+    featSel.appendChild(opt);
+  });
+
+  document.getElementById('ep-op').value = nd.op || '>=';
+  document.getElementById('ep-thr').value = Math.round(Math.abs(nd.threshold));
+
+  // Outcome toggle: use prefer_higher for abs nodes, exit_class for legacy
+  var aIsOn = nd.use_abs ? nd.prefer_higher !== false : nd.exit_class === 1;
+  setOutcomeToggle('ep-out-a', 'ep-out-b', aIsOn);
+
+  // Update outcome button labels to be semantic when use_abs
+  _refreshOutcomeLabels(nd.feature, 'ep-out-a', 'ep-out-b');
+
+  buildRefine(i, nd.refine);
+
+  // Hide the parent outcome section when a tie-breaker handles the YES exit
+  document.getElementById('ep-outcome-section').style.display = nd.refine ? 'none' : '';
+
+  syncThresholdSlider('ep-thr', 'ep-thr-out', 'ep-thr-caption', nd.feature);
+
+  // Re-render first so the selected outline is drawn and the layout is fresh,
+  // then position the panel against the box it belongs to.
+  redraw();
+  positionPanel('edit-panel', lastLayout.nodes[i]);
+  logEvent('step_panel_opened', {step: i + 1});
+}
+
+// Place a floating HTML panel just below a box from the SVG layout. Boxes are
+// in SVG coordinates, so everything is multiplied by the zoom factor.
+function positionPanel(panelId, box, opts) {
+  var panel = document.getElementById(panelId);
+  if (!panel) return;
+  opts = opts || {};
+  var scale = getSVGScale();
+  if (!box) {
+    panel.style.top = '20px';
+    panel.style.left = '20px';
+  } else {
+    panel.style.top  = ((box.y + box.h + 8) * scale) + 'px';
+    panel.style.left = (box.x * scale) + 'px';
+  }
+  if (opts.visibleClass) panel.classList.add('visible');
+  else panel.style.display = 'block';
+  updateHeight();
+}
+
+// ── Threshold sliders ─────────────────────────────────────────────
+// Thresholds are a continuous quantity with a natural range, which is exactly
+// what a slider is good at. Discrete choices (which patient to prefer, the
+// 1–7 rating) stay as buttons — a slider would only make those harder to hit.
+function featureRange(feature) {
+  var base = (feature || '').replace('_diff', '');
+  var r = FEATURE_RANGES[base];
+  if (!r) return {min: 0, max: 20, step: 1};
+  // The threshold is on |A − B|, so it runs from 0 up to the widest possible gap.
+  var span = Math.ceil(Math.abs(r.max - r.min));
+  return {min: 0, max: Math.max(1, span), step: r.step || 1};
+}
+
+function syncThresholdSlider(sliderId, outId, captionId, feature) {
+  var slider = document.getElementById(sliderId);
+  var out = document.getElementById(outId);
+  var caption = document.getElementById(captionId);
+  if (!slider) return;
+  var r = featureRange(feature);
+  var current = parseFloat(slider.value);
+  slider.min = r.min;
+  slider.max = r.max;
+  slider.step = r.step;
+  if (!isNaN(current)) slider.value = Math.max(r.min, Math.min(r.max, current));
+  if (out) out.textContent = slider.value;
+  if (caption) {
+    caption.textContent = 'Drag to set the gap that makes this check fire (' +
+      r.min + '–' + r.max + ').';
+  }
+}
+
+function bindSliderReadout(sliderId, outId, onCommit) {
+  var slider = document.getElementById(sliderId);
+  var out = document.getElementById(outId);
+  if (!slider) return;
+  slider.addEventListener('input', function () {
+    if (out) out.textContent = slider.value;
+  });
+  slider.addEventListener('change', function () {
+    if (out) out.textContent = slider.value;
+    if (onCommit) onCommit();
+  });
+}
+
+// Set semantic text on outcome toggle buttons based on node feature
+function _refreshOutcomeLabels(feature, idA, idB) {
+  var base = (feature || '').replace('_diff', '');
+  var pair = SHORT_LABELS[base];
+  var btnA = document.getElementById(idA);
+  var btnB = document.getElementById(idB);
+  if (btnA && btnB && pair) {
+    btnA.textContent = pair[0];
+    btnB.textContent = pair[1];
+  } else if (btnA && btnB) {
+    btnA.textContent = 'Choose A';
+    btnB.textContent = 'Choose B';
+  }
+}
+
+// Set semantic labels on tie-breaker outcome buttons.
+// btnA → what you get when true_class=1 and condition fires.
+// btnB → what you get when true_class=0 and condition fires.
+function _refreshRefineTrueLabels(refine, idA, idB) {
+  var btnA = document.getElementById(idA);
+  var btnB = document.getElementById(idB);
+  if (!btnA || !btnB || !refine) return;
+  var labelA = refineOutcomeLabel(Object.assign({}, refine, {true_class: 1}), true);
+  var labelB = refineOutcomeLabel(Object.assign({}, refine, {true_class: 0}), true);
+  btnA.textContent = '→ ' + labelA;
+  btnB.textContent = '→ ' + labelB;
+}
+
+// Rebuild SVG in-place while the panel stays open (real-time feedback)
+function updateSVG() {
+  savePanel();
+  saveLeafPanel();
+  saveRefinePanel();
+  saveDefaultPanel();
+  rebuildExplanations();
+  redraw();
+}
+
+function closePanel() {
+  savePanel();
+  document.getElementById('edit-panel').style.display = 'none';
+  if (selectedNode !== null) {
+    selectedNode = null;
+    redraw();
+  }
+}
+
+function savePanel() {
+  if (selectedNode === null) return;
+  var i  = selectedNode;
+  var nd = tree.nodes[i];
+
+  nd.feature    = document.getElementById('ep-feat').value;
+  nd.op         = document.getElementById('ep-op').value || '>=';
+  var tv        = parseFloat(document.getElementById('ep-thr').value);
+  if (!isNaN(tv)) nd.threshold = Math.round(Math.abs(tv));
+  var aOn = document.getElementById('ep-out-a').classList.contains('ep-on');
+  if (nd.use_abs) {
+    nd.prefer_higher = aOn;  // "A button" = prefer higher for abs nodes
+  } else {
+    nd.exit_class = aOn ? 1 : 0;
+  }
+
+  // Refine
+  var rf = document.getElementById('ep-r-feat');
+  if (rf && nd.refine) {
+    nd.refine.feature = rf.value;
+    var rv = parseFloat(document.getElementById('ep-r-thr').value);
+    if (nd.refine.use_abs) {
+      nd.refine.op = '>=';
+      if (!isNaN(rv)) nd.refine.threshold = Math.round(Math.abs(rv));
+      var rAOn = document.getElementById('ep-r-out-a').classList.contains('ep-on');
+      nd.refine.prefer_higher = rAOn;
+      nd.refine.true_class    = rAOn ? 1 : 0;
+      nd.refine.false_class   = rAOn ? 0 : 1;
+    } else {
+      nd.refine.op = (document.getElementById('ep-r-op') || {}).value || '>=';
+      if (!isNaN(rv)) nd.refine.threshold = Math.round(rv);
+      nd.refine.true_class  = document.getElementById('ep-r-out-a').classList.contains('ep-on') ? 1 : 0;
+      nd.refine.false_class = nd.refine.true_class === 1 ? 0 : 1;
+    }
+  }
+}
+
+function buildRefine(nodeIdx, refine) {
+  var sec = document.getElementById('ep-refine');
+  sec.innerHTML = '';
+
+  if (refine) {
+    var head = document.createElement('div');
+    head.className = 'ep-refine-head';
+
+    var lbl = document.createElement('span');
+    lbl.className = 'ep-field-label';
+    lbl.textContent = 'Tie-breaker — if close:';
+
+    var rmBtn = document.createElement('button');
+    rmBtn.className = 'ep-rm-refine';
+    rmBtn.textContent = 'Remove ✕';
+    rmBtn.addEventListener('click', function() {
+      savePanel();
+      delete tree.nodes[nodeIdx].refine;
+      buildRefine(nodeIdx, null);
+      // Restore parent outcome section now that tie-breaker is gone
+      document.getElementById('ep-outcome-section').style.display = '';
+      rebuildExplanations();
+      redraw();
+    });
+    head.appendChild(lbl); head.appendChild(rmBtn);
+    sec.appendChild(head);
+
+    var rFeat = document.createElement('select');
+    rFeat.id = 'ep-r-feat'; rFeat.className = 'ep-select feat';
+    params.forEach(function(p) {
+      var opt = document.createElement('option');
+      opt.value = p; opt.textContent = dropdownLabel(p);
+      if (opt.value === refine.feature) opt.selected = true;
+      rFeat.appendChild(opt);
+    });
+    sec.appendChild(rFeat);
+
+    var rRow = document.createElement('div'); rRow.className = 'ep-cond-row';
+    var rOp = document.createElement('select');
+    rOp.id = 'ep-r-op'; rOp.className = 'ep-select op';
+    [['>=','≥'],['<=','≤']].forEach(function(p) {
+      var opt=document.createElement('option'); opt.value=p[0]; opt.textContent=p[1];
+      if (p[0]===(refine.op||'>=')) opt.selected=true; rOp.appendChild(opt);
+    });
+    var rRange = featureRange(refine.feature);
+    var rThr = document.createElement('input');
+    rThr.id = 'ep-r-thr'; rThr.type = 'range';
+    rThr.min = rRange.min; rThr.max = rRange.max; rThr.step = rRange.step;
+    rThr.value = Math.max(rRange.min,
+                   Math.min(rRange.max, Math.round(Math.abs(refine.threshold))));
+    var rThrOut = document.createElement('span');
+    rThrOut.className = 'slider-value';
+    rThrOut.id = 'ep-r-thr-out';
+    rThrOut.textContent = rThr.value;
+    rThr.addEventListener('input', function () { rThrOut.textContent = rThr.value; });
+    // For abs refine: replace op dropdown with |Δ| ≥ label
+    if (refine.use_abs) {
+      var rAbsLbl = document.createElement('span');
+      rAbsLbl.style.cssText = 'font-family:monospace;font-size:14px;color:#64748b;padding:6px 4px;white-space:nowrap';
+      rAbsLbl.textContent = '|Δ| ≥';
+      rRow.appendChild(rAbsLbl);
+    } else {
+      rRow.appendChild(rOp);
+    }
+    rRow.appendChild(rThrOut);
+    sec.appendChild(rRow);
+    var rSliderRow = document.createElement('div');
+    rSliderRow.className = 'slider-row';
+    rSliderRow.appendChild(rThr);
+    sec.appendChild(rSliderRow);
+
+    var rOutLbl = document.createElement('div');
+    rOutLbl.className='ep-outcome-label'; rOutLbl.textContent='Prefer when condition fires:'; rOutLbl.style.marginTop='6px';
+    sec.appendChild(rOutLbl);
+
+    var rOutRow = document.createElement('div'); rOutRow.className='ep-outcome-row';
+    var rBtnA = document.createElement('button');
+    rBtnA.id='ep-r-out-a'; rBtnA.className='ep-toggle ep-toggle-a'+(refine.true_class===1?' ep-on':'');
+    var rBtnB = document.createElement('button');
+    rBtnB.id='ep-r-out-b'; rBtnB.className='ep-toggle ep-toggle-b'+(refine.true_class===0?' ep-on':'');
+    rOutRow.appendChild(rBtnA); rOutRow.appendChild(rBtnB); sec.appendChild(rOutRow);
+    // Set semantic labels based on refine feature/op/threshold
+    _refreshRefineTrueLabels(refine, 'ep-r-out-a', 'ep-r-out-b');
+    rBtnA.addEventListener('click', function(){
+      setOutcomeToggle('ep-r-out-a','ep-r-out-b',true);
+      var nd2 = tree.nodes[nodeIdx];
+      if (nd2.refine) _refreshRefineTrueLabels(nd2.refine, 'ep-r-out-a', 'ep-r-out-b');
+      updateSVG();
+    });
+    rBtnB.addEventListener('click', function(){
+      setOutcomeToggle('ep-r-out-a','ep-r-out-b',false);
+      var nd2 = tree.nodes[nodeIdx];
+      if (nd2.refine) _refreshRefineTrueLabels(nd2.refine, 'ep-r-out-a', 'ep-r-out-b');
+      updateSVG();
+    });
+    rFeat.addEventListener('change', function() {
+      var nd2 = tree.nodes[nodeIdx];
+      if (nd2.refine) {
+        nd2.refine.feature = this.value;
+        _refreshRefineTrueLabels(nd2.refine, 'ep-r-out-a', 'ep-r-out-b');
+      }
+      updateSVG();
+    });
+    rOp.addEventListener('change', function() {
+      var nd2 = tree.nodes[nodeIdx];
+      if (nd2.refine) {
+        nd2.refine.op = this.value;
+        _refreshRefineTrueLabels(nd2.refine, 'ep-r-out-a', 'ep-r-out-b');
+      }
+      updateSVG();
+    });
+    rThr.addEventListener('change', function() {
+      var nd2 = tree.nodes[nodeIdx];
+      if (nd2.refine) {
+        var tv = parseFloat(this.value);
+        if (!isNaN(tv)) nd2.refine.threshold = Math.round(tv);
+        _refreshRefineTrueLabels(nd2.refine, 'ep-r-out-a', 'ep-r-out-b');
+      }
+      updateSVG();
+    });
+
+  }
+
+  var addBtn = document.createElement('button');
+  addBtn.className = 'ep-add-refine';
+  var allowed = canAddMoreFeatures();
+  addBtn.textContent = allowed
+    ? '＋ Add a rule after this step'
+    : 'Limit reached — ' + MAX_NEW_FEATURES + ' checks at a time';
+  addBtn.disabled = !allowed;
+  if (!allowed) { addBtn.style.opacity = '.55'; addBtn.style.cursor = 'default'; }
+  addBtn.addEventListener('click', function() {
+    if (!canAddMoreFeatures()) { flashLimitReached(); return; }
+    savePanel();
+    closePanel();
+    var newIdx = insertRuleAfter(nodeIdx);
+    logEvent('step_added', {after: nodeIdx + 1, via: 'panel'});
+    render();
+    openPanel(newIdx);
+  });
+  sec.appendChild(addBtn);
+}
+
+// Insert a plain, general decision rule right after a given node — a normal
+// sequential check, not a nested tie-breaker. It only fires when every rule
+// above it (including the one it was inserted after) falls through, which is
+// how this checklist-style model works; it's placed immediately after the
+// rule you inserted it from, not appended to the end of the whole list.
+function insertRuleAfter(afterIndex) {
+  var used = tree.nodes.map(function(nd) { return nd.feature; });
+  var rf = null;
+  for (var pi = 0; pi < params.length; pi++) {
+    if (used.indexOf(params[pi]) === -1) { rf = params[pi]; break; }
+  }
+  if (!rf) rf = params[0] || 'age_diff';
+  var newNode = { feature: rf, op: '>=', threshold: 0, use_abs: true, prefer_higher: true, exit_class: 1, support: 0, purity: 0.5 };
+  var insertAt = afterIndex + 1;
+  tree.nodes.splice(insertAt, 0, newNode);
+  return insertAt;
+}
+
+// Attach a tie-breaker (refine) sub-check to a node, converting its YES leaf
+// into a "close call" branch instead of an immediate exit. Used by the
+// "Add tie-breaker" button inside the main edit panel (an advanced option —
+// separate from "Add a rule after this step", which inserts a plain
+// sequential rule; see insertRuleAfter above).
+function addTieBreakerToNode(nodeIdx) {
+  var used = [tree.nodes[nodeIdx].feature];
+  var rf2 = null;
+  for (var pi = 0; pi < params.length; pi++) {
+    if (used.indexOf(params[pi]) === -1) { rf2 = params[pi]; break; }
+  }
+  if (!rf2) rf2 = params[0] || 'age_diff';
+  tree.nodes[nodeIdx].refine = {
+    feature: rf2, op: '>=', threshold: 0, true_class: 1, false_class: 0,
+    support: 0, false_support: 0, purity: .5, false_purity: .5, manual: true
+  };
+}
+
+// ── Leaf panel (YES exit) ─────────────────────────────────────────
+var leafPanelNode = null;
+
+function openLeafPanel(i) {
+  closePanel(); closeDefaultPanel(); closeRefinePanel();
+  leafPanelNode = i;
+  var nd = tree.nodes[i];
+  document.getElementById('lp-title').textContent = 'STEP ' + (i + 1) + ' · YES EXIT';
+  // use_abs nodes store the preference in prefer_higher, not exit_class
+  var aIsOn = nd.use_abs ? nd.prefer_higher !== false : nd.exit_class === 1;
+  setOutcomeToggle('lp-out-a', 'lp-out-b', aIsOn);
+  _refreshOutcomeLabels(nd.feature, 'lp-out-a', 'lp-out-b');
+
+  positionPanel('leaf-panel', lastLayout.leaves[i], {visibleClass: true});
+  logEvent('outcome_panel_opened', {step: i + 1});
+}
+
+function saveLeafPanel() {
+  if (leafPanelNode === null) return;
+  var nd = tree.nodes[leafPanelNode];
+  var aIsOn = document.getElementById('lp-out-a').classList.contains('ep-on');
+  if (nd.use_abs) {
+    nd.prefer_higher = aIsOn;
+    nd.exit_class = aIsOn ? 1 : 0;  // keep in sync so legacy code and colors are correct
+  } else {
+    nd.exit_class = aIsOn ? 1 : 0;
+  }
+}
+
+function closeLeafPanel() {
+  saveLeafPanel();
+  document.getElementById('leaf-panel').classList.remove('visible');
+  leafPanelNode = null;
+}
+
+// ── Refine panel (tie-breaker box) ────────────────────────────────
+var refinePanelNode = null;
+
+function openRefinePanel(i) {
+  closePanel(); closeLeafPanel(); closeDefaultPanel();
+  refinePanelNode = i;
+  var r = tree.nodes[i].refine;
+  document.getElementById('rp-title').textContent = 'TIE-BREAKER · STEP ' + (i + 1);
+
+  var featSel = document.getElementById('rp-feat');
+  featSel.innerHTML = '';
+  params.forEach(function(p) {
+    var opt = document.createElement('option');
+    opt.value = p; opt.textContent = dropdownLabel(p);
+    if (opt.value === r.feature) opt.selected = true;
+    featSel.appendChild(opt);
+  });
+
+  // For abs refine: hide op dropdown, show |Δ| ≥ prefix
+  var rpOpSel = document.getElementById('rp-op');
+  var rpAbsLbl = document.getElementById('rp-abs-label');
+  if (r.use_abs) {
+    rpOpSel.style.display = 'none';
+    if (!rpAbsLbl) {
+      rpAbsLbl = document.createElement('span');
+      rpAbsLbl.id = 'rp-abs-label';
+      rpAbsLbl.style.cssText = 'font-family:monospace;font-size:14px;color:#64748b;padding:6px 4px;white-space:nowrap';
+      rpOpSel.parentNode.insertBefore(rpAbsLbl, rpOpSel);
+    }
+    rpAbsLbl.textContent = '|Δ| ≥';
+    rpAbsLbl.style.display = '';
+  } else {
+    rpOpSel.style.display = '';
+    if (rpAbsLbl) rpAbsLbl.style.display = 'none';
+    rpOpSel.value = r.op || '>=';
+  }
+  document.getElementById('rp-thr').value = Math.round(Math.abs(r.threshold));
+  setOutcomeToggle('rp-out-a', 'rp-out-b', r.use_abs ? r.prefer_higher !== false : r.true_class === 1);
+  _refreshRefineTrueLabels(r, 'rp-out-a', 'rp-out-b');
+  syncThresholdSlider('rp-thr', 'rp-thr-out', 'rp-thr-caption', r.feature);
+
+  positionPanel('refine-panel', lastLayout.refines[i], {visibleClass: true});
+  logEvent('tiebreaker_panel_opened', {step: i + 1});
+}
+
+function saveRefinePanel() {
+  if (refinePanelNode === null) return;
+  var r = tree.nodes[refinePanelNode].refine;
+  if (!r) return;
+  r.feature = document.getElementById('rp-feat').value;
+  var tv    = parseFloat(document.getElementById('rp-thr').value);
+  if (r.use_abs) {
+    if (!isNaN(tv)) r.threshold = Math.round(Math.abs(tv));
+    r.op = '>=';
+    var aIsOn = document.getElementById('rp-out-a').classList.contains('ep-on');
+    r.prefer_higher = aIsOn;
+    r.true_class    = aIsOn ? 1 : 0;
+    r.false_class   = aIsOn ? 0 : 1;
+  } else {
+    r.op = document.getElementById('rp-op').value;
+    if (!isNaN(tv)) r.threshold = Math.round(tv);
+    r.true_class  = document.getElementById('rp-out-a').classList.contains('ep-on') ? 1 : 0;
+    r.false_class = r.true_class === 1 ? 0 : 1;
+  }
+}
+
+function closeRefinePanel() {
+  saveRefinePanel();
+  document.getElementById('refine-panel').classList.remove('visible');
+  refinePanelNode = null;
+}
+
+// ── Reorder nodes ─────────────────────────────────────────────────
+function moveNode(i, dir) {
+  var j = i + dir;
+  if (j < 0 || j >= tree.nodes.length) return;
+  var tmp = tree.nodes[i];
+  tree.nodes[i] = tree.nodes[j];
+  tree.nodes[j] = tmp;
+  selectedNode = null;
+  render();
+}
+
+// ── Default panel ─────────────────────────────────────────────────
+function openDefaultPanel() {
+  closePanel();
+  setOutcomeToggle('def-out-a','def-out-b', tree.default_class === 1);
+
+  // Refresh button labels: derive semantic direction from the last node's feature
+  // so the buttons say e.g. "Longer wait" / "Shorter wait" instead of A/B.
+  var nodes = (tree && tree.nodes) || [];
+  var btnA = document.getElementById('def-out-a');
+  var btnB = document.getElementById('def-out-b');
+  if (btnA && btnB && nodes.length) {
+    var last = nodes[nodes.length - 1];
+    var base = (last.feature || '').replace('_diff', '');
+    var sp = SHORT_LABELS[base];
+    if (sp) {
+      // Button A (red) = class-1 direction = same as last YES.
+      // Button B (blue) = class-0 direction = opposite = natural otherwise.
+      var lastPrefHigh = last.use_abs ? (last.prefer_higher !== false)
+                       : (last.op === '>=' ? last.exit_class === 1 : last.exit_class === 0);
+      var defLblA = lastPrefHigh ? sp[0] : sp[1];  // class 1 direction
+      var defLblB = lastPrefHigh ? sp[1] : sp[0];  // class 0 direction (natural otherwise)
+      btnA.textContent = defLblA;
+      btnB.textContent = defLblB;
+    } else {
+      btnA.textContent = 'Prefer Patient A';
+      btnB.textContent = 'Prefer Patient B';
+    }
+  } else if (btnA && btnB) {
+    btnA.textContent = 'Prefer Patient A';
+    btnB.textContent = 'Prefer Patient B';
+  }
+
+  positionPanel('default-panel', lastLayout.defaultLeaf);
+  logEvent('default_panel_opened', {});
+}
+function closeDefaultPanel() {
+  document.getElementById('default-panel').style.display = 'none';
+}
+function saveDefaultPanel() {
+  var aIsOn = document.getElementById('def-out-a').classList.contains('ep-on');
+  tree.default_class = aIsOn ? 1 : 0;
+  var nodes = (tree && tree.nodes) || [];
+  if (nodes.length) {
+    var last = nodes[nodes.length - 1];
+    var lastPrefHigh = last.use_abs ? (last.prefer_higher !== false)
+                     : (last.op === '>=' ? last.exit_class === 1 : last.exit_class === 0);
+    // A = class-1 direction = lastPrefHigh; B = class-0 direction = !lastPrefHigh
+    tree.default_prefer_higher = aIsOn ? lastPrefHigh : !lastPrefHigh;
+    tree.default_feature = last.feature;
+  }
+}
+
+// ── Outcome toggle helper ─────────────────────────────────────────
+function setOutcomeToggle(idA, idB, aIsOn) {
+  var btnA = document.getElementById(idA);
+  var btnB = document.getElementById(idB);
+  if (!btnA || !btnB) return;
+  btnA.className = btnA.className.replace(/ ep-on/g,'') + (aIsOn ? ' ep-on' : '');
+  btnB.className = btnB.className.replace(/ ep-on/g,'') + (!aIsOn? ' ep-on' : '');
+}
+
+// Re-attach node clicks after innerHTML rebuild
+function reAttachNodeClicks() {
+  // The SVG is rebuilt with innerHTML on every change, so its listeners have
+  // to be re-bound each time. Outside edit mode the boxes stay inert.
+  if (!editing) { attachWrapDismiss(); return; }
+
+  document.querySelectorAll('[data-node]').forEach(function(g) {
+    var idx = parseInt(g.getAttribute('data-node'), 10);
+    g.addEventListener('click', function(e) { e.stopPropagation(); openPanel(idx); });
+  });
+  document.querySelectorAll('[data-leaf]').forEach(function(g) {
+    var idx = parseInt(g.getAttribute('data-leaf'), 10);
+    g.addEventListener('click', function(e) { e.stopPropagation(); openLeafPanel(idx); });
+  });
+  document.querySelectorAll('[data-refine]').forEach(function(g) {
+    var idx = parseInt(g.getAttribute('data-refine'), 10);
+    g.addEventListener('click', function(e) { e.stopPropagation(); openRefinePanel(idx); });
+  });
+  document.querySelectorAll('[data-move-up]').forEach(function(el) {
+    var idx = parseInt(el.getAttribute('data-move-up'), 10);
+    el.addEventListener('click', function(e) { e.stopPropagation(); moveNode(idx, -1); });
+  });
+  document.querySelectorAll('[data-move-down]').forEach(function(el) {
+    var idx = parseInt(el.getAttribute('data-move-down'), 10);
+    el.addEventListener('click', function(e) { e.stopPropagation(); moveNode(idx, 1); });
+  });
+  // One-click add: the "+" badge sits on the node itself, so creating a check
+  // is a single click on the thing you want it to follow — no panel first.
+  document.querySelectorAll('[data-add-after]').forEach(function(el) {
+    var idx = parseInt(el.getAttribute('data-add-after'), 10);
+    el.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (!canAddMoreFeatures()) { flashLimitReached(); return; }
+      closeAllPanels();
+      var newIdx = insertRuleAfter(idx);
+      logEvent('step_added', {after: idx + 1, via: 'node_plus_button'});
+      render();
+      openPanel(newIdx);
+    });
+  });
+  var defLeaf = document.getElementById('default-leaf');
+  if (defLeaf) {
+    defLeaf.addEventListener('click', function(e) {
+      e.stopPropagation(); openDefaultPanel();
+    });
+  }
+  attachWrapDismiss();
+}
+
+// Clicking empty canvas dismisses whatever panel is open. Bound once — the
+// old code re-bound it on every redraw, stacking a fresh listener each time.
+var wrapDismissBound = false;
+function attachWrapDismiss() {
+  if (wrapDismissBound) return;
+  var wrap = document.getElementById('svg-wrap');
+  if (!wrap) return;
+  wrap.addEventListener('click', function() { closeAllPanels(); });
+  wrapDismissBound = true;
+}
+
+// ── Height sync (no-op: this is now a normal page, not an iframe) ──
+function updateHeight() {}
+
+// ── Panel button wiring ───────────────────────────────────────────
+document.getElementById('ep-close').addEventListener('click', function() {
+  savePanel(); closePanel();
+});
+document.getElementById('ep-del').addEventListener('click', function() {
+  if (selectedNode === null || tree.nodes.length <= 1) return;
+  tree.nodes.splice(selectedNode, 1);
+  selectedNode = null;
+  document.getElementById('edit-panel').style.display = 'none';
+  render();
+});
+document.getElementById('ep-feat').addEventListener('change', function() {
+  var feat = document.getElementById('ep-feat').value;
+  _refreshOutcomeLabels(feat, 'ep-out-a', 'ep-out-b');
+  updateSVG();
+});
+document.getElementById('ep-op').addEventListener('change', updateSVG);
+document.getElementById('ep-thr').addEventListener('change', updateSVG);
+document.getElementById('ep-out-a').addEventListener('click', function() {
+  setOutcomeToggle('ep-out-a','ep-out-b',true); updateSVG();
+});
+document.getElementById('ep-out-b').addEventListener('click', function() {
+  setOutcomeToggle('ep-out-a','ep-out-b',false); updateSVG();
+});
+// Prevent panel clicks from bubbling to svg-wrap
+document.getElementById('edit-panel').addEventListener('click', function(e){ e.stopPropagation(); });
+document.getElementById('default-panel').addEventListener('click', function(e){ e.stopPropagation(); });
+
+document.getElementById('def-out-a').addEventListener('click', function() {
+  setOutcomeToggle('def-out-a','def-out-b',true); updateSVG();
+});
+document.getElementById('def-out-b').addEventListener('click', function() {
+  setOutcomeToggle('def-out-a','def-out-b',false); updateSVG();
+});
+document.getElementById('def-close').addEventListener('click', function() {
+  saveDefaultPanel();
+  closeDefaultPanel();
+  rebuildExplanations();
+  redraw();
+});
+
+// ── Leaf panel wiring ─────────────────────────────────────────────
+document.getElementById('lp-close').addEventListener('click', function() {
+  saveLeafPanel();
+  closeLeafPanel();
+  redraw();
+});
+document.getElementById('lp-out-a').addEventListener('click', function() {
+  setOutcomeToggle('lp-out-a', 'lp-out-b', true); updateSVG();
+});
+document.getElementById('lp-out-b').addEventListener('click', function() {
+  setOutcomeToggle('lp-out-a', 'lp-out-b', false); updateSVG();
+});
+document.getElementById('lp-insert').addEventListener('click', function() {
+  saveLeafPanel();
+  if (leafPanelNode !== null) {
+    var nodeIdx = leafPanelNode;
+    addTieBreakerToNode(nodeIdx);
+    closeLeafPanel();
+    render();
+    openPanel(nodeIdx);
+  }
+});
+document.getElementById('leaf-panel').addEventListener('click', function(e) { e.stopPropagation(); });
+
+// ── Refine panel wiring ───────────────────────────────────────────
+document.getElementById('rp-close').addEventListener('click', function() {
+  saveRefinePanel();
+  closeRefinePanel();
+  rebuildExplanations();
+  redraw();
+});
+document.getElementById('rp-del').addEventListener('click', function() {
+  if (refinePanelNode === null) return;
+  delete tree.nodes[refinePanelNode].refine;
+  closeRefinePanel();
+  render();
+});
+document.getElementById('rp-feat').addEventListener('change', function() {
+  if (refinePanelNode === null) return;
+  var r = tree.nodes[refinePanelNode].refine;
+  if (r) { r.feature = this.value; _refreshRefineTrueLabels(r, 'rp-out-a', 'rp-out-b'); updateSVG(); }
+});
+document.getElementById('rp-op').addEventListener('change', function() {
+  if (refinePanelNode === null) return;
+  var r = tree.nodes[refinePanelNode].refine;
+  if (r) { r.op = this.value; _refreshRefineTrueLabels(r, 'rp-out-a', 'rp-out-b'); updateSVG(); }
+});
+document.getElementById('rp-thr').addEventListener('change', function() {
+  if (refinePanelNode === null) return;
+  var r = tree.nodes[refinePanelNode].refine;
+  if (r) {
+    var tv = parseFloat(this.value);
+    if (!isNaN(tv)) { r.threshold = Math.round(tv); _refreshRefineTrueLabels(r, 'rp-out-a', 'rp-out-b'); }
+    updateSVG();
+  }
+});
+document.getElementById('rp-out-a').addEventListener('click', function() {
+  setOutcomeToggle('rp-out-a', 'rp-out-b', true); updateSVG();
+});
+document.getElementById('rp-out-b').addEventListener('click', function() {
+  setOutcomeToggle('rp-out-a', 'rp-out-b', false); updateSVG();
+});
+document.getElementById('refine-panel').addEventListener('click', function(e) { e.stopPropagation(); });
+
+document.getElementById('btn-add').addEventListener('click', function() {
+  if (!canAddMoreFeatures()) { flashLimitReached(); return; }
+  savePanel(); closePanel(); closeDefaultPanel();
+  var used = tree.nodes.map(function(nd){ return nd.feature; });
+  var rf = null;
+  for (var pi = 0; pi < params.length; pi++) {
+    if (used.indexOf(params[pi]) === -1) { rf = params[pi]; break; }
+  }
+  if (!rf) rf = params[0] || 'age_diff';
+  tree.nodes.push({feature:rf,op:'>=',threshold:0,use_abs:true,prefer_higher:true,exit_class:1,support:0,purity:.5});
+  logEvent('step_added', {via: 'toolbar'});
+  render();
+});
+
+document.getElementById('btn-apply').addEventListener('click', function() {
+  savePanel();
+  saveLeafPanel();
+  saveRefinePanel();
+  saveDefaultPanel();
+
+  var btn = document.getElementById('btn-apply');
+  btn.disabled = true;
+  btn.textContent = 'Saving…';
+
+  fetch(APPLY_URL, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({tree: tree, baseline_node_count: baselineNodeCount})
+  })
+  .then(function(resp) {
+    if (!resp.ok) {
+      return resp.json().catch(function () { return {}; }).then(function (body) {
+        throw new Error(body.error || 'Save failed');
+      });
+    }
+    return resp.json();
+  })
+  .then(function(data) {
+    btn.textContent = '✓ Changes applied';
+    btn.classList.add('saved');
+    if (data && data.redirect) {
+      setTimeout(function(){ window.location.href = data.redirect; }, 600);
+    } else {
+      btn.disabled = false;
+      setTimeout(function(){ btn.textContent="\u2713 Done editing"; btn.classList.remove('saved'); }, 3000);
+    }
+  })
+  .catch(function(err) {
+    btn.disabled = false;
+    btn.textContent = (err && err.message) ? err.message : "Couldn't save \u2014 try again";
+    setTimeout(function () { btn.textContent = '\u2713 Done editing'; }, 4000);
+  });
+});
+
+// ── Mode toggle (view <-> edit), no page navigation ─────────────────
+var MODE_CAPTIONS = {
+  view: "Based on your decisions, here's the decision tree that captures your thinking. Each step is a single check the tree applies, in order.",
+  edit: "You're editing the model \u2014 click any check, outcome, or the \u201COTHERWISE\u201D box to change it. Use \u201C+ Add decision step\u201D to add a new check."
+};
+
+// Editing stays gated behind the alignment rating, exactly as before — only
+// the controls' position changed, not when they become available.
+function showPostRatingActions() {
+  document.getElementById('rating-card').style.display = 'none';
+  document.getElementById('post-rating-row').style.display = 'flex';
+  var bar = document.getElementById('edit-bar');
+  if (bar) bar.style.display = 'flex';
+}
+
+function setMode(nextEditing) {
+  editing = nextEditing;
+  var caption = document.getElementById('mode-caption');
+  var banner = document.getElementById('editing-banner');
+  var postRow = document.getElementById('post-rating-row');
+  var modeBtn = document.getElementById('mode-toggle');
+  if (editing) {
+    caption.textContent = MODE_CAPTIONS.edit;
+    banner.style.display = 'flex';
+    postRow.style.display = 'none';
+    // Entering edit mode starts a fresh allowance of new checks.
+    baselineNodeCount = ((tree && tree.nodes) || []).length;
+    if (modeBtn) { modeBtn.textContent = '✎ Editing…'; modeBtn.disabled = true; }
+  } else {
+    caption.textContent = MODE_CAPTIONS.view;
+    banner.style.display = 'none';
+    if (modeBtn) { modeBtn.textContent = '✎ Edit the model'; modeBtn.disabled = false; }
+    if (currentScore) { showPostRatingActions(); } else { postRow.style.display = 'none'; }
+  }
+  setAuditEnabled(!editing);
+  selectedNode = null; leafPanelNode = null; refinePanelNode = null;
+  document.getElementById('edit-panel').style.display    = 'none';
+  document.getElementById('default-panel').style.display = 'none';
+  document.getElementById('leaf-panel').classList.remove('visible');
+  document.getElementById('refine-panel').classList.remove('visible');
+  render();
+}
+
+// The only way into edit mode is this button (shown after rating); the only
+// way out is "done editing" in the toolbar, which saves and reloads.
+document.getElementById('mode-toggle').addEventListener('click', function() {
+  setMode(true);
+});
+
+var resetBtn = document.getElementById('reset-model');
+if (resetBtn) {
+  resetBtn.addEventListener('click', function() {
+    if (!confirm("Reset to the original model trained from your answers? This discards your edits.")) return;
+    resetBtn.disabled = true;
+    resetBtn.textContent = 'Resetting…';
+    fetch(RESET_URL, { method: 'POST' })
+      .then(function(resp) { return resp.json(); })
+      .then(function(data) {
+        if (data && data.redirect) window.location.href = data.redirect;
+      })
+      .catch(function() {
+        resetBtn.disabled = false;
+        resetBtn.textContent = '\u21BA Reset to original model';
+      });
+  });
+}
+
+// ── 7-point alignment rating (gates the edit/continue options) ──────
+function renderScoreRow() {
+  var row = document.getElementById('score-row-7');
+  row.innerHTML = '';
+  for (var i = 1; i <= 7; i++) {
+    (function(score) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'score-btn-7' + (currentScore === score ? ' selected' : '');
+      btn.textContent = String(score);
+      btn.addEventListener('click', function() {
+        currentScore = score;
+        renderScoreRow();
+        showPostRatingActions();
+        fetch(RATE_URL, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({score: score})
+        }).catch(function() {});
+      });
+      row.appendChild(btn);
+    })(i);
+  }
+}
+renderScoreRow();
+if (currentScore) showPostRatingActions();
+
+document.getElementById('btn-continue').addEventListener('click', function() {
+  window.location.href = CONTINUE_URL;
+});
+
+// ── Scenario audit panel ─────────────────────────────────────────
+// Re-evaluates the current tree against the person's own past answers
+// (and, optionally, a scenario they build themselves) entirely client-side.
+var auditSelected = pastScenarios.length ? 0 : null;   // index into pastScenarios, or null
+
+function getFeatureBase() {
+  return params.map(function(p) { return p.replace('_diff', ''); });
+}
+
+function diffsFromAB(a, b) {
+  var d = {};
+  getFeatureBase().forEach(function(f) {
+    d[f + '_diff'] = (parseFloat(a[f]) || 0) - (parseFloat(b[f]) || 0);
+  });
+  return d;
+}
+
+// Mirrors FastFrugalTree._row_predict in fft_model.py exactly: walk nodes in
+// order, first one whose condition holds decides it (via its follow-up check
+// if it has one); nothing firing falls through to the default class.
+function evalTreeRow(diffs) {
+  var nodes = (tree && tree.nodes) || [];
+  for (var i = 0; i < nodes.length; i++) {
+    var node = nodes[i];
+    var x = diffs[node.feature] || 0;
+    var cond = node.use_abs
+      ? (Math.abs(x) >= node.threshold)
+      : (node.op === '>=' ? (x >= node.threshold) : (x <= node.threshold));
+    if (!cond) continue;
+    var refine = node.refine;
+    if (refine) {
+      var rx = diffs[refine.feature] || 0;
+      var rcond, cls;
+      if (refine.use_abs) {
+        rcond = Math.abs(rx) >= refine.threshold;
+        cls = rcond ? ((rx > 0) === refine.prefer_higher ? 1 : 0) : refine.false_class;
+      } else {
+        rcond = refine.op === '>=' ? (rx >= refine.threshold) : (rx <= refine.threshold);
+        cls = rcond ? refine.true_class : refine.false_class;
+      }
+      return {cls: cls, exitIndex: i, refineFired: rcond};
+    }
+    return {cls: ((x > 0) === node.prefer_higher ? 1 : 0), exitIndex: i, refineFired: null};
+  }
+  return {cls: (tree && tree.default_class) || 0, exitIndex: -1, refineFired: null};
+}
+
+function auditWhyText(result) {
+  if (result.exitIndex === -1) return 'No step matched \u2014 used the default choice.';
+  var stepNum = result.exitIndex + 1;
+  if (result.refineFired !== null) {
+    return 'Decided at step ' + stepNum + '\u2019s follow-up check \u2014 the main condition was a close call.';
+  }
+  return 'Decided at step ' + stepNum + '.';
+}
+
+function renderAuditGrid() {
+  var grid = document.getElementById('audit-grid');
+  grid.style.gridTemplateColumns = 'repeat(' + Math.max(1, pastScenarios.length) + ', minmax(0, 1fr))';
+  grid.innerHTML = '';
+  var matchCount = 0;
+  pastScenarios.forEach(function(sc, idx) {
+    var result = evalTreeRow(diffsFromAB(sc.A, sc.B));
+    var modelChoice = result.cls === 1 ? 'A' : 'B';
+    var isMatch = modelChoice === sc.choice;
+    if (isMatch) matchCount++;
+    var chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = 'audit-chip ' + (isMatch ? 'match' : 'mismatch') + (auditSelected === idx ? ' selected' : '');
+    chip.textContent = idx + 1;
+    chip.title = 'Scenario ' + (idx + 1);
+    chip.addEventListener('click', function() {
+      auditSelected = idx;
+      renderAuditGrid();
+      renderAuditDetail();
+    });
+    grid.appendChild(chip);
+  });
+  var titleEl = document.getElementById('audit-toggle-title');
+  if (pastScenarios.length) {
+    titleEl.textContent = 'Matches ' + matchCount + ' of your ' + pastScenarios.length + ' answers';
+  } else {
+    titleEl.textContent = 'Check when the model makes the same choice as you';
+  }
+}
+
+function patientCardHTML(side, vals) {
+  var label = side === 'a' ? 'Patient A' : 'Patient B';
+  var html = '<div class="audit-patient-card ' + side + '">'
+           + '<div class="audit-patient-label ' + side + '">' + label + '</div>';
+  getFeatureBase().forEach(function(f) {
+    html += '<div class="audit-feature-row">'
+          + '<div class="audit-feature-name">' + esc(pretty(f)) + '</div>'
+          + '<div class="audit-feature-value">' + esc(vals[f]) + '</div>'
+          + '</div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function renderAuditDetail() {
+  var detail = document.getElementById('audit-detail');
+
+  if (auditSelected === null || !pastScenarios.length) {
+    detail.innerHTML = '<div style="font-size:13px;color:#94a3b8;text-align:center;padding:8px">Click a scenario above to see the details.</div>';
+    return;
+  }
+  var sc = pastScenarios[auditSelected];
+  var result = evalTreeRow(diffsFromAB(sc.A, sc.B));
+  var modelChoice = result.cls === 1 ? 'A' : 'B';
+  var isMatch = modelChoice === sc.choice;
+
+  var html = '<div class="audit-detail-title">Scenario ' + (auditSelected + 1) + '</div>';
+  html += '<div class="audit-scenario-grid">'
+        + patientCardHTML('a', sc.A) + patientCardHTML('b', sc.B)
+        + '</div>';
+  html += '<div class="audit-outcome-row"><span class="lbl">You chose</span><span class="val">Patient ' + esc(sc.choice) + '</span></div>';
+  html += '<div class="audit-outcome-row"><span class="lbl">Model predicts</span><span class="val">Patient ' + modelChoice + '</span></div>';
+  html += '<div class="audit-banner ' + (isMatch ? 'match' : 'mismatch') + '">'
+        + (isMatch ? 'Model agrees with your choice' : 'Model disagrees with your choice') + '</div>';
+  html += '<div class="audit-why">' + esc(auditWhyText(result)) + '</div>';
+  detail.innerHTML = html;
+}
+
+// ── Try a new scenario ────────────────────────────────────────────
+// Each click generates a pair the participant has not seen, records their
+// choice against the model's, and asks how their reasoning differed. Every
+// scenario is its own trial on the server, so its agreement/disagreement is
+// stored independently rather than overwriting the previous one.
+
+var currentTrial = null;
+
+function scenarioValueRows(sc) {
+  var html = '<div class="audit-scenario-grid">';
+  ['A', 'B'].forEach(function (side) {
+    var vals = sc[side];
+    html += '<div class="audit-patient-card ' + side.toLowerCase() + '">'
+          + '<div class="audit-patient-label ' + side.toLowerCase() + '">Patient ' + side + '</div>';
+    getFeatureBase().forEach(function (f) {
+      html += '<div class="audit-feature-row">'
+            + '<div class="audit-feature-name">' + esc(pretty(f)) + '</div>'
+            + '<div class="audit-feature-value">' + esc(fmt(vals[f])) + '</div>'
+            + '</div>';
+    });
+    html += '</div>';
+  });
+  return html + '</div>';
+}
+
+function renderTrialPrompt(data) {
+  currentTrial = data;
+  var area = document.getElementById('trial-area');
+  area.innerHTML =
+    '<div class="trial-card">'
+  + '<div class="audit-detail-title">New scenario ' + data.index + ' — who should receive the organ?</div>'
+  + scenarioValueRows(data.scenario)
+  + '<div class="trial-choice-row">'
+  + '<button class="btn-choose a" id="trial-pick-a" type="button">Choose Patient A</button>'
+  + '<button class="btn-choose b" id="trial-pick-b" type="button">Choose Patient B</button>'
+  + '</div></div>';
+
+  ['a', 'b'].forEach(function (side) {
+    document.getElementById('trial-pick-' + side)
+      .addEventListener('click', function () { submitTrialChoice(side.toUpperCase()); });
+  });
+  area.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+}
+
+function submitTrialChoice(choice) {
+  if (!currentTrial) return;
+  ['a', 'b'].forEach(function (s) {
+    var b = document.getElementById('trial-pick-' + s);
+    if (b) b.disabled = true;
+  });
+
+  fetch(ANSWER_SCENARIO_URL, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({trial_id: currentTrial.trial_id, choice: choice})
+  })
+  .then(function (r) { return r.json(); })
+  .then(function (res) {
+    if (res.error) { showTrialError(res.error); return; }
+    renderTrialResult(res);
+  })
+  .catch(function () { showTrialError('Could not reach the server. Try again.'); });
+}
+
+function showTrialError(msg) {
+  var area = document.getElementById('trial-area');
+  area.innerHTML = '<div class="trial-card" style="border-color:#fecaca">'
+    + '<div style="color:#b91c1c;font-size:14px;font-weight:600">' + esc(msg) + '</div>'
+    + '</div>';
+}
+
+function renderTrialResult(res) {
+  var area = document.getElementById('trial-area');
+  var agreed = res.agreed;
+  var html = '<div class="trial-card">'
+    + '<div class="audit-detail-title">New scenario ' + (currentTrial.index || '') + '</div>'
+    + scenarioValueRows(currentTrial.scenario)
+    + '<div class="audit-outcome-row"><span class="lbl">You chose</span>'
+    + '<span class="val">Patient ' + esc(res.user_choice) + '</span></div>'
+    + '<div class="audit-outcome-row"><span class="lbl">Model predicts</span>'
+    + '<span class="val">Patient ' + esc(res.model_choice) + '</span></div>'
+    + '<div class="audit-banner ' + (agreed ? 'match' : 'mismatch') + '">'
+    + (agreed ? 'Model agrees with your choice' : 'Model disagrees with your choice')
+    + '</div>'
+    + '<div class="audit-why">' + esc(res.reason || '') + '</div>';
+
+  html += '<div class="feedback-block">'
+    + '<label for="trial-reasoning">'
+    + (agreed
+        ? 'What did you weigh up here? Anything the model may be missing?'
+        : 'How was your reasoning different from the model\'s?')
+    + '</label>'
+    + '<textarea id="trial-reasoning" placeholder="In your own words…"></textarea>'
+    + '<div class="feedback-row">'
+    + '<button class="btn-save-feedback" id="trial-save-feedback" type="button">Save my reasoning</button>'
+    + '<span class="feedback-status" id="trial-feedback-status"></span>'
+    + '</div></div>';
+
+  html += '<div class="feedback-row" style="margin-top:14px">'
+    + '<button class="btn-link" id="trial-another" type="button">Try another scenario</button>'
+    + '<a class="btn-link" href="' + REVIEW_URL + '">See all agreements &amp; disagreements →</a>'
+    + '</div></div>';
+
+  area.innerHTML = html;
+
+  document.getElementById('trial-save-feedback').addEventListener('click', saveTrialReasoning);
+  document.getElementById('trial-another').addEventListener('click', requestNewScenario);
+}
+
+function saveTrialReasoning() {
+  if (!currentTrial) return;
+  var box = document.getElementById('trial-reasoning');
+  var btn = document.getElementById('trial-save-feedback');
+  var status = document.getElementById('trial-feedback-status');
+  var text = (box.value || '').trim();
+  if (!text) { status.style.color = '#b45309'; status.textContent = 'Write a line first.'; return; }
+
+  btn.disabled = true;
+  status.style.color = '#64748b';
+  status.textContent = 'Saving…';
+
+  fetch(FEEDBACK_URL, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({trial_id: currentTrial.trial_id, reasoning: text})
+  })
+  .then(function (r) { return r.json(); })
+  .then(function (res) {
+    if (res.error) throw new Error(res.error);
+    status.style.color = '#15803d';
+    status.textContent = 'Saved — thank you.';
+    btn.disabled = false;
+  })
+  .catch(function () {
+    status.style.color = '#b91c1c';
+    status.textContent = 'Could not save. Try again.';
+    btn.disabled = false;
+  });
+}
+
+function requestNewScenario() {
+  var area = document.getElementById('trial-area');
+  area.innerHTML = '<div class="trial-card"><div class="muted" style="font-size:14px;color:#64748b">'
+    + 'Building a new scenario…</div></div>';
+
+  fetch(NEW_SCENARIO_URL, {method: 'POST'})
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      if (data.error) { showTrialError(data.error); return; }
+      renderTrialPrompt(data);
+    })
+    .catch(function () { showTrialError('Could not reach the server. Try again.'); });
+}
+
+document.getElementById('audit-toggle').addEventListener('click', function() {
+  var body = document.getElementById('audit-body');
+  var chev = document.getElementById('audit-chevron');
+  var open = body.style.display === 'block';
+  body.style.display = open ? 'none' : 'block';
+  chev.classList.toggle('open', !open);
+  logEvent('audit_panel_toggled', {open: !open});
+});
+
+document.getElementById('audit-try-new').addEventListener('click', function() {
+  requestNewScenario();
+});
+
+function setAuditEnabled(enabled) {
+  document.getElementById('audit-disabled-note').style.display = enabled ? 'none' : 'block';
+  document.getElementById('audit-interactive').style.display = enabled ? '' : 'none';
+}
+
+function renderAudit() {
+  renderAuditGrid();
+  renderAuditDetail();
+}
+
+// ── Tutorial ──────────────────────────────────────────────────────
+// Shows on the first visit, returns once as a short reminder, and is always
+// reachable from the "?" button. Dismissible at every step — it never blocks
+// the page behind a required walkthrough.
+
+var TUTORIAL_STEPS = [
+  {
+    title: 'This is your model',
+    body: 'It reads top to bottom. Each box is one check. If the check holds, ' +
+          'the YES branch on the left gives the answer; if not, the NO branch ' +
+          'carries on down to the next check.'
+  },
+  {
+    title: 'The bottom box is the fallback',
+    body: 'When no check applies, the model uses the outcome in the ' +
+          '“OTHERWISE” box at the end of the tree.'
+  },
+  {
+    title: 'You can change any of it',
+    body: 'Rate the model first, then use “Edit the model” at the top. Click a ' +
+          'check to change its factor or threshold, or use the green + on a box ' +
+          'to add a new check straight after it.'
+  },
+  {
+    title: 'Test it against a new scenario',
+    body: 'Open “Try a new scenario” at the bottom to see a fresh pair of ' +
+          'patients, make your own choice, and compare it with the model\'s. ' +
+          'Your agreements and disagreements are kept so you can review them.'
+  }
+];
+
+var tutorialStep = 0;
+
+function renderTutorial() {
+  var s = TUTORIAL_STEPS[tutorialStep];
+  document.getElementById('tutorial-step-count').textContent =
+    'Step ' + (tutorialStep + 1) + ' of ' + TUTORIAL_STEPS.length;
+  document.getElementById('tutorial-title').textContent = s.title;
+  document.getElementById('tutorial-body').textContent = s.body;
+  document.getElementById('tutorial-next').textContent =
+    tutorialStep === TUTORIAL_STEPS.length - 1 ? 'Got it' : 'Next';
+
+  var dots = document.getElementById('tutorial-dots');
+  dots.innerHTML = '';
+  TUTORIAL_STEPS.forEach(function (_, i) {
+    var d = document.createElement('span');
+    d.className = 'tutorial-dot' + (i === tutorialStep ? ' on' : '');
+    dots.appendChild(d);
+  });
+}
+
+function openTutorial(via) {
+  tutorialStep = 0;
+  renderTutorial();
+  document.getElementById('tutorial-backdrop').classList.add('visible');
+  logEvent('tutorial_opened', {via: via || 'auto'});
+}
+
+function closeTutorial(via) {
+  document.getElementById('tutorial-backdrop').classList.remove('visible');
+  fetch(TUTORIAL_SEEN_URL, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({mode: TUTORIAL_MODE || 'manual', via: via || 'close'})
+  }).catch(function () {});
+}
+
+document.getElementById('tutorial-next').addEventListener('click', function () {
+  if (tutorialStep < TUTORIAL_STEPS.length - 1) {
+    tutorialStep++;
+    renderTutorial();
+  } else {
+    closeTutorial('finished');
+  }
+});
+document.getElementById('tutorial-skip').addEventListener('click', function () {
+  closeTutorial('skipped');
+});
+document.getElementById('tutorial-backdrop').addEventListener('click', function (e) {
+  if (e.target === this) closeTutorial('backdrop');
+});
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape' &&
+      document.getElementById('tutorial-backdrop').classList.contains('visible')) {
+    closeTutorial('escape');
+  }
+});
+document.getElementById('btn-help').addEventListener('click', function () {
+  openTutorial('help_button');
+});
+document.getElementById('tutorial-nudge-open').addEventListener('click', function () {
+  document.getElementById('tutorial-nudge').classList.remove('visible');
+  openTutorial('reminder');
+});
+
+function startTutorial() {
+  if (TUTORIAL_MODE === 'full') {
+    openTutorial('first_visit');
+  } else if (TUTORIAL_MODE === 'reminder') {
+    // The return visit gets an inline strip rather than a modal — a reminder
+    // that interrupts is just the first tutorial again.
+    document.getElementById('tutorial-nudge').classList.add('visible');
+    logEvent('tutorial_reminder_shown', {});
+  }
+}
+
+// ── Zoom controls ─────────────────────────────────────────────────
+document.getElementById('zoom-in').addEventListener('click', function () {
+  setZoom(zoom + 0.15, 'button');
+});
+document.getElementById('zoom-out').addEventListener('click', function () {
+  setZoom(zoom - 0.15, 'button');
+});
+document.getElementById('zoom-fit').addEventListener('click', function () {
+  closeAllPanels();
+  fitZoom(false);
+});
+
+var resizeTimer = null;
+window.addEventListener('resize', function () {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(function () { applyZoom(); }, 150);
+});
+
+// ── Init: data is injected server-side (see bottom of this template) ──
+function initEditor(initTree, initParams, initLabels, initNodeExplanations, initSummary) {
+  tree    = initTree ? JSON.parse(JSON.stringify(initTree)) : null;
+  params  = initParams || [];
+  labels  = initLabels || {};
+  nodeExplanations   = initNodeExplanations || [];
+  summaryExplanation = initSummary || '';
+  selectedNode    = null;
+  leafPanelNode   = null;
+  refinePanelNode = null;
+  document.getElementById('edit-panel').style.display    = 'none';
+  document.getElementById('default-panel').style.display = 'none';
+  document.getElementById('leaf-panel').classList.remove('visible');
+  document.getElementById('refine-panel').classList.remove('visible');
+
+  baselineNodeCount = ((tree && tree.nodes) || []).length;
+
+  // Threshold sliders commit on release, which redraws the tree — dragging
+  // gives a live number without re-laying out the whole tree on every pixel.
+  bindSliderReadout('ep-thr', 'ep-thr-out', updateSVG);
+  bindSliderReadout('rp-thr', 'rp-thr-out', function () {
+    if (refinePanelNode === null) return;
+    var r = tree.nodes[refinePanelNode].refine;
+    if (r) {
+      var tv = parseFloat(document.getElementById('rp-thr').value);
+      if (!isNaN(tv)) { r.threshold = Math.round(tv); _refreshRefineTrueLabels(r, 'rp-out-a', 'rp-out-b'); }
+    }
+    updateSVG();
+  });
+
+  renderAudit();
+  setMode(false);
+  fitZoom(true);
+  startTutorial();
+
+  // Arriving from the review page's "Try a new scenario" link: open the panel
+  // and generate straight away, so the link lands where it promised.
+  if (/[?&]try=1\b/.test(window.location.search)) {
+    var body = document.getElementById('audit-body');
+    var chev = document.getElementById('audit-chevron');
+    body.style.display = 'block';
+    chev.classList.add('open');
+    requestNewScenario();
+  }
+}
+
+initEditor(
+  {{ tree_json | tojson }},
+  {{ params_json | tojson }},
+  {{ labels_json | tojson }},
+  {{ node_explanations_json | tojson }},
+  {{ summary_explanation_json | tojson }}
+);
+</script>
+</body>
+</html>
