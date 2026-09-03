@@ -26,4 +26,4 @@ Then open http://127.0.0.1:5000
   will work as before if GROQ credentials are set; not otherwise touched.
 - No CSS framework — styling lives in templates/base.html as plain CSS custom properties,
   mirroring the COLORS palette from the old app.py, so you have full control now instead
-  of fighting Streamlit's widget styles.
+  of fighting Streamlit's widget styles...
