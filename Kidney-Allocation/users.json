@@ -1,0 +1,6796 @@
+{
+  "test_1": {
+    "part1_scenarios": [
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 65.0,
+          "years_waiting": 8.0,
+          "urgency_score": 9.0,
+          "health_score": 5.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 54.0,
+          "years_waiting": 9.0,
+          "urgency_score": 7.0,
+          "health_score": 7.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 51.0,
+          "years_waiting": 3.0,
+          "urgency_score": 5.0,
+          "health_score": 7.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 55.0,
+          "years_waiting": 4.0,
+          "urgency_score": 10.0,
+          "health_score": 7.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 61.0,
+          "years_waiting": 1.0,
+          "urgency_score": 9.0,
+          "health_score": 9.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 34.0,
+          "years_waiting": 10.0,
+          "urgency_score": 7.0,
+          "health_score": 8.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 4.0,
+          "age": 42.0,
+          "years_waiting": 1.0,
+          "urgency_score": 7.0,
+          "health_score": 7.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 29.0,
+          "years_waiting": 1.0,
+          "urgency_score": 3.0,
+          "health_score": 5.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 28.0,
+          "years_waiting": 4.0,
+          "urgency_score": 4.0,
+          "health_score": 8.0
+        },
+        "B": {
+          "dependents": 2.0,
+          "age": 58.0,
+          "years_waiting": 4.0,
+          "urgency_score": 7.0,
+          "health_score": 6.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 4.0,
+          "age": 38.0,
+          "years_waiting": 7.0,
+          "urgency_score": 3.0,
+          "health_score": 5.0
+        },
+        "B": {
+          "dependents": 2.0,
+          "age": 61.0,
+          "years_waiting": 8.0,
+          "urgency_score": 3.0,
+          "health_score": 4.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 53.0,
+          "years_waiting": 6.0,
+          "urgency_score": 6.0,
+          "health_score": 7.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 51.0,
+          "years_waiting": 10.0,
+          "urgency_score": 4.0,
+          "health_score": 5.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 2.0,
+          "age": 25.0,
+          "years_waiting": 9.0,
+          "urgency_score": 5.0,
+          "health_score": 7.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 67.0,
+          "years_waiting": 10.0,
+          "urgency_score": 7.0,
+          "health_score": 6.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 66.0,
+          "years_waiting": 8.0,
+          "urgency_score": 8.0,
+          "health_score": 7.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 42.0,
+          "years_waiting": 9.0,
+          "urgency_score": 8.0,
+          "health_score": 8.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 4.0,
+          "age": 38.0,
+          "years_waiting": 5.0,
+          "urgency_score": 10.0,
+          "health_score": 9.0
+        },
+        "B": {
+          "dependents": 0.0,
+          "age": 45.0,
+          "years_waiting": 8.0,
+          "urgency_score": 4.0,
+          "health_score": 5.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 68.0,
+          "years_waiting": 12.0,
+          "urgency_score": 4.0,
+          "health_score": 6.0
+        },
+        "B": {
+          "dependents": 2.0,
+          "age": 52.0,
+          "years_waiting": 9.0,
+          "urgency_score": 3.0,
+          "health_score": 4.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 2.0,
+          "age": 46.0,
+          "years_waiting": 7.0,
+          "urgency_score": 9.0,
+          "health_score": 8.0
+        },
+        "B": {
+          "dependents": 2.0,
+          "age": 53.0,
+          "years_waiting": 4.0,
+          "urgency_score": 8.0,
+          "health_score": 5.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 4.0,
+          "age": 54.0,
+          "years_waiting": 7.0,
+          "urgency_score": 8.0,
+          "health_score": 9.0
+        },
+        "B": {
+          "dependents": 0.0,
+          "age": 37.0,
+          "years_waiting": 10.0,
+          "urgency_score": 5.0,
+          "health_score": 7.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 4.0,
+          "age": 58.0,
+          "years_waiting": 10.0,
+          "urgency_score": 7.0,
+          "health_score": 4.0
+        },
+        "B": {
+          "dependents": 2.0,
+          "age": 41.0,
+          "years_waiting": 3.0,
+          "urgency_score": 6.0,
+          "health_score": 9.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 58.0,
+          "years_waiting": 10.0,
+          "urgency_score": 4.0,
+          "health_score": 7.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 59.0,
+          "years_waiting": 2.0,
+          "urgency_score": 4.0,
+          "health_score": 9.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 59.0,
+          "years_waiting": 9.0,
+          "urgency_score": 6.0,
+          "health_score": 6.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 54.0,
+          "years_waiting": 5.0,
+          "urgency_score": 8.0,
+          "health_score": 9.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 62.0,
+          "years_waiting": 11.0,
+          "urgency_score": 3.0,
+          "health_score": 5.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 40.0,
+          "years_waiting": 7.0,
+          "urgency_score": 10.0,
+          "health_score": 5.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 46.0,
+          "years_waiting": 2.0,
+          "urgency_score": 9.0,
+          "health_score": 8.0
+        },
+        "B": {
+          "dependents": 0.0,
+          "age": 66.0,
+          "years_waiting": 8.0,
+          "urgency_score": 6.0,
+          "health_score": 6.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 40.0,
+          "years_waiting": 3.0,
+          "urgency_score": 3.0,
+          "health_score": 6.0
+        },
+        "B": {
+          "dependents": 0.0,
+          "age": 50.0,
+          "years_waiting": 12.0,
+          "urgency_score": 3.0,
+          "health_score": 4.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 47.0,
+          "years_waiting": 4.0,
+          "urgency_score": 6.0,
+          "health_score": 9.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 33.0,
+          "years_waiting": 3.0,
+          "urgency_score": 3.0,
+          "health_score": 5.0
+        }
+      }
+    ],
+    "part1": [
+      {
+        "username": "test_1",
+        "scenario": 1,
+        "choice": "A",
+        "timestamp": "2026-08-07T14:51:27.339630",
+        "A_dependents": 1.0,
+        "B_dependents": 1.0,
+        "A_age": 65.0,
+        "B_age": 54.0,
+        "A_years_waiting": 8.0,
+        "B_years_waiting": 9.0,
+        "A_urgency_score": 9.0,
+        "B_urgency_score": 7.0,
+        "A_health_score": 5.0,
+        "B_health_score": 7.0
+      },
+      {
+        "username": "test_1",
+        "scenario": 2,
+        "choice": "A",
+        "timestamp": "2026-08-07T14:51:27.639107",
+        "A_dependents": 1.0,
+        "B_dependents": 1.0,
+        "A_age": 51.0,
+        "B_age": 55.0,
+        "A_years_waiting": 3.0,
+        "B_years_waiting": 4.0,
+        "A_urgency_score": 5.0,
+        "B_urgency_score": 10.0,
+        "A_health_score": 7.0,
+        "B_health_score": 7.0
+      },
+      {
+        "username": "test_1",
+        "scenario": 3,
+        "choice": "A",
+        "timestamp": "2026-08-07T14:51:27.952299",
+        "A_dependents": 0.0,
+        "B_dependents": 1.0,
+        "A_age": 61.0,
+        "B_age": 34.0,
+        "A_years_waiting": 1.0,
+        "B_years_waiting": 10.0,
+        "A_urgency_score": 9.0,
+        "B_urgency_score": 7.0,
+        "A_health_score": 9.0,
+        "B_health_score": 8.0
+      },
+      {
+        "username": "test_1",
+        "scenario": 4,
+        "choice": "A",
+        "timestamp": "2026-08-07T14:51:28.251016",
+        "A_dependents": 4.0,
+        "B_dependents": 3.0,
+        "A_age": 42.0,
+        "B_age": 29.0,
+        "A_years_waiting": 1.0,
+        "B_years_waiting": 1.0,
+        "A_urgency_score": 7.0,
+        "B_urgency_score": 3.0,
+        "A_health_score": 7.0,
+        "B_health_score": 5.0
+      },
+      {
+        "username": "test_1",
+        "scenario": 5,
+        "choice": "A",
+        "timestamp": "2026-08-07T14:51:28.569597",
+        "A_dependents": 3.0,
+        "B_dependents": 2.0,
+        "A_age": 28.0,
+        "B_age": 58.0,
+        "A_years_waiting": 4.0,
+        "B_years_waiting": 4.0,
+        "A_urgency_score": 4.0,
+        "B_urgency_score": 7.0,
+        "A_health_score": 8.0,
+        "B_health_score": 6.0
+      },
+      {
+        "username": "test_1",
+        "scenario": 6,
+        "choice": "A",
+        "timestamp": "2026-08-07T14:51:28.892031",
+        "A_dependents": 4.0,
+        "B_dependents": 2.0,
+        "A_age": 38.0,
+        "B_age": 61.0,
+        "A_years_waiting": 7.0,
+        "B_years_waiting": 8.0,
+        "A_urgency_score": 3.0,
+        "B_urgency_score": 3.0,
+        "A_health_score": 5.0,
+        "B_health_score": 4.0
+      },
+      {
+        "username": "test_1",
+        "scenario": 7,
+        "choice": "A",
+        "timestamp": "2026-08-07T14:51:29.227459",
+        "A_dependents": 3.0,
+        "B_dependents": 3.0,
+        "A_age": 53.0,
+        "B_age": 51.0,
+        "A_years_waiting": 6.0,
+        "B_years_waiting": 10.0,
+        "A_urgency_score": 6.0,
+        "B_urgency_score": 4.0,
+        "A_health_score": 7.0,
+        "B_health_score": 5.0
+      },
+      {
+        "username": "test_1",
+        "scenario": 8,
+        "choice": "A",
+        "timestamp": "2026-08-07T14:51:29.581171",
+        "A_dependents": 2.0,
+        "B_dependents": 3.0,
+        "A_age": 25.0,
+        "B_age": 67.0,
+        "A_years_waiting": 9.0,
+        "B_years_waiting": 10.0,
+        "A_urgency_score": 5.0,
+        "B_urgency_score": 7.0,
+        "A_health_score": 7.0,
+        "B_health_score": 6.0
+      },
+      {
+        "username": "test_1",
+        "scenario": 9,
+        "choice": "A",
+        "timestamp": "2026-08-07T14:51:29.944787",
+        "A_dependents": 0.0,
+        "B_dependents": 3.0,
+        "A_age": 66.0,
+        "B_age": 42.0,
+        "A_years_waiting": 8.0,
+        "B_years_waiting": 9.0,
+        "A_urgency_score": 8.0,
+        "B_urgency_score": 8.0,
+        "A_health_score": 7.0,
+        "B_health_score": 8.0
+      },
+      {
+        "username": "test_1",
+        "scenario": 10,
+        "choice": "A",
+        "timestamp": "2026-08-07T14:51:30.289100",
+        "A_dependents": 4.0,
+        "B_dependents": 0.0,
+        "A_age": 38.0,
+        "B_age": 45.0,
+        "A_years_waiting": 5.0,
+        "B_years_waiting": 8.0,
+        "A_urgency_score": 10.0,
+        "B_urgency_score": 4.0,
+        "A_health_score": 9.0,
+        "B_health_score": 5.0
+      },
+      {
+        "username": "test_1",
+        "scenario": 11,
+        "choice": "A",
+        "timestamp": "2026-08-07T14:51:30.681597",
+        "A_dependents": 0.0,
+        "B_dependents": 2.0,
+        "A_age": 68.0,
+        "B_age": 52.0,
+        "A_years_waiting": 12.0,
+        "B_years_waiting": 9.0,
+        "A_urgency_score": 4.0,
+        "B_urgency_score": 3.0,
+        "A_health_score": 6.0,
+        "B_health_score": 4.0
+      },
+      {
+        "username": "test_1",
+        "scenario": 12,
+        "choice": "A",
+        "timestamp": "2026-08-07T14:51:31.064968",
+        "A_dependents": 2.0,
+        "B_dependents": 2.0,
+        "A_age": 46.0,
+        "B_age": 53.0,
+        "A_years_waiting": 7.0,
+        "B_years_waiting": 4.0,
+        "A_urgency_score": 9.0,
+        "B_urgency_score": 8.0,
+        "A_health_score": 8.0,
+        "B_health_score": 5.0
+      },
+      {
+        "username": "test_1",
+        "scenario": 13,
+        "choice": "A",
+        "timestamp": "2026-08-07T14:51:31.453494",
+        "A_dependents": 4.0,
+        "B_dependents": 0.0,
+        "A_age": 54.0,
+        "B_age": 37.0,
+        "A_years_waiting": 7.0,
+        "B_years_waiting": 10.0,
+        "A_urgency_score": 8.0,
+        "B_urgency_score": 5.0,
+        "A_health_score": 9.0,
+        "B_health_score": 7.0
+      },
+      {
+        "username": "test_1",
+        "scenario": 14,
+        "choice": "A",
+        "timestamp": "2026-08-07T14:51:31.789998",
+        "A_dependents": 4.0,
+        "B_dependents": 2.0,
+        "A_age": 58.0,
+        "B_age": 41.0,
+        "A_years_waiting": 10.0,
+        "B_years_waiting": 3.0,
+        "A_urgency_score": 7.0,
+        "B_urgency_score": 6.0,
+        "A_health_score": 4.0,
+        "B_health_score": 9.0
+      },
+      {
+        "username": "test_1",
+        "scenario": 15,
+        "choice": "B",
+        "timestamp": "2026-08-07T14:51:35.927018",
+        "A_dependents": 1.0,
+        "B_dependents": 1.0,
+        "A_age": 58.0,
+        "B_age": 59.0,
+        "A_years_waiting": 10.0,
+        "B_years_waiting": 2.0,
+        "A_urgency_score": 4.0,
+        "B_urgency_score": 4.0,
+        "A_health_score": 7.0,
+        "B_health_score": 9.0
+      },
+      {
+        "username": "test_1",
+        "scenario": 16,
+        "choice": "B",
+        "timestamp": "2026-08-07T14:51:36.246218",
+        "A_dependents": 0.0,
+        "B_dependents": 3.0,
+        "A_age": 59.0,
+        "B_age": 54.0,
+        "A_years_waiting": 9.0,
+        "B_years_waiting": 5.0,
+        "A_urgency_score": 6.0,
+        "B_urgency_score": 8.0,
+        "A_health_score": 6.0,
+        "B_health_score": 9.0
+      },
+      {
+        "username": "test_1",
+        "scenario": 17,
+        "choice": "B",
+        "timestamp": "2026-08-07T14:51:36.603696",
+        "A_dependents": 3.0,
+        "B_dependents": 4.0,
+        "A_age": 62.0,
+        "B_age": 40.0,
+        "A_years_waiting": 11.0,
+        "B_years_waiting": 7.0,
+        "A_urgency_score": 3.0,
+        "B_urgency_score": 10.0,
+        "A_health_score": 5.0,
+        "B_health_score": 5.0
+      },
+      {
+        "username": "test_1",
+        "scenario": 18,
+        "choice": "B",
+        "timestamp": "2026-08-07T14:51:36.942343",
+        "A_dependents": 1.0,
+        "B_dependents": 0.0,
+        "A_age": 46.0,
+        "B_age": 66.0,
+        "A_years_waiting": 2.0,
+        "B_years_waiting": 8.0,
+        "A_urgency_score": 9.0,
+        "B_urgency_score": 6.0,
+        "A_health_score": 8.0,
+        "B_health_score": 6.0
+      },
+      {
+        "username": "test_1",
+        "scenario": 19,
+        "choice": "B",
+        "timestamp": "2026-08-07T14:51:37.940711",
+        "A_dependents": 0.0,
+        "B_dependents": 0.0,
+        "A_age": 40.0,
+        "B_age": 50.0,
+        "A_years_waiting": 3.0,
+        "B_years_waiting": 12.0,
+        "A_urgency_score": 3.0,
+        "B_urgency_score": 3.0,
+        "A_health_score": 6.0,
+        "B_health_score": 4.0
+      },
+      {
+        "username": "test_1",
+        "scenario": 20,
+        "choice": "A",
+        "timestamp": "2026-08-07T14:51:38.386331",
+        "A_dependents": 1.0,
+        "B_dependents": 3.0,
+        "A_age": 47.0,
+        "B_age": 33.0,
+        "A_years_waiting": 4.0,
+        "B_years_waiting": 3.0,
+        "A_urgency_score": 6.0,
+        "B_urgency_score": 3.0,
+        "A_health_score": 9.0,
+        "B_health_score": 5.0
+      }
+    ],
+    "part1_index": 20,
+    "part2_scenarios": [
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 27.0,
+          "years_waiting": 12.0,
+          "urgency_score": 6.0,
+          "health_score": 6.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 67.0,
+          "years_waiting": 10.0,
+          "urgency_score": 3.0,
+          "health_score": 5.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 60.0,
+          "years_waiting": 8.0,
+          "urgency_score": 3.0,
+          "health_score": 8.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 46.0,
+          "years_waiting": 1.0,
+          "urgency_score": 10.0,
+          "health_score": 5.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 2.0,
+          "age": 47.0,
+          "years_waiting": 7.0,
+          "urgency_score": 4.0,
+          "health_score": 7.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 65.0,
+          "years_waiting": 11.0,
+          "urgency_score": 3.0,
+          "health_score": 8.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 48.0,
+          "years_waiting": 1.0,
+          "urgency_score": 8.0,
+          "health_score": 8.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 49.0,
+          "years_waiting": 1.0,
+          "urgency_score": 6.0,
+          "health_score": 9.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 42.0,
+          "years_waiting": 12.0,
+          "urgency_score": 4.0,
+          "health_score": 4.0
+        },
+        "B": {
+          "dependents": 2.0,
+          "age": 57.0,
+          "years_waiting": 12.0,
+          "urgency_score": 10.0,
+          "health_score": 8.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 25.0,
+          "years_waiting": 8.0,
+          "urgency_score": 6.0,
+          "health_score": 9.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 50.0,
+          "years_waiting": 3.0,
+          "urgency_score": 6.0,
+          "health_score": 9.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 40.0,
+          "years_waiting": 1.0,
+          "urgency_score": 7.0,
+          "health_score": 7.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 54.0,
+          "years_waiting": 5.0,
+          "urgency_score": 8.0,
+          "health_score": 9.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 4.0,
+          "age": 44.0,
+          "years_waiting": 1.0,
+          "urgency_score": 7.0,
+          "health_score": 5.0
+        },
+        "B": {
+          "dependents": 0.0,
+          "age": 44.0,
+          "years_waiting": 9.0,
+          "urgency_score": 7.0,
+          "health_score": 8.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 2.0,
+          "age": 52.0,
+          "years_waiting": 10.0,
+          "urgency_score": 3.0,
+          "health_score": 5.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 52.0,
+          "years_waiting": 5.0,
+          "urgency_score": 6.0,
+          "health_score": 8.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 53.0,
+          "years_waiting": 3.0,
+          "urgency_score": 7.0,
+          "health_score": 7.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 29.0,
+          "years_waiting": 6.0,
+          "urgency_score": 7.0,
+          "health_score": 8.0
+        }
+      }
+    ],
+    "part2": [
+      {
+        "username": "test_1",
+        "scenario": 1,
+        "choice": "B",
+        "timestamp": "2026-08-07T16:09:09.507862",
+        "A_dependents": 1.0,
+        "B_dependents": 3.0,
+        "A_age": 27.0,
+        "B_age": 67.0,
+        "A_years_waiting": 12.0,
+        "B_years_waiting": 10.0,
+        "A_urgency_score": 6.0,
+        "B_urgency_score": 3.0,
+        "A_health_score": 6.0,
+        "B_health_score": 5.0
+      },
+      {
+        "username": "test_1",
+        "scenario": 2,
+        "choice": "B",
+        "timestamp": "2026-08-07T16:09:10.366527",
+        "A_dependents": 1.0,
+        "B_dependents": 1.0,
+        "A_age": 60.0,
+        "B_age": 46.0,
+        "A_years_waiting": 8.0,
+        "B_years_waiting": 1.0,
+        "A_urgency_score": 3.0,
+        "B_urgency_score": 10.0,
+        "A_health_score": 8.0,
+        "B_health_score": 5.0
+      },
+      {
+        "username": "test_1",
+        "scenario": 3,
+        "choice": "B",
+        "timestamp": "2026-08-07T16:09:10.857835",
+        "A_dependents": 2.0,
+        "B_dependents": 4.0,
+        "A_age": 47.0,
+        "B_age": 65.0,
+        "A_years_waiting": 7.0,
+        "B_years_waiting": 11.0,
+        "A_urgency_score": 4.0,
+        "B_urgency_score": 3.0,
+        "A_health_score": 7.0,
+        "B_health_score": 8.0
+      },
+      {
+        "username": "test_1",
+        "scenario": 4,
+        "choice": "B",
+        "timestamp": "2026-08-07T16:09:11.167134",
+        "A_dependents": 3.0,
+        "B_dependents": 3.0,
+        "A_age": 48.0,
+        "B_age": 49.0,
+        "A_years_waiting": 1.0,
+        "B_years_waiting": 1.0,
+        "A_urgency_score": 8.0,
+        "B_urgency_score": 6.0,
+        "A_health_score": 8.0,
+        "B_health_score": 9.0
+      },
+      {
+        "username": "test_1",
+        "scenario": 5,
+        "choice": "B",
+        "timestamp": "2026-08-07T16:09:11.415008",
+        "A_dependents": 0.0,
+        "B_dependents": 2.0,
+        "A_age": 42.0,
+        "B_age": 57.0,
+        "A_years_waiting": 12.0,
+        "B_years_waiting": 12.0,
+        "A_urgency_score": 4.0,
+        "B_urgency_score": 10.0,
+        "A_health_score": 4.0,
+        "B_health_score": 8.0
+      },
+      {
+        "username": "test_1",
+        "scenario": 6,
+        "choice": "B",
+        "timestamp": "2026-08-07T16:09:11.668325",
+        "A_dependents": 3.0,
+        "B_dependents": 1.0,
+        "A_age": 25.0,
+        "B_age": 50.0,
+        "A_years_waiting": 8.0,
+        "B_years_waiting": 3.0,
+        "A_urgency_score": 6.0,
+        "B_urgency_score": 6.0,
+        "A_health_score": 9.0,
+        "B_health_score": 9.0
+      },
+      {
+        "username": "test_1",
+        "scenario": 7,
+        "choice": "B",
+        "timestamp": "2026-08-07T16:09:12.622704",
+        "A_dependents": 3.0,
+        "B_dependents": 1.0,
+        "A_age": 40.0,
+        "B_age": 54.0,
+        "A_years_waiting": 1.0,
+        "B_years_waiting": 5.0,
+        "A_urgency_score": 7.0,
+        "B_urgency_score": 8.0,
+        "A_health_score": 7.0,
+        "B_health_score": 9.0
+      },
+      {
+        "username": "test_1",
+        "scenario": 8,
+        "choice": "B",
+        "timestamp": "2026-08-07T16:09:13.193731",
+        "A_dependents": 4.0,
+        "B_dependents": 0.0,
+        "A_age": 44.0,
+        "B_age": 44.0,
+        "A_years_waiting": 1.0,
+        "B_years_waiting": 9.0,
+        "A_urgency_score": 7.0,
+        "B_urgency_score": 7.0,
+        "A_health_score": 5.0,
+        "B_health_score": 8.0
+      },
+      {
+        "username": "test_1",
+        "scenario": 9,
+        "choice": "B",
+        "timestamp": "2026-08-07T16:09:13.541150",
+        "A_dependents": 2.0,
+        "B_dependents": 4.0,
+        "A_age": 52.0,
+        "B_age": 52.0,
+        "A_years_waiting": 10.0,
+        "B_years_waiting": 5.0,
+        "A_urgency_score": 3.0,
+        "B_urgency_score": 6.0,
+        "A_health_score": 5.0,
+        "B_health_score": 8.0
+      },
+      {
+        "username": "test_1",
+        "scenario": 10,
+        "choice": "B",
+        "timestamp": "2026-08-07T16:09:13.946550",
+        "A_dependents": 3.0,
+        "B_dependents": 3.0,
+        "A_age": 53.0,
+        "B_age": 29.0,
+        "A_years_waiting": 3.0,
+        "B_years_waiting": 6.0,
+        "A_urgency_score": 7.0,
+        "B_urgency_score": 7.0,
+        "A_health_score": 7.0,
+        "B_health_score": 8.0
+      }
+    ],
+    "part2_index": 10,
+    "alignment_score": 3,
+    "fft_override": {
+      "default_class": 0,
+      "default_purity": 0.5,
+      "default_support": 0.05,
+      "feature_names": [
+        "dependents_diff",
+        "age_diff",
+        "years_waiting_diff",
+        "urgency_score_diff",
+        "health_score_diff"
+      ],
+      "max_depth": 4,
+      "near_tie_threshold": 1,
+      "nodes": [
+        {
+          "exit_class": 1,
+          "feature": "urgency_score_diff",
+          "op": ">=",
+          "prefer_higher": true,
+          "purity": 0.75,
+          "support": 0.8,
+          "threshold": 1,
+          "use_abs": true
+        },
+        {
+          "feature": "dependents_diff_diff",
+          "op": ">=",
+          "threshold": 0,
+          "use_abs": true,
+          "prefer_higher": true,
+          "exit_class": 1,
+          "support": 0,
+          "purity": 0.5
+        },
+        {
+          "exit_class": 0,
+          "feature": "dependents_diff",
+          "op": ">=",
+          "prefer_higher": false,
+          "purity": 1,
+          "support": 0.05,
+          "threshold": 3,
+          "use_abs": true
+        },
+        {
+          "exit_class": 0,
+          "feature": "age_diff",
+          "op": ">=",
+          "prefer_higher": false,
+          "purity": 1,
+          "support": 0.05,
+          "threshold": 17,
+          "use_abs": true
+        },
+        {
+          "exit_class": 0,
+          "feature": "years_waiting_diff",
+          "op": ">=",
+          "prefer_higher": true,
+          "purity": 1,
+          "support": 0.05,
+          "threshold": 9,
+          "use_abs": true
+        }
+      ]
+    }
+  },
+  "Chitresh": {
+    "part1_scenarios": [
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 41.0,
+          "years_waiting": 9.0,
+          "urgency_score": 7.0,
+          "health_score": 7.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 39.0,
+          "years_waiting": 7.0,
+          "urgency_score": 9.0,
+          "health_score": 8.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 4.0,
+          "age": 52.0,
+          "years_waiting": 10.0,
+          "urgency_score": 3.0,
+          "health_score": 5.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 26.0,
+          "years_waiting": 2.0,
+          "urgency_score": 9.0,
+          "health_score": 7.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 31.0,
+          "years_waiting": 5.0,
+          "urgency_score": 3.0,
+          "health_score": 9.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 51.0,
+          "years_waiting": 12.0,
+          "urgency_score": 8.0,
+          "health_score": 4.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 61.0,
+          "years_waiting": 8.0,
+          "urgency_score": 10.0,
+          "health_score": 9.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 45.0,
+          "years_waiting": 10.0,
+          "urgency_score": 6.0,
+          "health_score": 9.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 63.0,
+          "years_waiting": 9.0,
+          "urgency_score": 9.0,
+          "health_score": 4.0
+        },
+        "B": {
+          "dependents": 0.0,
+          "age": 55.0,
+          "years_waiting": 6.0,
+          "urgency_score": 9.0,
+          "health_score": 5.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 63.0,
+          "years_waiting": 6.0,
+          "urgency_score": 3.0,
+          "health_score": 5.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 63.0,
+          "years_waiting": 5.0,
+          "urgency_score": 3.0,
+          "health_score": 4.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 59.0,
+          "years_waiting": 5.0,
+          "urgency_score": 4.0,
+          "health_score": 9.0
+        },
+        "B": {
+          "dependents": 2.0,
+          "age": 58.0,
+          "years_waiting": 12.0,
+          "urgency_score": 3.0,
+          "health_score": 8.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 59.0,
+          "years_waiting": 3.0,
+          "urgency_score": 6.0,
+          "health_score": 8.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 45.0,
+          "years_waiting": 12.0,
+          "urgency_score": 9.0,
+          "health_score": 6.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 2.0,
+          "age": 29.0,
+          "years_waiting": 7.0,
+          "urgency_score": 3.0,
+          "health_score": 5.0
+        },
+        "B": {
+          "dependents": 0.0,
+          "age": 59.0,
+          "years_waiting": 8.0,
+          "urgency_score": 8.0,
+          "health_score": 5.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 37.0,
+          "years_waiting": 2.0,
+          "urgency_score": 9.0,
+          "health_score": 5.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 25.0,
+          "years_waiting": 4.0,
+          "urgency_score": 5.0,
+          "health_score": 5.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 2.0,
+          "age": 37.0,
+          "years_waiting": 8.0,
+          "urgency_score": 10.0,
+          "health_score": 6.0
+        },
+        "B": {
+          "dependents": 0.0,
+          "age": 57.0,
+          "years_waiting": 1.0,
+          "urgency_score": 4.0,
+          "health_score": 7.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 2.0,
+          "age": 64.0,
+          "years_waiting": 3.0,
+          "urgency_score": 10.0,
+          "health_score": 5.0
+        },
+        "B": {
+          "dependents": 0.0,
+          "age": 29.0,
+          "years_waiting": 9.0,
+          "urgency_score": 6.0,
+          "health_score": 7.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 47.0,
+          "years_waiting": 2.0,
+          "urgency_score": 9.0,
+          "health_score": 9.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 56.0,
+          "years_waiting": 8.0,
+          "urgency_score": 3.0,
+          "health_score": 5.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 4.0,
+          "age": 51.0,
+          "years_waiting": 5.0,
+          "urgency_score": 5.0,
+          "health_score": 9.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 28.0,
+          "years_waiting": 4.0,
+          "urgency_score": 6.0,
+          "health_score": 4.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 42.0,
+          "years_waiting": 9.0,
+          "urgency_score": 4.0,
+          "health_score": 9.0
+        },
+        "B": {
+          "dependents": 2.0,
+          "age": 66.0,
+          "years_waiting": 10.0,
+          "urgency_score": 7.0,
+          "health_score": 5.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 28.0,
+          "years_waiting": 12.0,
+          "urgency_score": 7.0,
+          "health_score": 9.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 44.0,
+          "years_waiting": 2.0,
+          "urgency_score": 7.0,
+          "health_score": 6.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 64.0,
+          "years_waiting": 8.0,
+          "urgency_score": 9.0,
+          "health_score": 6.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 35.0,
+          "years_waiting": 10.0,
+          "urgency_score": 4.0,
+          "health_score": 6.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 2.0,
+          "age": 46.0,
+          "years_waiting": 12.0,
+          "urgency_score": 7.0,
+          "health_score": 7.0
+        },
+        "B": {
+          "dependents": 2.0,
+          "age": 38.0,
+          "years_waiting": 10.0,
+          "urgency_score": 5.0,
+          "health_score": 7.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 68.0,
+          "years_waiting": 6.0,
+          "urgency_score": 8.0,
+          "health_score": 6.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 46.0,
+          "years_waiting": 12.0,
+          "urgency_score": 10.0,
+          "health_score": 4.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 33.0,
+          "years_waiting": 3.0,
+          "urgency_score": 8.0,
+          "health_score": 8.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 28.0,
+          "years_waiting": 5.0,
+          "urgency_score": 8.0,
+          "health_score": 7.0
+        }
+      }
+    ],
+    "part1": [
+      {
+        "username": "Chitresh",
+        "scenario": 1,
+        "choice": "A",
+        "timestamp": "2026-08-10T17:07:19.351661",
+        "A_dependents": 3.0,
+        "B_dependents": 4.0,
+        "A_age": 41.0,
+        "B_age": 39.0,
+        "A_years_waiting": 9.0,
+        "B_years_waiting": 7.0,
+        "A_urgency_score": 7.0,
+        "B_urgency_score": 9.0,
+        "A_health_score": 7.0,
+        "B_health_score": 8.0
+      },
+      {
+        "username": "Chitresh",
+        "scenario": 2,
+        "choice": "B",
+        "timestamp": "2026-08-10T17:07:20.992717",
+        "A_dependents": 4.0,
+        "B_dependents": 4.0,
+        "A_age": 52.0,
+        "B_age": 26.0,
+        "A_years_waiting": 10.0,
+        "B_years_waiting": 2.0,
+        "A_urgency_score": 3.0,
+        "B_urgency_score": 9.0,
+        "A_health_score": 5.0,
+        "B_health_score": 7.0
+      },
+      {
+        "username": "Chitresh",
+        "scenario": 3,
+        "choice": "A",
+        "timestamp": "2026-08-10T17:07:23.121842",
+        "A_dependents": 3.0,
+        "B_dependents": 1.0,
+        "A_age": 31.0,
+        "B_age": 51.0,
+        "A_years_waiting": 5.0,
+        "B_years_waiting": 12.0,
+        "A_urgency_score": 3.0,
+        "B_urgency_score": 8.0,
+        "A_health_score": 9.0,
+        "B_health_score": 4.0
+      },
+      {
+        "username": "Chitresh",
+        "scenario": 4,
+        "choice": "A",
+        "timestamp": "2026-08-10T17:07:26.585073",
+        "A_dependents": 0.0,
+        "B_dependents": 4.0,
+        "A_age": 61.0,
+        "B_age": 45.0,
+        "A_years_waiting": 8.0,
+        "B_years_waiting": 10.0,
+        "A_urgency_score": 10.0,
+        "B_urgency_score": 6.0,
+        "A_health_score": 9.0,
+        "B_health_score": 9.0
+      },
+      {
+        "username": "Chitresh",
+        "scenario": 5,
+        "choice": "A",
+        "timestamp": "2026-08-10T17:07:27.470912",
+        "A_dependents": 3.0,
+        "B_dependents": 0.0,
+        "A_age": 63.0,
+        "B_age": 55.0,
+        "A_years_waiting": 9.0,
+        "B_years_waiting": 6.0,
+        "A_urgency_score": 9.0,
+        "B_urgency_score": 9.0,
+        "A_health_score": 4.0,
+        "B_health_score": 5.0
+      },
+      {
+        "username": "Chitresh",
+        "scenario": 6,
+        "choice": "A",
+        "timestamp": "2026-08-10T17:07:27.724429",
+        "A_dependents": 1.0,
+        "B_dependents": 3.0,
+        "A_age": 63.0,
+        "B_age": 63.0,
+        "A_years_waiting": 6.0,
+        "B_years_waiting": 5.0,
+        "A_urgency_score": 3.0,
+        "B_urgency_score": 3.0,
+        "A_health_score": 5.0,
+        "B_health_score": 4.0
+      },
+      {
+        "username": "Chitresh",
+        "scenario": 7,
+        "choice": "A",
+        "timestamp": "2026-08-10T17:07:28.573246",
+        "A_dependents": 3.0,
+        "B_dependents": 2.0,
+        "A_age": 59.0,
+        "B_age": 58.0,
+        "A_years_waiting": 5.0,
+        "B_years_waiting": 12.0,
+        "A_urgency_score": 4.0,
+        "B_urgency_score": 3.0,
+        "A_health_score": 9.0,
+        "B_health_score": 8.0
+      },
+      {
+        "username": "Chitresh",
+        "scenario": 8,
+        "choice": "B",
+        "timestamp": "2026-08-10T17:07:29.606471",
+        "A_dependents": 1.0,
+        "B_dependents": 3.0,
+        "A_age": 59.0,
+        "B_age": 45.0,
+        "A_years_waiting": 3.0,
+        "B_years_waiting": 12.0,
+        "A_urgency_score": 6.0,
+        "B_urgency_score": 9.0,
+        "A_health_score": 8.0,
+        "B_health_score": 6.0
+      },
+      {
+        "username": "Chitresh",
+        "scenario": 9,
+        "choice": "B",
+        "timestamp": "2026-08-10T17:07:30.206292",
+        "A_dependents": 2.0,
+        "B_dependents": 0.0,
+        "A_age": 29.0,
+        "B_age": 59.0,
+        "A_years_waiting": 7.0,
+        "B_years_waiting": 8.0,
+        "A_urgency_score": 3.0,
+        "B_urgency_score": 8.0,
+        "A_health_score": 5.0,
+        "B_health_score": 5.0
+      },
+      {
+        "username": "Chitresh",
+        "scenario": 10,
+        "choice": "A",
+        "timestamp": "2026-08-10T17:07:30.838907",
+        "A_dependents": 1.0,
+        "B_dependents": 1.0,
+        "A_age": 37.0,
+        "B_age": 25.0,
+        "A_years_waiting": 2.0,
+        "B_years_waiting": 4.0,
+        "A_urgency_score": 9.0,
+        "B_urgency_score": 5.0,
+        "A_health_score": 5.0,
+        "B_health_score": 5.0
+      },
+      {
+        "username": "Chitresh",
+        "scenario": 11,
+        "choice": "A",
+        "timestamp": "2026-08-10T17:07:31.106218",
+        "A_dependents": 2.0,
+        "B_dependents": 0.0,
+        "A_age": 37.0,
+        "B_age": 57.0,
+        "A_years_waiting": 8.0,
+        "B_years_waiting": 1.0,
+        "A_urgency_score": 10.0,
+        "B_urgency_score": 4.0,
+        "A_health_score": 6.0,
+        "B_health_score": 7.0
+      },
+      {
+        "username": "Chitresh",
+        "scenario": 12,
+        "choice": "B",
+        "timestamp": "2026-08-10T17:07:31.787928",
+        "A_dependents": 2.0,
+        "B_dependents": 0.0,
+        "A_age": 64.0,
+        "B_age": 29.0,
+        "A_years_waiting": 3.0,
+        "B_years_waiting": 9.0,
+        "A_urgency_score": 10.0,
+        "B_urgency_score": 6.0,
+        "A_health_score": 5.0,
+        "B_health_score": 7.0
+      },
+      {
+        "username": "Chitresh",
+        "scenario": 13,
+        "choice": "B",
+        "timestamp": "2026-08-10T17:07:32.073674",
+        "A_dependents": 1.0,
+        "B_dependents": 4.0,
+        "A_age": 47.0,
+        "B_age": 56.0,
+        "A_years_waiting": 2.0,
+        "B_years_waiting": 8.0,
+        "A_urgency_score": 9.0,
+        "B_urgency_score": 3.0,
+        "A_health_score": 9.0,
+        "B_health_score": 5.0
+      },
+      {
+        "username": "Chitresh",
+        "scenario": 14,
+        "choice": "B",
+        "timestamp": "2026-08-10T17:07:32.319057",
+        "A_dependents": 4.0,
+        "B_dependents": 3.0,
+        "A_age": 51.0,
+        "B_age": 28.0,
+        "A_years_waiting": 5.0,
+        "B_years_waiting": 4.0,
+        "A_urgency_score": 5.0,
+        "B_urgency_score": 6.0,
+        "A_health_score": 9.0,
+        "B_health_score": 4.0
+      },
+      {
+        "username": "Chitresh",
+        "scenario": 15,
+        "choice": "B",
+        "timestamp": "2026-08-10T17:07:32.555802",
+        "A_dependents": 3.0,
+        "B_dependents": 2.0,
+        "A_age": 42.0,
+        "B_age": 66.0,
+        "A_years_waiting": 9.0,
+        "B_years_waiting": 10.0,
+        "A_urgency_score": 4.0,
+        "B_urgency_score": 7.0,
+        "A_health_score": 9.0,
+        "B_health_score": 5.0
+      },
+      {
+        "username": "Chitresh",
+        "scenario": 16,
+        "choice": "B",
+        "timestamp": "2026-08-10T17:07:32.785377",
+        "A_dependents": 1.0,
+        "B_dependents": 3.0,
+        "A_age": 28.0,
+        "B_age": 44.0,
+        "A_years_waiting": 12.0,
+        "B_years_waiting": 2.0,
+        "A_urgency_score": 7.0,
+        "B_urgency_score": 7.0,
+        "A_health_score": 9.0,
+        "B_health_score": 6.0
+      },
+      {
+        "username": "Chitresh",
+        "scenario": 17,
+        "choice": "B",
+        "timestamp": "2026-08-10T17:07:32.985187",
+        "A_dependents": 0.0,
+        "B_dependents": 4.0,
+        "A_age": 64.0,
+        "B_age": 35.0,
+        "A_years_waiting": 8.0,
+        "B_years_waiting": 10.0,
+        "A_urgency_score": 9.0,
+        "B_urgency_score": 4.0,
+        "A_health_score": 6.0,
+        "B_health_score": 6.0
+      },
+      {
+        "username": "Chitresh",
+        "scenario": 18,
+        "choice": "B",
+        "timestamp": "2026-08-10T17:07:33.201137",
+        "A_dependents": 2.0,
+        "B_dependents": 2.0,
+        "A_age": 46.0,
+        "B_age": 38.0,
+        "A_years_waiting": 12.0,
+        "B_years_waiting": 10.0,
+        "A_urgency_score": 7.0,
+        "B_urgency_score": 5.0,
+        "A_health_score": 7.0,
+        "B_health_score": 7.0
+      },
+      {
+        "username": "Chitresh",
+        "scenario": 19,
+        "choice": "B",
+        "timestamp": "2026-08-10T17:07:33.418390",
+        "A_dependents": 1.0,
+        "B_dependents": 4.0,
+        "A_age": 68.0,
+        "B_age": 46.0,
+        "A_years_waiting": 6.0,
+        "B_years_waiting": 12.0,
+        "A_urgency_score": 8.0,
+        "B_urgency_score": 10.0,
+        "A_health_score": 6.0,
+        "B_health_score": 4.0
+      },
+      {
+        "username": "Chitresh",
+        "scenario": 20,
+        "choice": "B",
+        "timestamp": "2026-08-10T17:07:33.651959",
+        "A_dependents": 3.0,
+        "B_dependents": 1.0,
+        "A_age": 33.0,
+        "B_age": 28.0,
+        "A_years_waiting": 3.0,
+        "B_years_waiting": 5.0,
+        "A_urgency_score": 8.0,
+        "B_urgency_score": 8.0,
+        "A_health_score": 8.0,
+        "B_health_score": 7.0
+      }
+    ],
+    "part1_index": 20,
+    "part2_scenarios": [
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 52.0,
+          "years_waiting": 7.0,
+          "urgency_score": 6.0,
+          "health_score": 6.0
+        },
+        "B": {
+          "dependents": 2.0,
+          "age": 29.0,
+          "years_waiting": 5.0,
+          "urgency_score": 9.0,
+          "health_score": 9.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 58.0,
+          "years_waiting": 10.0,
+          "urgency_score": 6.0,
+          "health_score": 5.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 36.0,
+          "years_waiting": 11.0,
+          "urgency_score": 4.0,
+          "health_score": 7.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 4.0,
+          "age": 52.0,
+          "years_waiting": 8.0,
+          "urgency_score": 7.0,
+          "health_score": 8.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 31.0,
+          "years_waiting": 2.0,
+          "urgency_score": 6.0,
+          "health_score": 4.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 2.0,
+          "age": 67.0,
+          "years_waiting": 6.0,
+          "urgency_score": 7.0,
+          "health_score": 8.0
+        },
+        "B": {
+          "dependents": 0.0,
+          "age": 38.0,
+          "years_waiting": 7.0,
+          "urgency_score": 3.0,
+          "health_score": 8.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 2.0,
+          "age": 43.0,
+          "years_waiting": 11.0,
+          "urgency_score": 7.0,
+          "health_score": 4.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 36.0,
+          "years_waiting": 10.0,
+          "urgency_score": 9.0,
+          "health_score": 4.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 2.0,
+          "age": 67.0,
+          "years_waiting": 8.0,
+          "urgency_score": 6.0,
+          "health_score": 7.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 42.0,
+          "years_waiting": 8.0,
+          "urgency_score": 5.0,
+          "health_score": 8.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 49.0,
+          "years_waiting": 8.0,
+          "urgency_score": 6.0,
+          "health_score": 5.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 28.0,
+          "years_waiting": 8.0,
+          "urgency_score": 4.0,
+          "health_score": 4.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 47.0,
+          "years_waiting": 12.0,
+          "urgency_score": 6.0,
+          "health_score": 5.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 28.0,
+          "years_waiting": 1.0,
+          "urgency_score": 9.0,
+          "health_score": 5.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 47.0,
+          "years_waiting": 2.0,
+          "urgency_score": 4.0,
+          "health_score": 4.0
+        },
+        "B": {
+          "dependents": 0.0,
+          "age": 41.0,
+          "years_waiting": 9.0,
+          "urgency_score": 5.0,
+          "health_score": 4.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 26.0,
+          "years_waiting": 1.0,
+          "urgency_score": 4.0,
+          "health_score": 7.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 45.0,
+          "years_waiting": 8.0,
+          "urgency_score": 9.0,
+          "health_score": 8.0
+        }
+      }
+    ],
+    "part2": [
+      {
+        "username": "Chitresh",
+        "scenario": 1,
+        "choice": "B",
+        "timestamp": "2026-08-12T13:31:24.831872",
+        "A_dependents": 0.0,
+        "B_dependents": 2.0,
+        "A_age": 52.0,
+        "B_age": 29.0,
+        "A_years_waiting": 7.0,
+        "B_years_waiting": 5.0,
+        "A_urgency_score": 6.0,
+        "B_urgency_score": 9.0,
+        "A_health_score": 6.0,
+        "B_health_score": 9.0
+      },
+      {
+        "username": "Chitresh",
+        "scenario": 2,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:31:25.800100",
+        "A_dependents": 3.0,
+        "B_dependents": 3.0,
+        "A_age": 58.0,
+        "B_age": 36.0,
+        "A_years_waiting": 10.0,
+        "B_years_waiting": 11.0,
+        "A_urgency_score": 6.0,
+        "B_urgency_score": 4.0,
+        "A_health_score": 5.0,
+        "B_health_score": 7.0
+      },
+      {
+        "username": "Chitresh",
+        "scenario": 3,
+        "choice": "B",
+        "timestamp": "2026-08-12T13:31:26.296488",
+        "A_dependents": 4.0,
+        "B_dependents": 4.0,
+        "A_age": 52.0,
+        "B_age": 31.0,
+        "A_years_waiting": 8.0,
+        "B_years_waiting": 2.0,
+        "A_urgency_score": 7.0,
+        "B_urgency_score": 6.0,
+        "A_health_score": 8.0,
+        "B_health_score": 4.0
+      },
+      {
+        "username": "Chitresh",
+        "scenario": 4,
+        "choice": "B",
+        "timestamp": "2026-08-12T13:31:26.497336",
+        "A_dependents": 2.0,
+        "B_dependents": 0.0,
+        "A_age": 67.0,
+        "B_age": 38.0,
+        "A_years_waiting": 6.0,
+        "B_years_waiting": 7.0,
+        "A_urgency_score": 7.0,
+        "B_urgency_score": 3.0,
+        "A_health_score": 8.0,
+        "B_health_score": 8.0
+      },
+      {
+        "username": "Chitresh",
+        "scenario": 5,
+        "choice": "B",
+        "timestamp": "2026-08-12T13:31:26.678040",
+        "A_dependents": 2.0,
+        "B_dependents": 4.0,
+        "A_age": 43.0,
+        "B_age": 36.0,
+        "A_years_waiting": 11.0,
+        "B_years_waiting": 10.0,
+        "A_urgency_score": 7.0,
+        "B_urgency_score": 9.0,
+        "A_health_score": 4.0,
+        "B_health_score": 4.0
+      },
+      {
+        "username": "Chitresh",
+        "scenario": 6,
+        "choice": "B",
+        "timestamp": "2026-08-12T13:31:26.861131",
+        "A_dependents": 2.0,
+        "B_dependents": 1.0,
+        "A_age": 67.0,
+        "B_age": 42.0,
+        "A_years_waiting": 8.0,
+        "B_years_waiting": 8.0,
+        "A_urgency_score": 6.0,
+        "B_urgency_score": 5.0,
+        "A_health_score": 7.0,
+        "B_health_score": 8.0
+      },
+      {
+        "username": "Chitresh",
+        "scenario": 7,
+        "choice": "B",
+        "timestamp": "2026-08-12T13:31:27.044714",
+        "A_dependents": 0.0,
+        "B_dependents": 1.0,
+        "A_age": 49.0,
+        "B_age": 28.0,
+        "A_years_waiting": 8.0,
+        "B_years_waiting": 8.0,
+        "A_urgency_score": 6.0,
+        "B_urgency_score": 4.0,
+        "A_health_score": 5.0,
+        "B_health_score": 4.0
+      },
+      {
+        "username": "Chitresh",
+        "scenario": 8,
+        "choice": "B",
+        "timestamp": "2026-08-12T13:31:27.194686",
+        "A_dependents": 3.0,
+        "B_dependents": 3.0,
+        "A_age": 47.0,
+        "B_age": 28.0,
+        "A_years_waiting": 12.0,
+        "B_years_waiting": 1.0,
+        "A_urgency_score": 6.0,
+        "B_urgency_score": 9.0,
+        "A_health_score": 5.0,
+        "B_health_score": 5.0
+      },
+      {
+        "username": "Chitresh",
+        "scenario": 9,
+        "choice": "B",
+        "timestamp": "2026-08-12T13:31:27.376418",
+        "A_dependents": 3.0,
+        "B_dependents": 0.0,
+        "A_age": 47.0,
+        "B_age": 41.0,
+        "A_years_waiting": 2.0,
+        "B_years_waiting": 9.0,
+        "A_urgency_score": 4.0,
+        "B_urgency_score": 5.0,
+        "A_health_score": 4.0,
+        "B_health_score": 4.0
+      },
+      {
+        "username": "Chitresh",
+        "scenario": 10,
+        "choice": "B",
+        "timestamp": "2026-08-12T13:31:27.562436",
+        "A_dependents": 1.0,
+        "B_dependents": 3.0,
+        "A_age": 26.0,
+        "B_age": 45.0,
+        "A_years_waiting": 1.0,
+        "B_years_waiting": 8.0,
+        "A_urgency_score": 4.0,
+        "B_urgency_score": 9.0,
+        "A_health_score": 7.0,
+        "B_health_score": 8.0
+      }
+    ],
+    "part2_index": 10,
+    "alignment_score": 4
+  },
+  "verify_user": {
+    "part1_scenarios": [
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 57.0,
+          "years_waiting": 2.0,
+          "urgency_score": 10.0,
+          "health_score": 6.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 60.0,
+          "years_waiting": 7.0,
+          "urgency_score": 3.0,
+          "health_score": 4.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 46.0,
+          "years_waiting": 4.0,
+          "urgency_score": 4.0,
+          "health_score": 6.0
+        },
+        "B": {
+          "dependents": 2.0,
+          "age": 57.0,
+          "years_waiting": 10.0,
+          "urgency_score": 4.0,
+          "health_score": 7.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 34.0,
+          "years_waiting": 12.0,
+          "urgency_score": 9.0,
+          "health_score": 7.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 26.0,
+          "years_waiting": 11.0,
+          "urgency_score": 7.0,
+          "health_score": 8.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 50.0,
+          "years_waiting": 9.0,
+          "urgency_score": 3.0,
+          "health_score": 9.0
+        },
+        "B": {
+          "dependents": 0.0,
+          "age": 56.0,
+          "years_waiting": 6.0,
+          "urgency_score": 10.0,
+          "health_score": 6.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 2.0,
+          "age": 27.0,
+          "years_waiting": 6.0,
+          "urgency_score": 4.0,
+          "health_score": 9.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 57.0,
+          "years_waiting": 12.0,
+          "urgency_score": 8.0,
+          "health_score": 9.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 2.0,
+          "age": 49.0,
+          "years_waiting": 10.0,
+          "urgency_score": 4.0,
+          "health_score": 7.0
+        },
+        "B": {
+          "dependents": 0.0,
+          "age": 25.0,
+          "years_waiting": 1.0,
+          "urgency_score": 10.0,
+          "health_score": 8.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 64.0,
+          "years_waiting": 8.0,
+          "urgency_score": 9.0,
+          "health_score": 8.0
+        },
+        "B": {
+          "dependents": 2.0,
+          "age": 58.0,
+          "years_waiting": 2.0,
+          "urgency_score": 6.0,
+          "health_score": 7.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 4.0,
+          "age": 59.0,
+          "years_waiting": 9.0,
+          "urgency_score": 7.0,
+          "health_score": 6.0
+        },
+        "B": {
+          "dependents": 2.0,
+          "age": 54.0,
+          "years_waiting": 2.0,
+          "urgency_score": 3.0,
+          "health_score": 8.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 39.0,
+          "years_waiting": 3.0,
+          "urgency_score": 4.0,
+          "health_score": 6.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 30.0,
+          "years_waiting": 8.0,
+          "urgency_score": 8.0,
+          "health_score": 7.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 65.0,
+          "years_waiting": 3.0,
+          "urgency_score": 3.0,
+          "health_score": 5.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 29.0,
+          "years_waiting": 11.0,
+          "urgency_score": 8.0,
+          "health_score": 5.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 34.0,
+          "years_waiting": 11.0,
+          "urgency_score": 7.0,
+          "health_score": 6.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 34.0,
+          "years_waiting": 11.0,
+          "urgency_score": 8.0,
+          "health_score": 8.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 59.0,
+          "years_waiting": 10.0,
+          "urgency_score": 3.0,
+          "health_score": 6.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 52.0,
+          "years_waiting": 4.0,
+          "urgency_score": 5.0,
+          "health_score": 7.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 55.0,
+          "years_waiting": 3.0,
+          "urgency_score": 3.0,
+          "health_score": 5.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 47.0,
+          "years_waiting": 8.0,
+          "urgency_score": 9.0,
+          "health_score": 5.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 31.0,
+          "years_waiting": 5.0,
+          "urgency_score": 4.0,
+          "health_score": 4.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 42.0,
+          "years_waiting": 7.0,
+          "urgency_score": 8.0,
+          "health_score": 8.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 4.0,
+          "age": 59.0,
+          "years_waiting": 8.0,
+          "urgency_score": 9.0,
+          "health_score": 7.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 31.0,
+          "years_waiting": 2.0,
+          "urgency_score": 7.0,
+          "health_score": 7.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 4.0,
+          "age": 63.0,
+          "years_waiting": 2.0,
+          "urgency_score": 4.0,
+          "health_score": 4.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 63.0,
+          "years_waiting": 10.0,
+          "urgency_score": 8.0,
+          "health_score": 4.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 4.0,
+          "age": 49.0,
+          "years_waiting": 8.0,
+          "urgency_score": 6.0,
+          "health_score": 7.0
+        },
+        "B": {
+          "dependents": 0.0,
+          "age": 27.0,
+          "years_waiting": 9.0,
+          "urgency_score": 10.0,
+          "health_score": 6.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 2.0,
+          "age": 50.0,
+          "years_waiting": 2.0,
+          "urgency_score": 3.0,
+          "health_score": 8.0
+        },
+        "B": {
+          "dependents": 0.0,
+          "age": 36.0,
+          "years_waiting": 9.0,
+          "urgency_score": 5.0,
+          "health_score": 7.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 45.0,
+          "years_waiting": 11.0,
+          "urgency_score": 7.0,
+          "health_score": 7.0
+        },
+        "B": {
+          "dependents": 2.0,
+          "age": 33.0,
+          "years_waiting": 10.0,
+          "urgency_score": 10.0,
+          "health_score": 7.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 4.0,
+          "age": 60.0,
+          "years_waiting": 8.0,
+          "urgency_score": 8.0,
+          "health_score": 6.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 46.0,
+          "years_waiting": 1.0,
+          "urgency_score": 7.0,
+          "health_score": 4.0
+        }
+      }
+    ],
+    "part1": [],
+    "part1_index": 0,
+    "part2_scenarios": [
+      {
+        "A": {
+          "dependents": 4.0,
+          "age": 49.0,
+          "years_waiting": 9.0,
+          "urgency_score": 10.0,
+          "health_score": 5.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 39.0,
+          "years_waiting": 2.0,
+          "urgency_score": 6.0,
+          "health_score": 5.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 27.0,
+          "years_waiting": 2.0,
+          "urgency_score": 3.0,
+          "health_score": 6.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 65.0,
+          "years_waiting": 2.0,
+          "urgency_score": 3.0,
+          "health_score": 9.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 2.0,
+          "age": 66.0,
+          "years_waiting": 6.0,
+          "urgency_score": 7.0,
+          "health_score": 5.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 31.0,
+          "years_waiting": 1.0,
+          "urgency_score": 4.0,
+          "health_score": 7.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 49.0,
+          "years_waiting": 4.0,
+          "urgency_score": 3.0,
+          "health_score": 8.0
+        },
+        "B": {
+          "dependents": 0.0,
+          "age": 30.0,
+          "years_waiting": 4.0,
+          "urgency_score": 7.0,
+          "health_score": 5.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 26.0,
+          "years_waiting": 4.0,
+          "urgency_score": 6.0,
+          "health_score": 5.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 43.0,
+          "years_waiting": 4.0,
+          "urgency_score": 4.0,
+          "health_score": 8.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 4.0,
+          "age": 33.0,
+          "years_waiting": 4.0,
+          "urgency_score": 8.0,
+          "health_score": 4.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 50.0,
+          "years_waiting": 12.0,
+          "urgency_score": 3.0,
+          "health_score": 7.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 64.0,
+          "years_waiting": 8.0,
+          "urgency_score": 10.0,
+          "health_score": 8.0
+        },
+        "B": {
+          "dependents": 2.0,
+          "age": 32.0,
+          "years_waiting": 5.0,
+          "urgency_score": 9.0,
+          "health_score": 9.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 42.0,
+          "years_waiting": 9.0,
+          "urgency_score": 7.0,
+          "health_score": 9.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 60.0,
+          "years_waiting": 12.0,
+          "urgency_score": 6.0,
+          "health_score": 5.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 2.0,
+          "age": 37.0,
+          "years_waiting": 10.0,
+          "urgency_score": 3.0,
+          "health_score": 7.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 37.0,
+          "years_waiting": 1.0,
+          "urgency_score": 7.0,
+          "health_score": 5.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 52.0,
+          "years_waiting": 11.0,
+          "urgency_score": 5.0,
+          "health_score": 6.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 34.0,
+          "years_waiting": 6.0,
+          "urgency_score": 6.0,
+          "health_score": 8.0
+        }
+      }
+    ],
+    "part2": [],
+    "part2_index": 0
+  },
+  "verify_run2": {
+    "part1_scenarios": [
+      {
+        "A": {
+          "dependents": 4.0,
+          "age": 45.0,
+          "years_waiting": 12.0,
+          "urgency_score": 8.0,
+          "health_score": 6.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 54.0,
+          "years_waiting": 12.0,
+          "urgency_score": 5.0,
+          "health_score": 7.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 56.0,
+          "years_waiting": 5.0,
+          "urgency_score": 3.0,
+          "health_score": 8.0
+        },
+        "B": {
+          "dependents": 0.0,
+          "age": 39.0,
+          "years_waiting": 6.0,
+          "urgency_score": 6.0,
+          "health_score": 8.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 60.0,
+          "years_waiting": 1.0,
+          "urgency_score": 5.0,
+          "health_score": 8.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 66.0,
+          "years_waiting": 12.0,
+          "urgency_score": 7.0,
+          "health_score": 9.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 4.0,
+          "age": 49.0,
+          "years_waiting": 2.0,
+          "urgency_score": 5.0,
+          "health_score": 6.0
+        },
+        "B": {
+          "dependents": 0.0,
+          "age": 68.0,
+          "years_waiting": 7.0,
+          "urgency_score": 9.0,
+          "health_score": 8.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 2.0,
+          "age": 25.0,
+          "years_waiting": 8.0,
+          "urgency_score": 8.0,
+          "health_score": 8.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 37.0,
+          "years_waiting": 7.0,
+          "urgency_score": 8.0,
+          "health_score": 8.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 4.0,
+          "age": 63.0,
+          "years_waiting": 1.0,
+          "urgency_score": 6.0,
+          "health_score": 5.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 30.0,
+          "years_waiting": 2.0,
+          "urgency_score": 8.0,
+          "health_score": 9.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 55.0,
+          "years_waiting": 3.0,
+          "urgency_score": 6.0,
+          "health_score": 9.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 49.0,
+          "years_waiting": 10.0,
+          "urgency_score": 6.0,
+          "health_score": 6.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 38.0,
+          "years_waiting": 5.0,
+          "urgency_score": 6.0,
+          "health_score": 5.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 47.0,
+          "years_waiting": 8.0,
+          "urgency_score": 3.0,
+          "health_score": 6.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 59.0,
+          "years_waiting": 5.0,
+          "urgency_score": 5.0,
+          "health_score": 8.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 67.0,
+          "years_waiting": 9.0,
+          "urgency_score": 7.0,
+          "health_score": 8.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 28.0,
+          "years_waiting": 3.0,
+          "urgency_score": 4.0,
+          "health_score": 5.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 35.0,
+          "years_waiting": 7.0,
+          "urgency_score": 5.0,
+          "health_score": 4.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 2.0,
+          "age": 32.0,
+          "years_waiting": 7.0,
+          "urgency_score": 3.0,
+          "health_score": 6.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 66.0,
+          "years_waiting": 6.0,
+          "urgency_score": 8.0,
+          "health_score": 4.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 56.0,
+          "years_waiting": 3.0,
+          "urgency_score": 4.0,
+          "health_score": 9.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 65.0,
+          "years_waiting": 7.0,
+          "urgency_score": 3.0,
+          "health_score": 5.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 2.0,
+          "age": 49.0,
+          "years_waiting": 1.0,
+          "urgency_score": 10.0,
+          "health_score": 4.0
+        },
+        "B": {
+          "dependents": 0.0,
+          "age": 65.0,
+          "years_waiting": 12.0,
+          "urgency_score": 7.0,
+          "health_score": 5.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 67.0,
+          "years_waiting": 12.0,
+          "urgency_score": 4.0,
+          "health_score": 7.0
+        },
+        "B": {
+          "dependents": 0.0,
+          "age": 60.0,
+          "years_waiting": 2.0,
+          "urgency_score": 5.0,
+          "health_score": 7.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 42.0,
+          "years_waiting": 9.0,
+          "urgency_score": 8.0,
+          "health_score": 9.0
+        },
+        "B": {
+          "dependents": 0.0,
+          "age": 58.0,
+          "years_waiting": 11.0,
+          "urgency_score": 8.0,
+          "health_score": 9.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 25.0,
+          "years_waiting": 4.0,
+          "urgency_score": 10.0,
+          "health_score": 5.0
+        },
+        "B": {
+          "dependents": 2.0,
+          "age": 46.0,
+          "years_waiting": 5.0,
+          "urgency_score": 8.0,
+          "health_score": 5.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 36.0,
+          "years_waiting": 11.0,
+          "urgency_score": 8.0,
+          "health_score": 9.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 47.0,
+          "years_waiting": 5.0,
+          "urgency_score": 5.0,
+          "health_score": 6.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 65.0,
+          "years_waiting": 9.0,
+          "urgency_score": 4.0,
+          "health_score": 9.0
+        },
+        "B": {
+          "dependents": 0.0,
+          "age": 42.0,
+          "years_waiting": 1.0,
+          "urgency_score": 8.0,
+          "health_score": 6.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 2.0,
+          "age": 61.0,
+          "years_waiting": 1.0,
+          "urgency_score": 4.0,
+          "health_score": 6.0
+        },
+        "B": {
+          "dependents": 0.0,
+          "age": 29.0,
+          "years_waiting": 11.0,
+          "urgency_score": 6.0,
+          "health_score": 4.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 50.0,
+          "years_waiting": 4.0,
+          "urgency_score": 7.0,
+          "health_score": 5.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 63.0,
+          "years_waiting": 9.0,
+          "urgency_score": 6.0,
+          "health_score": 6.0
+        }
+      }
+    ],
+    "part1": [
+      {
+        "username": "verify_run2",
+        "scenario": 1,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:02:07.713291",
+        "A_dependents": 4.0,
+        "B_dependents": 4.0,
+        "A_age": 45.0,
+        "B_age": 54.0,
+        "A_years_waiting": 12.0,
+        "B_years_waiting": 12.0,
+        "A_urgency_score": 8.0,
+        "B_urgency_score": 5.0,
+        "A_health_score": 6.0,
+        "B_health_score": 7.0
+      },
+      {
+        "username": "verify_run2",
+        "scenario": 2,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:02:08.295821",
+        "A_dependents": 0.0,
+        "B_dependents": 0.0,
+        "A_age": 56.0,
+        "B_age": 39.0,
+        "A_years_waiting": 5.0,
+        "B_years_waiting": 6.0,
+        "A_urgency_score": 3.0,
+        "B_urgency_score": 6.0,
+        "A_health_score": 8.0,
+        "B_health_score": 8.0
+      },
+      {
+        "username": "verify_run2",
+        "scenario": 3,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:02:08.879138",
+        "A_dependents": 0.0,
+        "B_dependents": 1.0,
+        "A_age": 60.0,
+        "B_age": 66.0,
+        "A_years_waiting": 1.0,
+        "B_years_waiting": 12.0,
+        "A_urgency_score": 5.0,
+        "B_urgency_score": 7.0,
+        "A_health_score": 8.0,
+        "B_health_score": 9.0
+      },
+      {
+        "username": "verify_run2",
+        "scenario": 4,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:02:09.463069",
+        "A_dependents": 4.0,
+        "B_dependents": 0.0,
+        "A_age": 49.0,
+        "B_age": 68.0,
+        "A_years_waiting": 2.0,
+        "B_years_waiting": 7.0,
+        "A_urgency_score": 5.0,
+        "B_urgency_score": 9.0,
+        "A_health_score": 6.0,
+        "B_health_score": 8.0
+      },
+      {
+        "username": "verify_run2",
+        "scenario": 5,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:02:10.046667",
+        "A_dependents": 2.0,
+        "B_dependents": 1.0,
+        "A_age": 25.0,
+        "B_age": 37.0,
+        "A_years_waiting": 8.0,
+        "B_years_waiting": 7.0,
+        "A_urgency_score": 8.0,
+        "B_urgency_score": 8.0,
+        "A_health_score": 8.0,
+        "B_health_score": 8.0
+      },
+      {
+        "username": "verify_run2",
+        "scenario": 6,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:02:10.629224",
+        "A_dependents": 4.0,
+        "B_dependents": 3.0,
+        "A_age": 63.0,
+        "B_age": 30.0,
+        "A_years_waiting": 1.0,
+        "B_years_waiting": 2.0,
+        "A_urgency_score": 6.0,
+        "B_urgency_score": 8.0,
+        "A_health_score": 5.0,
+        "B_health_score": 9.0
+      },
+      {
+        "username": "verify_run2",
+        "scenario": 7,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:02:11.213466",
+        "A_dependents": 0.0,
+        "B_dependents": 4.0,
+        "A_age": 55.0,
+        "B_age": 49.0,
+        "A_years_waiting": 3.0,
+        "B_years_waiting": 10.0,
+        "A_urgency_score": 6.0,
+        "B_urgency_score": 6.0,
+        "A_health_score": 9.0,
+        "B_health_score": 6.0
+      },
+      {
+        "username": "verify_run2",
+        "scenario": 8,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:02:11.795986",
+        "A_dependents": 0.0,
+        "B_dependents": 1.0,
+        "A_age": 38.0,
+        "B_age": 47.0,
+        "A_years_waiting": 5.0,
+        "B_years_waiting": 8.0,
+        "A_urgency_score": 6.0,
+        "B_urgency_score": 3.0,
+        "A_health_score": 5.0,
+        "B_health_score": 6.0
+      },
+      {
+        "username": "verify_run2",
+        "scenario": 9,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:02:12.379105",
+        "A_dependents": 3.0,
+        "B_dependents": 1.0,
+        "A_age": 59.0,
+        "B_age": 67.0,
+        "A_years_waiting": 5.0,
+        "B_years_waiting": 9.0,
+        "A_urgency_score": 5.0,
+        "B_urgency_score": 7.0,
+        "A_health_score": 8.0,
+        "B_health_score": 8.0
+      },
+      {
+        "username": "verify_run2",
+        "scenario": 10,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:02:12.979911",
+        "A_dependents": 1.0,
+        "B_dependents": 3.0,
+        "A_age": 28.0,
+        "B_age": 35.0,
+        "A_years_waiting": 3.0,
+        "B_years_waiting": 7.0,
+        "A_urgency_score": 4.0,
+        "B_urgency_score": 5.0,
+        "A_health_score": 5.0,
+        "B_health_score": 4.0
+      },
+      {
+        "username": "verify_run2",
+        "scenario": 11,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:02:13.563286",
+        "A_dependents": 2.0,
+        "B_dependents": 4.0,
+        "A_age": 32.0,
+        "B_age": 66.0,
+        "A_years_waiting": 7.0,
+        "B_years_waiting": 6.0,
+        "A_urgency_score": 3.0,
+        "B_urgency_score": 8.0,
+        "A_health_score": 6.0,
+        "B_health_score": 4.0
+      },
+      {
+        "username": "verify_run2",
+        "scenario": 12,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:02:14.147027",
+        "A_dependents": 3.0,
+        "B_dependents": 3.0,
+        "A_age": 56.0,
+        "B_age": 65.0,
+        "A_years_waiting": 3.0,
+        "B_years_waiting": 7.0,
+        "A_urgency_score": 4.0,
+        "B_urgency_score": 3.0,
+        "A_health_score": 9.0,
+        "B_health_score": 5.0
+      },
+      {
+        "username": "verify_run2",
+        "scenario": 13,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:02:14.729271",
+        "A_dependents": 2.0,
+        "B_dependents": 0.0,
+        "A_age": 49.0,
+        "B_age": 65.0,
+        "A_years_waiting": 1.0,
+        "B_years_waiting": 12.0,
+        "A_urgency_score": 10.0,
+        "B_urgency_score": 7.0,
+        "A_health_score": 4.0,
+        "B_health_score": 5.0
+      },
+      {
+        "username": "verify_run2",
+        "scenario": 14,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:02:15.312588",
+        "A_dependents": 1.0,
+        "B_dependents": 0.0,
+        "A_age": 67.0,
+        "B_age": 60.0,
+        "A_years_waiting": 12.0,
+        "B_years_waiting": 2.0,
+        "A_urgency_score": 4.0,
+        "B_urgency_score": 5.0,
+        "A_health_score": 7.0,
+        "B_health_score": 7.0
+      },
+      {
+        "username": "verify_run2",
+        "scenario": 15,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:02:15.895912",
+        "A_dependents": 1.0,
+        "B_dependents": 0.0,
+        "A_age": 42.0,
+        "B_age": 58.0,
+        "A_years_waiting": 9.0,
+        "B_years_waiting": 11.0,
+        "A_urgency_score": 8.0,
+        "B_urgency_score": 8.0,
+        "A_health_score": 9.0,
+        "B_health_score": 9.0
+      },
+      {
+        "username": "verify_run2",
+        "scenario": 16,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:02:16.478248",
+        "A_dependents": 0.0,
+        "B_dependents": 2.0,
+        "A_age": 25.0,
+        "B_age": 46.0,
+        "A_years_waiting": 4.0,
+        "B_years_waiting": 5.0,
+        "A_urgency_score": 10.0,
+        "B_urgency_score": 8.0,
+        "A_health_score": 5.0,
+        "B_health_score": 5.0
+      },
+      {
+        "username": "verify_run2",
+        "scenario": 17,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:02:17.063418",
+        "A_dependents": 3.0,
+        "B_dependents": 4.0,
+        "A_age": 36.0,
+        "B_age": 47.0,
+        "A_years_waiting": 11.0,
+        "B_years_waiting": 5.0,
+        "A_urgency_score": 8.0,
+        "B_urgency_score": 5.0,
+        "A_health_score": 9.0,
+        "B_health_score": 6.0
+      },
+      {
+        "username": "verify_run2",
+        "scenario": 18,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:02:17.647098",
+        "A_dependents": 1.0,
+        "B_dependents": 0.0,
+        "A_age": 65.0,
+        "B_age": 42.0,
+        "A_years_waiting": 9.0,
+        "B_years_waiting": 1.0,
+        "A_urgency_score": 4.0,
+        "B_urgency_score": 8.0,
+        "A_health_score": 9.0,
+        "B_health_score": 6.0
+      },
+      {
+        "username": "verify_run2",
+        "scenario": 19,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:02:18.229850",
+        "A_dependents": 2.0,
+        "B_dependents": 0.0,
+        "A_age": 61.0,
+        "B_age": 29.0,
+        "A_years_waiting": 1.0,
+        "B_years_waiting": 11.0,
+        "A_urgency_score": 4.0,
+        "B_urgency_score": 6.0,
+        "A_health_score": 6.0,
+        "B_health_score": 4.0
+      },
+      {
+        "username": "verify_run2",
+        "scenario": 20,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:02:18.811058",
+        "A_dependents": 3.0,
+        "B_dependents": 4.0,
+        "A_age": 50.0,
+        "B_age": 63.0,
+        "A_years_waiting": 4.0,
+        "B_years_waiting": 9.0,
+        "A_urgency_score": 7.0,
+        "B_urgency_score": 6.0,
+        "A_health_score": 5.0,
+        "B_health_score": 6.0
+      }
+    ],
+    "part1_index": 20,
+    "part2_scenarios": [
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 46.0,
+          "years_waiting": 10.0,
+          "urgency_score": 5.0,
+          "health_score": 7.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 50.0,
+          "years_waiting": 7.0,
+          "urgency_score": 4.0,
+          "health_score": 8.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 4.0,
+          "age": 43.0,
+          "years_waiting": 11.0,
+          "urgency_score": 5.0,
+          "health_score": 9.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 49.0,
+          "years_waiting": 9.0,
+          "urgency_score": 5.0,
+          "health_score": 5.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 39.0,
+          "years_waiting": 1.0,
+          "urgency_score": 10.0,
+          "health_score": 6.0
+        },
+        "B": {
+          "dependents": 0.0,
+          "age": 54.0,
+          "years_waiting": 6.0,
+          "urgency_score": 10.0,
+          "health_score": 8.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 2.0,
+          "age": 63.0,
+          "years_waiting": 1.0,
+          "urgency_score": 6.0,
+          "health_score": 9.0
+        },
+        "B": {
+          "dependents": 2.0,
+          "age": 56.0,
+          "years_waiting": 1.0,
+          "urgency_score": 4.0,
+          "health_score": 7.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 4.0,
+          "age": 31.0,
+          "years_waiting": 9.0,
+          "urgency_score": 4.0,
+          "health_score": 8.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 38.0,
+          "years_waiting": 10.0,
+          "urgency_score": 10.0,
+          "health_score": 5.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 32.0,
+          "years_waiting": 7.0,
+          "urgency_score": 8.0,
+          "health_score": 7.0
+        },
+        "B": {
+          "dependents": 2.0,
+          "age": 64.0,
+          "years_waiting": 6.0,
+          "urgency_score": 8.0,
+          "health_score": 9.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 25.0,
+          "years_waiting": 9.0,
+          "urgency_score": 6.0,
+          "health_score": 5.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 46.0,
+          "years_waiting": 8.0,
+          "urgency_score": 3.0,
+          "health_score": 6.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 4.0,
+          "age": 36.0,
+          "years_waiting": 11.0,
+          "urgency_score": 7.0,
+          "health_score": 5.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 57.0,
+          "years_waiting": 2.0,
+          "urgency_score": 8.0,
+          "health_score": 8.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 4.0,
+          "age": 46.0,
+          "years_waiting": 4.0,
+          "urgency_score": 8.0,
+          "health_score": 4.0
+        },
+        "B": {
+          "dependents": 0.0,
+          "age": 65.0,
+          "years_waiting": 4.0,
+          "urgency_score": 5.0,
+          "health_score": 4.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 38.0,
+          "years_waiting": 5.0,
+          "urgency_score": 8.0,
+          "health_score": 9.0
+        },
+        "B": {
+          "dependents": 2.0,
+          "age": 39.0,
+          "years_waiting": 11.0,
+          "urgency_score": 6.0,
+          "health_score": 8.0
+        }
+      }
+    ],
+    "part2": [],
+    "part2_index": 0
+  },
+  "verify_edit_v3": {
+    "part1_scenarios": [
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 34.0,
+          "years_waiting": 10.0,
+          "urgency_score": 7.0,
+          "health_score": 8.0
+        },
+        "B": {
+          "dependents": 2.0,
+          "age": 30.0,
+          "years_waiting": 2.0,
+          "urgency_score": 4.0,
+          "health_score": 5.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 41.0,
+          "years_waiting": 11.0,
+          "urgency_score": 4.0,
+          "health_score": 9.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 64.0,
+          "years_waiting": 6.0,
+          "urgency_score": 10.0,
+          "health_score": 8.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 2.0,
+          "age": 55.0,
+          "years_waiting": 7.0,
+          "urgency_score": 3.0,
+          "health_score": 9.0
+        },
+        "B": {
+          "dependents": 2.0,
+          "age": 27.0,
+          "years_waiting": 12.0,
+          "urgency_score": 10.0,
+          "health_score": 5.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 36.0,
+          "years_waiting": 6.0,
+          "urgency_score": 3.0,
+          "health_score": 8.0
+        },
+        "B": {
+          "dependents": 0.0,
+          "age": 56.0,
+          "years_waiting": 4.0,
+          "urgency_score": 3.0,
+          "health_score": 4.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 43.0,
+          "years_waiting": 4.0,
+          "urgency_score": 9.0,
+          "health_score": 5.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 66.0,
+          "years_waiting": 7.0,
+          "urgency_score": 3.0,
+          "health_score": 4.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 43.0,
+          "years_waiting": 7.0,
+          "urgency_score": 5.0,
+          "health_score": 9.0
+        },
+        "B": {
+          "dependents": 2.0,
+          "age": 44.0,
+          "years_waiting": 1.0,
+          "urgency_score": 10.0,
+          "health_score": 9.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 4.0,
+          "age": 65.0,
+          "years_waiting": 9.0,
+          "urgency_score": 5.0,
+          "health_score": 6.0
+        },
+        "B": {
+          "dependents": 0.0,
+          "age": 45.0,
+          "years_waiting": 9.0,
+          "urgency_score": 8.0,
+          "health_score": 8.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 27.0,
+          "years_waiting": 9.0,
+          "urgency_score": 7.0,
+          "health_score": 8.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 54.0,
+          "years_waiting": 7.0,
+          "urgency_score": 9.0,
+          "health_score": 5.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 63.0,
+          "years_waiting": 11.0,
+          "urgency_score": 9.0,
+          "health_score": 4.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 31.0,
+          "years_waiting": 5.0,
+          "urgency_score": 8.0,
+          "health_score": 6.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 31.0,
+          "years_waiting": 2.0,
+          "urgency_score": 10.0,
+          "health_score": 9.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 59.0,
+          "years_waiting": 4.0,
+          "urgency_score": 8.0,
+          "health_score": 9.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 4.0,
+          "age": 63.0,
+          "years_waiting": 4.0,
+          "urgency_score": 3.0,
+          "health_score": 7.0
+        },
+        "B": {
+          "dependents": 2.0,
+          "age": 49.0,
+          "years_waiting": 8.0,
+          "urgency_score": 9.0,
+          "health_score": 5.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 64.0,
+          "years_waiting": 1.0,
+          "urgency_score": 6.0,
+          "health_score": 8.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 37.0,
+          "years_waiting": 11.0,
+          "urgency_score": 7.0,
+          "health_score": 7.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 26.0,
+          "years_waiting": 7.0,
+          "urgency_score": 4.0,
+          "health_score": 9.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 27.0,
+          "years_waiting": 4.0,
+          "urgency_score": 7.0,
+          "health_score": 6.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 41.0,
+          "years_waiting": 6.0,
+          "urgency_score": 9.0,
+          "health_score": 7.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 39.0,
+          "years_waiting": 10.0,
+          "urgency_score": 4.0,
+          "health_score": 4.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 2.0,
+          "age": 32.0,
+          "years_waiting": 12.0,
+          "urgency_score": 9.0,
+          "health_score": 9.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 28.0,
+          "years_waiting": 2.0,
+          "urgency_score": 7.0,
+          "health_score": 6.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 37.0,
+          "years_waiting": 3.0,
+          "urgency_score": 5.0,
+          "health_score": 4.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 43.0,
+          "years_waiting": 9.0,
+          "urgency_score": 8.0,
+          "health_score": 8.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 4.0,
+          "age": 29.0,
+          "years_waiting": 3.0,
+          "urgency_score": 7.0,
+          "health_score": 6.0
+        },
+        "B": {
+          "dependents": 2.0,
+          "age": 38.0,
+          "years_waiting": 9.0,
+          "urgency_score": 4.0,
+          "health_score": 4.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 2.0,
+          "age": 40.0,
+          "years_waiting": 1.0,
+          "urgency_score": 10.0,
+          "health_score": 5.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 38.0,
+          "years_waiting": 2.0,
+          "urgency_score": 10.0,
+          "health_score": 5.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 56.0,
+          "years_waiting": 1.0,
+          "urgency_score": 6.0,
+          "health_score": 8.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 29.0,
+          "years_waiting": 12.0,
+          "urgency_score": 8.0,
+          "health_score": 6.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 2.0,
+          "age": 41.0,
+          "years_waiting": 11.0,
+          "urgency_score": 5.0,
+          "health_score": 6.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 30.0,
+          "years_waiting": 8.0,
+          "urgency_score": 8.0,
+          "health_score": 7.0
+        }
+      }
+    ],
+    "part1": [
+      {
+        "username": "verify_edit_v3",
+        "scenario": 1,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:15:41.872192",
+        "A_dependents": 0.0,
+        "B_dependents": 2.0,
+        "A_age": 34.0,
+        "B_age": 30.0,
+        "A_years_waiting": 10.0,
+        "B_years_waiting": 2.0,
+        "A_urgency_score": 7.0,
+        "B_urgency_score": 4.0,
+        "A_health_score": 8.0,
+        "B_health_score": 5.0
+      },
+      {
+        "username": "verify_edit_v3",
+        "scenario": 2,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:15:42.457693",
+        "A_dependents": 0.0,
+        "B_dependents": 3.0,
+        "A_age": 41.0,
+        "B_age": 64.0,
+        "A_years_waiting": 11.0,
+        "B_years_waiting": 6.0,
+        "A_urgency_score": 4.0,
+        "B_urgency_score": 10.0,
+        "A_health_score": 9.0,
+        "B_health_score": 8.0
+      },
+      {
+        "username": "verify_edit_v3",
+        "scenario": 3,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:15:43.054584",
+        "A_dependents": 2.0,
+        "B_dependents": 2.0,
+        "A_age": 55.0,
+        "B_age": 27.0,
+        "A_years_waiting": 7.0,
+        "B_years_waiting": 12.0,
+        "A_urgency_score": 3.0,
+        "B_urgency_score": 10.0,
+        "A_health_score": 9.0,
+        "B_health_score": 5.0
+      },
+      {
+        "username": "verify_edit_v3",
+        "scenario": 4,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:15:43.637710",
+        "A_dependents": 1.0,
+        "B_dependents": 0.0,
+        "A_age": 36.0,
+        "B_age": 56.0,
+        "A_years_waiting": 6.0,
+        "B_years_waiting": 4.0,
+        "A_urgency_score": 3.0,
+        "B_urgency_score": 3.0,
+        "A_health_score": 8.0,
+        "B_health_score": 4.0
+      },
+      {
+        "username": "verify_edit_v3",
+        "scenario": 5,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:15:44.222084",
+        "A_dependents": 1.0,
+        "B_dependents": 1.0,
+        "A_age": 43.0,
+        "B_age": 66.0,
+        "A_years_waiting": 4.0,
+        "B_years_waiting": 7.0,
+        "A_urgency_score": 9.0,
+        "B_urgency_score": 3.0,
+        "A_health_score": 5.0,
+        "B_health_score": 4.0
+      },
+      {
+        "username": "verify_edit_v3",
+        "scenario": 6,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:15:44.806598",
+        "A_dependents": 0.0,
+        "B_dependents": 2.0,
+        "A_age": 43.0,
+        "B_age": 44.0,
+        "A_years_waiting": 7.0,
+        "B_years_waiting": 1.0,
+        "A_urgency_score": 5.0,
+        "B_urgency_score": 10.0,
+        "A_health_score": 9.0,
+        "B_health_score": 9.0
+      },
+      {
+        "username": "verify_edit_v3",
+        "scenario": 7,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:15:45.390614",
+        "A_dependents": 4.0,
+        "B_dependents": 0.0,
+        "A_age": 65.0,
+        "B_age": 45.0,
+        "A_years_waiting": 9.0,
+        "B_years_waiting": 9.0,
+        "A_urgency_score": 5.0,
+        "B_urgency_score": 8.0,
+        "A_health_score": 6.0,
+        "B_health_score": 8.0
+      },
+      {
+        "username": "verify_edit_v3",
+        "scenario": 8,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:15:45.972206",
+        "A_dependents": 1.0,
+        "B_dependents": 4.0,
+        "A_age": 27.0,
+        "B_age": 54.0,
+        "A_years_waiting": 9.0,
+        "B_years_waiting": 7.0,
+        "A_urgency_score": 7.0,
+        "B_urgency_score": 9.0,
+        "A_health_score": 8.0,
+        "B_health_score": 5.0
+      },
+      {
+        "username": "verify_edit_v3",
+        "scenario": 9,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:15:46.555548",
+        "A_dependents": 3.0,
+        "B_dependents": 1.0,
+        "A_age": 63.0,
+        "B_age": 31.0,
+        "A_years_waiting": 11.0,
+        "B_years_waiting": 5.0,
+        "A_urgency_score": 9.0,
+        "B_urgency_score": 8.0,
+        "A_health_score": 4.0,
+        "B_health_score": 6.0
+      },
+      {
+        "username": "verify_edit_v3",
+        "scenario": 10,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:15:47.140918",
+        "A_dependents": 0.0,
+        "B_dependents": 3.0,
+        "A_age": 31.0,
+        "B_age": 59.0,
+        "A_years_waiting": 2.0,
+        "B_years_waiting": 4.0,
+        "A_urgency_score": 10.0,
+        "B_urgency_score": 8.0,
+        "A_health_score": 9.0,
+        "B_health_score": 9.0
+      },
+      {
+        "username": "verify_edit_v3",
+        "scenario": 11,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:15:47.720922",
+        "A_dependents": 4.0,
+        "B_dependents": 2.0,
+        "A_age": 63.0,
+        "B_age": 49.0,
+        "A_years_waiting": 4.0,
+        "B_years_waiting": 8.0,
+        "A_urgency_score": 3.0,
+        "B_urgency_score": 9.0,
+        "A_health_score": 7.0,
+        "B_health_score": 5.0
+      },
+      {
+        "username": "verify_edit_v3",
+        "scenario": 12,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:15:48.305576",
+        "A_dependents": 1.0,
+        "B_dependents": 1.0,
+        "A_age": 64.0,
+        "B_age": 37.0,
+        "A_years_waiting": 1.0,
+        "B_years_waiting": 11.0,
+        "A_urgency_score": 6.0,
+        "B_urgency_score": 7.0,
+        "A_health_score": 8.0,
+        "B_health_score": 7.0
+      },
+      {
+        "username": "verify_edit_v3",
+        "scenario": 13,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:15:48.889283",
+        "A_dependents": 1.0,
+        "B_dependents": 4.0,
+        "A_age": 26.0,
+        "B_age": 27.0,
+        "A_years_waiting": 7.0,
+        "B_years_waiting": 4.0,
+        "A_urgency_score": 4.0,
+        "B_urgency_score": 7.0,
+        "A_health_score": 9.0,
+        "B_health_score": 6.0
+      },
+      {
+        "username": "verify_edit_v3",
+        "scenario": 14,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:15:49.473372",
+        "A_dependents": 0.0,
+        "B_dependents": 1.0,
+        "A_age": 41.0,
+        "B_age": 39.0,
+        "A_years_waiting": 6.0,
+        "B_years_waiting": 10.0,
+        "A_urgency_score": 9.0,
+        "B_urgency_score": 4.0,
+        "A_health_score": 7.0,
+        "B_health_score": 4.0
+      },
+      {
+        "username": "verify_edit_v3",
+        "scenario": 15,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:15:50.056445",
+        "A_dependents": 2.0,
+        "B_dependents": 1.0,
+        "A_age": 32.0,
+        "B_age": 28.0,
+        "A_years_waiting": 12.0,
+        "B_years_waiting": 2.0,
+        "A_urgency_score": 9.0,
+        "B_urgency_score": 7.0,
+        "A_health_score": 9.0,
+        "B_health_score": 6.0
+      },
+      {
+        "username": "verify_edit_v3",
+        "scenario": 16,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:15:50.640189",
+        "A_dependents": 0.0,
+        "B_dependents": 4.0,
+        "A_age": 37.0,
+        "B_age": 43.0,
+        "A_years_waiting": 3.0,
+        "B_years_waiting": 9.0,
+        "A_urgency_score": 5.0,
+        "B_urgency_score": 8.0,
+        "A_health_score": 4.0,
+        "B_health_score": 8.0
+      },
+      {
+        "username": "verify_edit_v3",
+        "scenario": 17,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:15:51.222400",
+        "A_dependents": 4.0,
+        "B_dependents": 2.0,
+        "A_age": 29.0,
+        "B_age": 38.0,
+        "A_years_waiting": 3.0,
+        "B_years_waiting": 9.0,
+        "A_urgency_score": 7.0,
+        "B_urgency_score": 4.0,
+        "A_health_score": 6.0,
+        "B_health_score": 4.0
+      },
+      {
+        "username": "verify_edit_v3",
+        "scenario": 18,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:15:51.805880",
+        "A_dependents": 2.0,
+        "B_dependents": 4.0,
+        "A_age": 40.0,
+        "B_age": 38.0,
+        "A_years_waiting": 1.0,
+        "B_years_waiting": 2.0,
+        "A_urgency_score": 10.0,
+        "B_urgency_score": 10.0,
+        "A_health_score": 5.0,
+        "B_health_score": 5.0
+      },
+      {
+        "username": "verify_edit_v3",
+        "scenario": 19,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:15:52.390155",
+        "A_dependents": 3.0,
+        "B_dependents": 1.0,
+        "A_age": 56.0,
+        "B_age": 29.0,
+        "A_years_waiting": 1.0,
+        "B_years_waiting": 12.0,
+        "A_urgency_score": 6.0,
+        "B_urgency_score": 8.0,
+        "A_health_score": 8.0,
+        "B_health_score": 6.0
+      },
+      {
+        "username": "verify_edit_v3",
+        "scenario": 20,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:15:52.974086",
+        "A_dependents": 2.0,
+        "B_dependents": 1.0,
+        "A_age": 41.0,
+        "B_age": 30.0,
+        "A_years_waiting": 11.0,
+        "B_years_waiting": 8.0,
+        "A_urgency_score": 5.0,
+        "B_urgency_score": 8.0,
+        "A_health_score": 6.0,
+        "B_health_score": 7.0
+      }
+    ],
+    "part1_index": 20,
+    "part2_scenarios": [
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 28.0,
+          "years_waiting": 2.0,
+          "urgency_score": 9.0,
+          "health_score": 4.0
+        },
+        "B": {
+          "dependents": 2.0,
+          "age": 51.0,
+          "years_waiting": 12.0,
+          "urgency_score": 4.0,
+          "health_score": 4.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 34.0,
+          "years_waiting": 6.0,
+          "urgency_score": 5.0,
+          "health_score": 9.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 41.0,
+          "years_waiting": 2.0,
+          "urgency_score": 4.0,
+          "health_score": 6.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 64.0,
+          "years_waiting": 10.0,
+          "urgency_score": 4.0,
+          "health_score": 5.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 53.0,
+          "years_waiting": 4.0,
+          "urgency_score": 5.0,
+          "health_score": 9.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 2.0,
+          "age": 40.0,
+          "years_waiting": 11.0,
+          "urgency_score": 6.0,
+          "health_score": 7.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 39.0,
+          "years_waiting": 3.0,
+          "urgency_score": 8.0,
+          "health_score": 7.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 39.0,
+          "years_waiting": 10.0,
+          "urgency_score": 8.0,
+          "health_score": 6.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 62.0,
+          "years_waiting": 3.0,
+          "urgency_score": 9.0,
+          "health_score": 8.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 31.0,
+          "years_waiting": 6.0,
+          "urgency_score": 10.0,
+          "health_score": 5.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 54.0,
+          "years_waiting": 5.0,
+          "urgency_score": 8.0,
+          "health_score": 4.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 68.0,
+          "years_waiting": 12.0,
+          "urgency_score": 10.0,
+          "health_score": 9.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 41.0,
+          "years_waiting": 1.0,
+          "urgency_score": 4.0,
+          "health_score": 4.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 2.0,
+          "age": 48.0,
+          "years_waiting": 9.0,
+          "urgency_score": 9.0,
+          "health_score": 4.0
+        },
+        "B": {
+          "dependents": 2.0,
+          "age": 66.0,
+          "years_waiting": 9.0,
+          "urgency_score": 7.0,
+          "health_score": 7.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 44.0,
+          "years_waiting": 1.0,
+          "urgency_score": 8.0,
+          "health_score": 8.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 53.0,
+          "years_waiting": 2.0,
+          "urgency_score": 6.0,
+          "health_score": 9.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 46.0,
+          "years_waiting": 6.0,
+          "urgency_score": 3.0,
+          "health_score": 4.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 31.0,
+          "years_waiting": 4.0,
+          "urgency_score": 3.0,
+          "health_score": 8.0
+        }
+      }
+    ],
+    "part2": [],
+    "part2_index": 0
+  },
+  "verify_edit_v4": {
+    "part1_scenarios": [
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 30.0,
+          "years_waiting": 12.0,
+          "urgency_score": 3.0,
+          "health_score": 5.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 58.0,
+          "years_waiting": 10.0,
+          "urgency_score": 6.0,
+          "health_score": 9.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 49.0,
+          "years_waiting": 9.0,
+          "urgency_score": 6.0,
+          "health_score": 8.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 33.0,
+          "years_waiting": 5.0,
+          "urgency_score": 8.0,
+          "health_score": 7.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 35.0,
+          "years_waiting": 11.0,
+          "urgency_score": 3.0,
+          "health_score": 4.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 30.0,
+          "years_waiting": 7.0,
+          "urgency_score": 10.0,
+          "health_score": 4.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 4.0,
+          "age": 55.0,
+          "years_waiting": 2.0,
+          "urgency_score": 5.0,
+          "health_score": 5.0
+        },
+        "B": {
+          "dependents": 2.0,
+          "age": 38.0,
+          "years_waiting": 9.0,
+          "urgency_score": 10.0,
+          "health_score": 7.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 2.0,
+          "age": 48.0,
+          "years_waiting": 4.0,
+          "urgency_score": 3.0,
+          "health_score": 6.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 34.0,
+          "years_waiting": 6.0,
+          "urgency_score": 3.0,
+          "health_score": 9.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 2.0,
+          "age": 28.0,
+          "years_waiting": 6.0,
+          "urgency_score": 7.0,
+          "health_score": 6.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 35.0,
+          "years_waiting": 10.0,
+          "urgency_score": 8.0,
+          "health_score": 8.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 64.0,
+          "years_waiting": 9.0,
+          "urgency_score": 3.0,
+          "health_score": 7.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 67.0,
+          "years_waiting": 1.0,
+          "urgency_score": 9.0,
+          "health_score": 4.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 57.0,
+          "years_waiting": 2.0,
+          "urgency_score": 5.0,
+          "health_score": 8.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 50.0,
+          "years_waiting": 12.0,
+          "urgency_score": 6.0,
+          "health_score": 4.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 51.0,
+          "years_waiting": 3.0,
+          "urgency_score": 8.0,
+          "health_score": 5.0
+        },
+        "B": {
+          "dependents": 0.0,
+          "age": 53.0,
+          "years_waiting": 12.0,
+          "urgency_score": 10.0,
+          "health_score": 6.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 4.0,
+          "age": 62.0,
+          "years_waiting": 7.0,
+          "urgency_score": 9.0,
+          "health_score": 7.0
+        },
+        "B": {
+          "dependents": 2.0,
+          "age": 28.0,
+          "years_waiting": 12.0,
+          "urgency_score": 9.0,
+          "health_score": 5.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 31.0,
+          "years_waiting": 5.0,
+          "urgency_score": 8.0,
+          "health_score": 5.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 29.0,
+          "years_waiting": 11.0,
+          "urgency_score": 7.0,
+          "health_score": 4.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 37.0,
+          "years_waiting": 7.0,
+          "urgency_score": 5.0,
+          "health_score": 8.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 59.0,
+          "years_waiting": 4.0,
+          "urgency_score": 6.0,
+          "health_score": 6.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 26.0,
+          "years_waiting": 7.0,
+          "urgency_score": 6.0,
+          "health_score": 7.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 37.0,
+          "years_waiting": 1.0,
+          "urgency_score": 7.0,
+          "health_score": 9.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 52.0,
+          "years_waiting": 11.0,
+          "urgency_score": 6.0,
+          "health_score": 8.0
+        },
+        "B": {
+          "dependents": 2.0,
+          "age": 61.0,
+          "years_waiting": 2.0,
+          "urgency_score": 6.0,
+          "health_score": 8.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 4.0,
+          "age": 51.0,
+          "years_waiting": 12.0,
+          "urgency_score": 10.0,
+          "health_score": 7.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 55.0,
+          "years_waiting": 8.0,
+          "urgency_score": 6.0,
+          "health_score": 4.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 35.0,
+          "years_waiting": 9.0,
+          "urgency_score": 5.0,
+          "health_score": 4.0
+        },
+        "B": {
+          "dependents": 0.0,
+          "age": 53.0,
+          "years_waiting": 11.0,
+          "urgency_score": 5.0,
+          "health_score": 9.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 64.0,
+          "years_waiting": 11.0,
+          "urgency_score": 4.0,
+          "health_score": 4.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 58.0,
+          "years_waiting": 1.0,
+          "urgency_score": 8.0,
+          "health_score": 6.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 4.0,
+          "age": 42.0,
+          "years_waiting": 3.0,
+          "urgency_score": 7.0,
+          "health_score": 8.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 27.0,
+          "years_waiting": 8.0,
+          "urgency_score": 7.0,
+          "health_score": 7.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 4.0,
+          "age": 48.0,
+          "years_waiting": 8.0,
+          "urgency_score": 10.0,
+          "health_score": 6.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 30.0,
+          "years_waiting": 5.0,
+          "urgency_score": 6.0,
+          "health_score": 7.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 4.0,
+          "age": 52.0,
+          "years_waiting": 12.0,
+          "urgency_score": 5.0,
+          "health_score": 8.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 58.0,
+          "years_waiting": 8.0,
+          "urgency_score": 4.0,
+          "health_score": 9.0
+        }
+      }
+    ],
+    "part1": [
+      {
+        "username": "verify_edit_v4",
+        "scenario": 1,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:17:15.655314",
+        "A_dependents": 1.0,
+        "B_dependents": 3.0,
+        "A_age": 30.0,
+        "B_age": 58.0,
+        "A_years_waiting": 12.0,
+        "B_years_waiting": 10.0,
+        "A_urgency_score": 3.0,
+        "B_urgency_score": 6.0,
+        "A_health_score": 5.0,
+        "B_health_score": 9.0
+      },
+      {
+        "username": "verify_edit_v4",
+        "scenario": 2,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:17:16.238936",
+        "A_dependents": 3.0,
+        "B_dependents": 3.0,
+        "A_age": 49.0,
+        "B_age": 33.0,
+        "A_years_waiting": 9.0,
+        "B_years_waiting": 5.0,
+        "A_urgency_score": 6.0,
+        "B_urgency_score": 8.0,
+        "A_health_score": 8.0,
+        "B_health_score": 7.0
+      },
+      {
+        "username": "verify_edit_v4",
+        "scenario": 3,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:17:16.819584",
+        "A_dependents": 0.0,
+        "B_dependents": 1.0,
+        "A_age": 35.0,
+        "B_age": 30.0,
+        "A_years_waiting": 11.0,
+        "B_years_waiting": 7.0,
+        "A_urgency_score": 3.0,
+        "B_urgency_score": 10.0,
+        "A_health_score": 4.0,
+        "B_health_score": 4.0
+      },
+      {
+        "username": "verify_edit_v4",
+        "scenario": 4,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:17:17.404630",
+        "A_dependents": 4.0,
+        "B_dependents": 2.0,
+        "A_age": 55.0,
+        "B_age": 38.0,
+        "A_years_waiting": 2.0,
+        "B_years_waiting": 9.0,
+        "A_urgency_score": 5.0,
+        "B_urgency_score": 10.0,
+        "A_health_score": 5.0,
+        "B_health_score": 7.0
+      },
+      {
+        "username": "verify_edit_v4",
+        "scenario": 5,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:17:17.986956",
+        "A_dependents": 2.0,
+        "B_dependents": 4.0,
+        "A_age": 48.0,
+        "B_age": 34.0,
+        "A_years_waiting": 4.0,
+        "B_years_waiting": 6.0,
+        "A_urgency_score": 3.0,
+        "B_urgency_score": 3.0,
+        "A_health_score": 6.0,
+        "B_health_score": 9.0
+      },
+      {
+        "username": "verify_edit_v4",
+        "scenario": 6,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:17:18.571451",
+        "A_dependents": 2.0,
+        "B_dependents": 4.0,
+        "A_age": 28.0,
+        "B_age": 35.0,
+        "A_years_waiting": 6.0,
+        "B_years_waiting": 10.0,
+        "A_urgency_score": 7.0,
+        "B_urgency_score": 8.0,
+        "A_health_score": 6.0,
+        "B_health_score": 8.0
+      },
+      {
+        "username": "verify_edit_v4",
+        "scenario": 7,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:17:19.154788",
+        "A_dependents": 3.0,
+        "B_dependents": 1.0,
+        "A_age": 64.0,
+        "B_age": 67.0,
+        "A_years_waiting": 9.0,
+        "B_years_waiting": 1.0,
+        "A_urgency_score": 3.0,
+        "B_urgency_score": 9.0,
+        "A_health_score": 7.0,
+        "B_health_score": 4.0
+      },
+      {
+        "username": "verify_edit_v4",
+        "scenario": 8,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:17:19.736993",
+        "A_dependents": 3.0,
+        "B_dependents": 1.0,
+        "A_age": 57.0,
+        "B_age": 50.0,
+        "A_years_waiting": 2.0,
+        "B_years_waiting": 12.0,
+        "A_urgency_score": 5.0,
+        "B_urgency_score": 6.0,
+        "A_health_score": 8.0,
+        "B_health_score": 4.0
+      },
+      {
+        "username": "verify_edit_v4",
+        "scenario": 9,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:17:20.321234",
+        "A_dependents": 1.0,
+        "B_dependents": 0.0,
+        "A_age": 51.0,
+        "B_age": 53.0,
+        "A_years_waiting": 3.0,
+        "B_years_waiting": 12.0,
+        "A_urgency_score": 8.0,
+        "B_urgency_score": 10.0,
+        "A_health_score": 5.0,
+        "B_health_score": 6.0
+      },
+      {
+        "username": "verify_edit_v4",
+        "scenario": 10,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:17:20.903330",
+        "A_dependents": 4.0,
+        "B_dependents": 2.0,
+        "A_age": 62.0,
+        "B_age": 28.0,
+        "A_years_waiting": 7.0,
+        "B_years_waiting": 12.0,
+        "A_urgency_score": 9.0,
+        "B_urgency_score": 9.0,
+        "A_health_score": 7.0,
+        "B_health_score": 5.0
+      },
+      {
+        "username": "verify_edit_v4",
+        "scenario": 11,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:17:21.488025",
+        "A_dependents": 1.0,
+        "B_dependents": 4.0,
+        "A_age": 31.0,
+        "B_age": 29.0,
+        "A_years_waiting": 5.0,
+        "B_years_waiting": 11.0,
+        "A_urgency_score": 8.0,
+        "B_urgency_score": 7.0,
+        "A_health_score": 5.0,
+        "B_health_score": 4.0
+      },
+      {
+        "username": "verify_edit_v4",
+        "scenario": 12,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:17:22.071641",
+        "A_dependents": 1.0,
+        "B_dependents": 4.0,
+        "A_age": 37.0,
+        "B_age": 59.0,
+        "A_years_waiting": 7.0,
+        "B_years_waiting": 4.0,
+        "A_urgency_score": 5.0,
+        "B_urgency_score": 6.0,
+        "A_health_score": 8.0,
+        "B_health_score": 6.0
+      },
+      {
+        "username": "verify_edit_v4",
+        "scenario": 13,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:17:22.654840",
+        "A_dependents": 3.0,
+        "B_dependents": 4.0,
+        "A_age": 26.0,
+        "B_age": 37.0,
+        "A_years_waiting": 7.0,
+        "B_years_waiting": 1.0,
+        "A_urgency_score": 6.0,
+        "B_urgency_score": 7.0,
+        "A_health_score": 7.0,
+        "B_health_score": 9.0
+      },
+      {
+        "username": "verify_edit_v4",
+        "scenario": 14,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:17:23.237995",
+        "A_dependents": 0.0,
+        "B_dependents": 2.0,
+        "A_age": 52.0,
+        "B_age": 61.0,
+        "A_years_waiting": 11.0,
+        "B_years_waiting": 2.0,
+        "A_urgency_score": 6.0,
+        "B_urgency_score": 6.0,
+        "A_health_score": 8.0,
+        "B_health_score": 8.0
+      },
+      {
+        "username": "verify_edit_v4",
+        "scenario": 15,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:17:23.820055",
+        "A_dependents": 4.0,
+        "B_dependents": 4.0,
+        "A_age": 51.0,
+        "B_age": 55.0,
+        "A_years_waiting": 12.0,
+        "B_years_waiting": 8.0,
+        "A_urgency_score": 10.0,
+        "B_urgency_score": 6.0,
+        "A_health_score": 7.0,
+        "B_health_score": 4.0
+      },
+      {
+        "username": "verify_edit_v4",
+        "scenario": 16,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:17:24.404908",
+        "A_dependents": 1.0,
+        "B_dependents": 0.0,
+        "A_age": 35.0,
+        "B_age": 53.0,
+        "A_years_waiting": 9.0,
+        "B_years_waiting": 11.0,
+        "A_urgency_score": 5.0,
+        "B_urgency_score": 5.0,
+        "A_health_score": 4.0,
+        "B_health_score": 9.0
+      },
+      {
+        "username": "verify_edit_v4",
+        "scenario": 17,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:17:24.989300",
+        "A_dependents": 0.0,
+        "B_dependents": 4.0,
+        "A_age": 64.0,
+        "B_age": 58.0,
+        "A_years_waiting": 11.0,
+        "B_years_waiting": 1.0,
+        "A_urgency_score": 4.0,
+        "B_urgency_score": 8.0,
+        "A_health_score": 4.0,
+        "B_health_score": 6.0
+      },
+      {
+        "username": "verify_edit_v4",
+        "scenario": 18,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:17:25.572075",
+        "A_dependents": 4.0,
+        "B_dependents": 3.0,
+        "A_age": 42.0,
+        "B_age": 27.0,
+        "A_years_waiting": 3.0,
+        "B_years_waiting": 8.0,
+        "A_urgency_score": 7.0,
+        "B_urgency_score": 7.0,
+        "A_health_score": 8.0,
+        "B_health_score": 7.0
+      },
+      {
+        "username": "verify_edit_v4",
+        "scenario": 19,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:17:26.155105",
+        "A_dependents": 4.0,
+        "B_dependents": 3.0,
+        "A_age": 48.0,
+        "B_age": 30.0,
+        "A_years_waiting": 8.0,
+        "B_years_waiting": 5.0,
+        "A_urgency_score": 10.0,
+        "B_urgency_score": 6.0,
+        "A_health_score": 6.0,
+        "B_health_score": 7.0
+      },
+      {
+        "username": "verify_edit_v4",
+        "scenario": 20,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:17:26.736302",
+        "A_dependents": 4.0,
+        "B_dependents": 1.0,
+        "A_age": 52.0,
+        "B_age": 58.0,
+        "A_years_waiting": 12.0,
+        "B_years_waiting": 8.0,
+        "A_urgency_score": 5.0,
+        "B_urgency_score": 4.0,
+        "A_health_score": 8.0,
+        "B_health_score": 9.0
+      }
+    ],
+    "part1_index": 20,
+    "part2_scenarios": [
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 66.0,
+          "years_waiting": 7.0,
+          "urgency_score": 5.0,
+          "health_score": 7.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 32.0,
+          "years_waiting": 11.0,
+          "urgency_score": 6.0,
+          "health_score": 9.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 52.0,
+          "years_waiting": 6.0,
+          "urgency_score": 5.0,
+          "health_score": 8.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 38.0,
+          "years_waiting": 12.0,
+          "urgency_score": 6.0,
+          "health_score": 5.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 66.0,
+          "years_waiting": 3.0,
+          "urgency_score": 6.0,
+          "health_score": 4.0
+        },
+        "B": {
+          "dependents": 0.0,
+          "age": 63.0,
+          "years_waiting": 12.0,
+          "urgency_score": 4.0,
+          "health_score": 7.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 33.0,
+          "years_waiting": 9.0,
+          "urgency_score": 9.0,
+          "health_score": 6.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 56.0,
+          "years_waiting": 5.0,
+          "urgency_score": 10.0,
+          "health_score": 8.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 2.0,
+          "age": 44.0,
+          "years_waiting": 2.0,
+          "urgency_score": 8.0,
+          "health_score": 5.0
+        },
+        "B": {
+          "dependents": 2.0,
+          "age": 36.0,
+          "years_waiting": 12.0,
+          "urgency_score": 5.0,
+          "health_score": 7.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 29.0,
+          "years_waiting": 5.0,
+          "urgency_score": 9.0,
+          "health_score": 6.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 44.0,
+          "years_waiting": 3.0,
+          "urgency_score": 6.0,
+          "health_score": 8.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 42.0,
+          "years_waiting": 5.0,
+          "urgency_score": 3.0,
+          "health_score": 5.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 48.0,
+          "years_waiting": 10.0,
+          "urgency_score": 10.0,
+          "health_score": 7.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 2.0,
+          "age": 55.0,
+          "years_waiting": 11.0,
+          "urgency_score": 8.0,
+          "health_score": 5.0
+        },
+        "B": {
+          "dependents": 0.0,
+          "age": 32.0,
+          "years_waiting": 4.0,
+          "urgency_score": 5.0,
+          "health_score": 4.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 27.0,
+          "years_waiting": 8.0,
+          "urgency_score": 7.0,
+          "health_score": 4.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 42.0,
+          "years_waiting": 7.0,
+          "urgency_score": 10.0,
+          "health_score": 8.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 4.0,
+          "age": 59.0,
+          "years_waiting": 11.0,
+          "urgency_score": 5.0,
+          "health_score": 6.0
+        },
+        "B": {
+          "dependents": 2.0,
+          "age": 29.0,
+          "years_waiting": 4.0,
+          "urgency_score": 3.0,
+          "health_score": 9.0
+        }
+      }
+    ],
+    "part2": [],
+    "part2_index": 0,
+    "alignment_score": 1
+  },
+  "jj": {
+    "part1_scenarios": [
+      {
+        "A": {
+          "dependents": 4.0,
+          "age": 38.0,
+          "years_waiting": 9.0,
+          "urgency_score": 9.0,
+          "health_score": 6.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 67.0,
+          "years_waiting": 3.0,
+          "urgency_score": 7.0,
+          "health_score": 6.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 26.0,
+          "years_waiting": 9.0,
+          "urgency_score": 7.0,
+          "health_score": 6.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 65.0,
+          "years_waiting": 1.0,
+          "urgency_score": 6.0,
+          "health_score": 7.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 50.0,
+          "years_waiting": 1.0,
+          "urgency_score": 9.0,
+          "health_score": 9.0
+        },
+        "B": {
+          "dependents": 0.0,
+          "age": 39.0,
+          "years_waiting": 8.0,
+          "urgency_score": 7.0,
+          "health_score": 8.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 2.0,
+          "age": 30.0,
+          "years_waiting": 5.0,
+          "urgency_score": 3.0,
+          "health_score": 8.0
+        },
+        "B": {
+          "dependents": 0.0,
+          "age": 25.0,
+          "years_waiting": 9.0,
+          "urgency_score": 5.0,
+          "health_score": 6.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 4.0,
+          "age": 54.0,
+          "years_waiting": 1.0,
+          "urgency_score": 6.0,
+          "health_score": 8.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 31.0,
+          "years_waiting": 7.0,
+          "urgency_score": 4.0,
+          "health_score": 5.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 68.0,
+          "years_waiting": 7.0,
+          "urgency_score": 3.0,
+          "health_score": 4.0
+        },
+        "B": {
+          "dependents": 2.0,
+          "age": 52.0,
+          "years_waiting": 1.0,
+          "urgency_score": 3.0,
+          "health_score": 5.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 2.0,
+          "age": 50.0,
+          "years_waiting": 2.0,
+          "urgency_score": 7.0,
+          "health_score": 8.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 57.0,
+          "years_waiting": 8.0,
+          "urgency_score": 8.0,
+          "health_score": 5.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 56.0,
+          "years_waiting": 4.0,
+          "urgency_score": 7.0,
+          "health_score": 4.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 66.0,
+          "years_waiting": 9.0,
+          "urgency_score": 4.0,
+          "health_score": 8.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 27.0,
+          "years_waiting": 7.0,
+          "urgency_score": 9.0,
+          "health_score": 4.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 37.0,
+          "years_waiting": 3.0,
+          "urgency_score": 9.0,
+          "health_score": 9.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 4.0,
+          "age": 40.0,
+          "years_waiting": 10.0,
+          "urgency_score": 10.0,
+          "health_score": 7.0
+        },
+        "B": {
+          "dependents": 2.0,
+          "age": 39.0,
+          "years_waiting": 12.0,
+          "urgency_score": 5.0,
+          "health_score": 7.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 52.0,
+          "years_waiting": 12.0,
+          "urgency_score": 3.0,
+          "health_score": 6.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 54.0,
+          "years_waiting": 5.0,
+          "urgency_score": 10.0,
+          "health_score": 5.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 40.0,
+          "years_waiting": 4.0,
+          "urgency_score": 10.0,
+          "health_score": 6.0
+        },
+        "B": {
+          "dependents": 2.0,
+          "age": 30.0,
+          "years_waiting": 2.0,
+          "urgency_score": 9.0,
+          "health_score": 5.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 43.0,
+          "years_waiting": 12.0,
+          "urgency_score": 5.0,
+          "health_score": 8.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 36.0,
+          "years_waiting": 5.0,
+          "urgency_score": 10.0,
+          "health_score": 6.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 61.0,
+          "years_waiting": 8.0,
+          "urgency_score": 9.0,
+          "health_score": 7.0
+        },
+        "B": {
+          "dependents": 2.0,
+          "age": 56.0,
+          "years_waiting": 7.0,
+          "urgency_score": 4.0,
+          "health_score": 8.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 2.0,
+          "age": 39.0,
+          "years_waiting": 9.0,
+          "urgency_score": 6.0,
+          "health_score": 4.0
+        },
+        "B": {
+          "dependents": 0.0,
+          "age": 42.0,
+          "years_waiting": 6.0,
+          "urgency_score": 10.0,
+          "health_score": 8.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 2.0,
+          "age": 47.0,
+          "years_waiting": 7.0,
+          "urgency_score": 3.0,
+          "health_score": 7.0
+        },
+        "B": {
+          "dependents": 2.0,
+          "age": 65.0,
+          "years_waiting": 10.0,
+          "urgency_score": 4.0,
+          "health_score": 7.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 4.0,
+          "age": 59.0,
+          "years_waiting": 7.0,
+          "urgency_score": 6.0,
+          "health_score": 4.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 57.0,
+          "years_waiting": 5.0,
+          "urgency_score": 5.0,
+          "health_score": 7.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 48.0,
+          "years_waiting": 8.0,
+          "urgency_score": 4.0,
+          "health_score": 6.0
+        },
+        "B": {
+          "dependents": 0.0,
+          "age": 38.0,
+          "years_waiting": 8.0,
+          "urgency_score": 4.0,
+          "health_score": 5.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 25.0,
+          "years_waiting": 11.0,
+          "urgency_score": 9.0,
+          "health_score": 9.0
+        },
+        "B": {
+          "dependents": 0.0,
+          "age": 68.0,
+          "years_waiting": 3.0,
+          "urgency_score": 4.0,
+          "health_score": 9.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 2.0,
+          "age": 26.0,
+          "years_waiting": 8.0,
+          "urgency_score": 3.0,
+          "health_score": 9.0
+        },
+        "B": {
+          "dependents": 2.0,
+          "age": 47.0,
+          "years_waiting": 2.0,
+          "urgency_score": 6.0,
+          "health_score": 5.0
+        }
+      }
+    ],
+    "part1": [
+      {
+        "username": "jj",
+        "scenario": 1,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:31:42.665238",
+        "A_dependents": 4.0,
+        "B_dependents": 3.0,
+        "A_age": 38.0,
+        "B_age": 67.0,
+        "A_years_waiting": 9.0,
+        "B_years_waiting": 3.0,
+        "A_urgency_score": 9.0,
+        "B_urgency_score": 7.0,
+        "A_health_score": 6.0,
+        "B_health_score": 6.0
+      },
+      {
+        "username": "jj",
+        "scenario": 2,
+        "choice": "B",
+        "timestamp": "2026-08-12T13:31:43.400323",
+        "A_dependents": 3.0,
+        "B_dependents": 3.0,
+        "A_age": 26.0,
+        "B_age": 65.0,
+        "A_years_waiting": 9.0,
+        "B_years_waiting": 1.0,
+        "A_urgency_score": 7.0,
+        "B_urgency_score": 6.0,
+        "A_health_score": 6.0,
+        "B_health_score": 7.0
+      },
+      {
+        "username": "jj",
+        "scenario": 3,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:31:43.965636",
+        "A_dependents": 0.0,
+        "B_dependents": 0.0,
+        "A_age": 50.0,
+        "B_age": 39.0,
+        "A_years_waiting": 1.0,
+        "B_years_waiting": 8.0,
+        "A_urgency_score": 9.0,
+        "B_urgency_score": 7.0,
+        "A_health_score": 9.0,
+        "B_health_score": 8.0
+      },
+      {
+        "username": "jj",
+        "scenario": 4,
+        "choice": "B",
+        "timestamp": "2026-08-12T13:31:44.549987",
+        "A_dependents": 2.0,
+        "B_dependents": 0.0,
+        "A_age": 30.0,
+        "B_age": 25.0,
+        "A_years_waiting": 5.0,
+        "B_years_waiting": 9.0,
+        "A_urgency_score": 3.0,
+        "B_urgency_score": 5.0,
+        "A_health_score": 8.0,
+        "B_health_score": 6.0
+      },
+      {
+        "username": "jj",
+        "scenario": 5,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:31:45.113769",
+        "A_dependents": 4.0,
+        "B_dependents": 3.0,
+        "A_age": 54.0,
+        "B_age": 31.0,
+        "A_years_waiting": 1.0,
+        "B_years_waiting": 7.0,
+        "A_urgency_score": 6.0,
+        "B_urgency_score": 4.0,
+        "A_health_score": 8.0,
+        "B_health_score": 5.0
+      },
+      {
+        "username": "jj",
+        "scenario": 6,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:31:45.368358",
+        "A_dependents": 3.0,
+        "B_dependents": 2.0,
+        "A_age": 68.0,
+        "B_age": 52.0,
+        "A_years_waiting": 7.0,
+        "B_years_waiting": 1.0,
+        "A_urgency_score": 3.0,
+        "B_urgency_score": 3.0,
+        "A_health_score": 4.0,
+        "B_health_score": 5.0
+      },
+      {
+        "username": "jj",
+        "scenario": 7,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:31:45.716415",
+        "A_dependents": 2.0,
+        "B_dependents": 1.0,
+        "A_age": 50.0,
+        "B_age": 57.0,
+        "A_years_waiting": 2.0,
+        "B_years_waiting": 8.0,
+        "A_urgency_score": 7.0,
+        "B_urgency_score": 8.0,
+        "A_health_score": 8.0,
+        "B_health_score": 5.0
+      },
+      {
+        "username": "jj",
+        "scenario": 8,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:31:45.982265",
+        "A_dependents": 0.0,
+        "B_dependents": 4.0,
+        "A_age": 56.0,
+        "B_age": 66.0,
+        "A_years_waiting": 4.0,
+        "B_years_waiting": 9.0,
+        "A_urgency_score": 7.0,
+        "B_urgency_score": 4.0,
+        "A_health_score": 4.0,
+        "B_health_score": 8.0
+      },
+      {
+        "username": "jj",
+        "scenario": 9,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:31:46.214743",
+        "A_dependents": 3.0,
+        "B_dependents": 4.0,
+        "A_age": 27.0,
+        "B_age": 37.0,
+        "A_years_waiting": 7.0,
+        "B_years_waiting": 3.0,
+        "A_urgency_score": 9.0,
+        "B_urgency_score": 9.0,
+        "A_health_score": 4.0,
+        "B_health_score": 9.0
+      },
+      {
+        "username": "jj",
+        "scenario": 10,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:31:46.412491",
+        "A_dependents": 4.0,
+        "B_dependents": 2.0,
+        "A_age": 40.0,
+        "B_age": 39.0,
+        "A_years_waiting": 10.0,
+        "B_years_waiting": 12.0,
+        "A_urgency_score": 10.0,
+        "B_urgency_score": 5.0,
+        "A_health_score": 7.0,
+        "B_health_score": 7.0
+      },
+      {
+        "username": "jj",
+        "scenario": 11,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:31:46.613524",
+        "A_dependents": 0.0,
+        "B_dependents": 1.0,
+        "A_age": 52.0,
+        "B_age": 54.0,
+        "A_years_waiting": 12.0,
+        "B_years_waiting": 5.0,
+        "A_urgency_score": 3.0,
+        "B_urgency_score": 10.0,
+        "A_health_score": 6.0,
+        "B_health_score": 5.0
+      },
+      {
+        "username": "jj",
+        "scenario": 12,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:31:46.812593",
+        "A_dependents": 1.0,
+        "B_dependents": 2.0,
+        "A_age": 40.0,
+        "B_age": 30.0,
+        "A_years_waiting": 4.0,
+        "B_years_waiting": 2.0,
+        "A_urgency_score": 10.0,
+        "B_urgency_score": 9.0,
+        "A_health_score": 6.0,
+        "B_health_score": 5.0
+      },
+      {
+        "username": "jj",
+        "scenario": 13,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:31:47.012719",
+        "A_dependents": 0.0,
+        "B_dependents": 3.0,
+        "A_age": 43.0,
+        "B_age": 36.0,
+        "A_years_waiting": 12.0,
+        "B_years_waiting": 5.0,
+        "A_urgency_score": 5.0,
+        "B_urgency_score": 10.0,
+        "A_health_score": 8.0,
+        "B_health_score": 6.0
+      },
+      {
+        "username": "jj",
+        "scenario": 14,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:31:47.264678",
+        "A_dependents": 3.0,
+        "B_dependents": 2.0,
+        "A_age": 61.0,
+        "B_age": 56.0,
+        "A_years_waiting": 8.0,
+        "B_years_waiting": 7.0,
+        "A_urgency_score": 9.0,
+        "B_urgency_score": 4.0,
+        "A_health_score": 7.0,
+        "B_health_score": 8.0
+      },
+      {
+        "username": "jj",
+        "scenario": 15,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:31:47.650459",
+        "A_dependents": 2.0,
+        "B_dependents": 0.0,
+        "A_age": 39.0,
+        "B_age": 42.0,
+        "A_years_waiting": 9.0,
+        "B_years_waiting": 6.0,
+        "A_urgency_score": 6.0,
+        "B_urgency_score": 10.0,
+        "A_health_score": 4.0,
+        "B_health_score": 8.0
+      },
+      {
+        "username": "jj",
+        "scenario": 16,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:31:48.267152",
+        "A_dependents": 2.0,
+        "B_dependents": 2.0,
+        "A_age": 47.0,
+        "B_age": 65.0,
+        "A_years_waiting": 7.0,
+        "B_years_waiting": 10.0,
+        "A_urgency_score": 3.0,
+        "B_urgency_score": 4.0,
+        "A_health_score": 7.0,
+        "B_health_score": 7.0
+      },
+      {
+        "username": "jj",
+        "scenario": 17,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:31:48.650417",
+        "A_dependents": 4.0,
+        "B_dependents": 1.0,
+        "A_age": 59.0,
+        "B_age": 57.0,
+        "A_years_waiting": 7.0,
+        "B_years_waiting": 5.0,
+        "A_urgency_score": 6.0,
+        "B_urgency_score": 5.0,
+        "A_health_score": 4.0,
+        "B_health_score": 7.0
+      },
+      {
+        "username": "jj",
+        "scenario": 18,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:31:48.914263",
+        "A_dependents": 0.0,
+        "B_dependents": 0.0,
+        "A_age": 48.0,
+        "B_age": 38.0,
+        "A_years_waiting": 8.0,
+        "B_years_waiting": 8.0,
+        "A_urgency_score": 4.0,
+        "B_urgency_score": 4.0,
+        "A_health_score": 6.0,
+        "B_health_score": 5.0
+      },
+      {
+        "username": "jj",
+        "scenario": 19,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:31:49.148915",
+        "A_dependents": 0.0,
+        "B_dependents": 0.0,
+        "A_age": 25.0,
+        "B_age": 68.0,
+        "A_years_waiting": 11.0,
+        "B_years_waiting": 3.0,
+        "A_urgency_score": 9.0,
+        "B_urgency_score": 4.0,
+        "A_health_score": 9.0,
+        "B_health_score": 9.0
+      },
+      {
+        "username": "jj",
+        "scenario": 20,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:31:49.815730",
+        "A_dependents": 2.0,
+        "B_dependents": 2.0,
+        "A_age": 26.0,
+        "B_age": 47.0,
+        "A_years_waiting": 8.0,
+        "B_years_waiting": 2.0,
+        "A_urgency_score": 3.0,
+        "B_urgency_score": 6.0,
+        "A_health_score": 9.0,
+        "B_health_score": 5.0
+      }
+    ],
+    "part1_index": 20,
+    "part2_scenarios": [
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 28.0,
+          "years_waiting": 12.0,
+          "urgency_score": 5.0,
+          "health_score": 8.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 45.0,
+          "years_waiting": 5.0,
+          "urgency_score": 9.0,
+          "health_score": 9.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 4.0,
+          "age": 25.0,
+          "years_waiting": 1.0,
+          "urgency_score": 10.0,
+          "health_score": 9.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 41.0,
+          "years_waiting": 6.0,
+          "urgency_score": 4.0,
+          "health_score": 7.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 36.0,
+          "years_waiting": 1.0,
+          "urgency_score": 5.0,
+          "health_score": 8.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 57.0,
+          "years_waiting": 5.0,
+          "urgency_score": 10.0,
+          "health_score": 8.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 31.0,
+          "years_waiting": 7.0,
+          "urgency_score": 9.0,
+          "health_score": 4.0
+        },
+        "B": {
+          "dependents": 2.0,
+          "age": 47.0,
+          "years_waiting": 2.0,
+          "urgency_score": 9.0,
+          "health_score": 7.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 63.0,
+          "years_waiting": 7.0,
+          "urgency_score": 5.0,
+          "health_score": 8.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 48.0,
+          "years_waiting": 9.0,
+          "urgency_score": 4.0,
+          "health_score": 9.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 66.0,
+          "years_waiting": 1.0,
+          "urgency_score": 6.0,
+          "health_score": 5.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 49.0,
+          "years_waiting": 9.0,
+          "urgency_score": 6.0,
+          "health_score": 7.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 67.0,
+          "years_waiting": 12.0,
+          "urgency_score": 8.0,
+          "health_score": 6.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 39.0,
+          "years_waiting": 7.0,
+          "urgency_score": 8.0,
+          "health_score": 4.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 36.0,
+          "years_waiting": 2.0,
+          "urgency_score": 10.0,
+          "health_score": 7.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 31.0,
+          "years_waiting": 4.0,
+          "urgency_score": 3.0,
+          "health_score": 6.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 60.0,
+          "years_waiting": 1.0,
+          "urgency_score": 5.0,
+          "health_score": 7.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 68.0,
+          "years_waiting": 1.0,
+          "urgency_score": 10.0,
+          "health_score": 4.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 32.0,
+          "years_waiting": 7.0,
+          "urgency_score": 3.0,
+          "health_score": 5.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 43.0,
+          "years_waiting": 6.0,
+          "urgency_score": 6.0,
+          "health_score": 5.0
+        }
+      }
+    ],
+    "part2": [
+      {
+        "username": "jj",
+        "scenario": 1,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:31:55.683953",
+        "A_dependents": 0.0,
+        "B_dependents": 1.0,
+        "A_age": 28.0,
+        "B_age": 45.0,
+        "A_years_waiting": 12.0,
+        "B_years_waiting": 5.0,
+        "A_urgency_score": 5.0,
+        "B_urgency_score": 9.0,
+        "A_health_score": 8.0,
+        "B_health_score": 9.0
+      },
+      {
+        "username": "jj",
+        "scenario": 2,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:31:56.234735",
+        "A_dependents": 4.0,
+        "B_dependents": 1.0,
+        "A_age": 25.0,
+        "B_age": 41.0,
+        "A_years_waiting": 1.0,
+        "B_years_waiting": 6.0,
+        "A_urgency_score": 10.0,
+        "B_urgency_score": 4.0,
+        "A_health_score": 9.0,
+        "B_health_score": 7.0
+      },
+      {
+        "username": "jj",
+        "scenario": 3,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:31:56.447424",
+        "A_dependents": 3.0,
+        "B_dependents": 4.0,
+        "A_age": 36.0,
+        "B_age": 57.0,
+        "A_years_waiting": 1.0,
+        "B_years_waiting": 5.0,
+        "A_urgency_score": 5.0,
+        "B_urgency_score": 10.0,
+        "A_health_score": 8.0,
+        "B_health_score": 8.0
+      },
+      {
+        "username": "jj",
+        "scenario": 4,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:31:56.661812",
+        "A_dependents": 0.0,
+        "B_dependents": 2.0,
+        "A_age": 31.0,
+        "B_age": 47.0,
+        "A_years_waiting": 7.0,
+        "B_years_waiting": 2.0,
+        "A_urgency_score": 9.0,
+        "B_urgency_score": 9.0,
+        "A_health_score": 4.0,
+        "B_health_score": 7.0
+      },
+      {
+        "username": "jj",
+        "scenario": 5,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:33:38.930991",
+        "A_dependents": 1.0,
+        "B_dependents": 1.0,
+        "A_age": 63.0,
+        "B_age": 48.0,
+        "A_years_waiting": 7.0,
+        "B_years_waiting": 9.0,
+        "A_urgency_score": 5.0,
+        "B_urgency_score": 4.0,
+        "A_health_score": 8.0,
+        "B_health_score": 9.0
+      },
+      {
+        "username": "jj",
+        "scenario": 6,
+        "choice": "B",
+        "timestamp": "2026-08-12T13:33:39.783551",
+        "A_dependents": 0.0,
+        "B_dependents": 4.0,
+        "A_age": 66.0,
+        "B_age": 49.0,
+        "A_years_waiting": 1.0,
+        "B_years_waiting": 9.0,
+        "A_urgency_score": 6.0,
+        "B_urgency_score": 6.0,
+        "A_health_score": 5.0,
+        "B_health_score": 7.0
+      },
+      {
+        "username": "jj",
+        "scenario": 7,
+        "choice": "B",
+        "timestamp": "2026-08-12T13:33:39.977656",
+        "A_dependents": 1.0,
+        "B_dependents": 4.0,
+        "A_age": 67.0,
+        "B_age": 39.0,
+        "A_years_waiting": 12.0,
+        "B_years_waiting": 7.0,
+        "A_urgency_score": 8.0,
+        "B_urgency_score": 8.0,
+        "A_health_score": 6.0,
+        "B_health_score": 4.0
+      },
+      {
+        "username": "jj",
+        "scenario": 8,
+        "choice": "B",
+        "timestamp": "2026-08-12T13:33:40.179323",
+        "A_dependents": 0.0,
+        "B_dependents": 4.0,
+        "A_age": 36.0,
+        "B_age": 31.0,
+        "A_years_waiting": 2.0,
+        "B_years_waiting": 4.0,
+        "A_urgency_score": 10.0,
+        "B_urgency_score": 3.0,
+        "A_health_score": 7.0,
+        "B_health_score": 6.0
+      },
+      {
+        "username": "jj",
+        "scenario": 9,
+        "choice": "B",
+        "timestamp": "2026-08-12T13:33:40.394814",
+        "A_dependents": 3.0,
+        "B_dependents": 3.0,
+        "A_age": 60.0,
+        "B_age": 68.0,
+        "A_years_waiting": 1.0,
+        "B_years_waiting": 1.0,
+        "A_urgency_score": 5.0,
+        "B_urgency_score": 10.0,
+        "A_health_score": 7.0,
+        "B_health_score": 4.0
+      },
+      {
+        "username": "jj",
+        "scenario": 10,
+        "choice": "B",
+        "timestamp": "2026-08-12T13:33:40.610013",
+        "A_dependents": 3.0,
+        "B_dependents": 4.0,
+        "A_age": 32.0,
+        "B_age": 43.0,
+        "A_years_waiting": 7.0,
+        "B_years_waiting": 6.0,
+        "A_urgency_score": 3.0,
+        "B_urgency_score": 6.0,
+        "A_health_score": 5.0,
+        "B_health_score": 5.0
+      }
+    ],
+    "part2_index": 10,
+    "alignment_score": 2
+  },
+  "KK": {
+    "part1_scenarios": [
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 64.0,
+          "years_waiting": 5.0,
+          "urgency_score": 3.0,
+          "health_score": 6.0
+        },
+        "B": {
+          "dependents": 0.0,
+          "age": 36.0,
+          "years_waiting": 1.0,
+          "urgency_score": 3.0,
+          "health_score": 7.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 48.0,
+          "years_waiting": 10.0,
+          "urgency_score": 6.0,
+          "health_score": 8.0
+        },
+        "B": {
+          "dependents": 0.0,
+          "age": 47.0,
+          "years_waiting": 9.0,
+          "urgency_score": 4.0,
+          "health_score": 8.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 62.0,
+          "years_waiting": 9.0,
+          "urgency_score": 6.0,
+          "health_score": 9.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 63.0,
+          "years_waiting": 9.0,
+          "urgency_score": 10.0,
+          "health_score": 9.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 29.0,
+          "years_waiting": 1.0,
+          "urgency_score": 8.0,
+          "health_score": 5.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 62.0,
+          "years_waiting": 7.0,
+          "urgency_score": 3.0,
+          "health_score": 8.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 2.0,
+          "age": 41.0,
+          "years_waiting": 8.0,
+          "urgency_score": 3.0,
+          "health_score": 6.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 25.0,
+          "years_waiting": 12.0,
+          "urgency_score": 7.0,
+          "health_score": 4.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 4.0,
+          "age": 26.0,
+          "years_waiting": 3.0,
+          "urgency_score": 3.0,
+          "health_score": 5.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 31.0,
+          "years_waiting": 1.0,
+          "urgency_score": 6.0,
+          "health_score": 6.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 43.0,
+          "years_waiting": 9.0,
+          "urgency_score": 9.0,
+          "health_score": 7.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 27.0,
+          "years_waiting": 7.0,
+          "urgency_score": 5.0,
+          "health_score": 4.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 2.0,
+          "age": 37.0,
+          "years_waiting": 4.0,
+          "urgency_score": 3.0,
+          "health_score": 8.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 48.0,
+          "years_waiting": 7.0,
+          "urgency_score": 8.0,
+          "health_score": 9.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 51.0,
+          "years_waiting": 9.0,
+          "urgency_score": 3.0,
+          "health_score": 6.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 62.0,
+          "years_waiting": 6.0,
+          "urgency_score": 7.0,
+          "health_score": 5.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 53.0,
+          "years_waiting": 2.0,
+          "urgency_score": 9.0,
+          "health_score": 8.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 36.0,
+          "years_waiting": 7.0,
+          "urgency_score": 3.0,
+          "health_score": 6.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 35.0,
+          "years_waiting": 7.0,
+          "urgency_score": 6.0,
+          "health_score": 9.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 43.0,
+          "years_waiting": 8.0,
+          "urgency_score": 6.0,
+          "health_score": 8.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 67.0,
+          "years_waiting": 2.0,
+          "urgency_score": 9.0,
+          "health_score": 7.0
+        },
+        "B": {
+          "dependents": 0.0,
+          "age": 64.0,
+          "years_waiting": 5.0,
+          "urgency_score": 8.0,
+          "health_score": 7.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 2.0,
+          "age": 37.0,
+          "years_waiting": 12.0,
+          "urgency_score": 10.0,
+          "health_score": 6.0
+        },
+        "B": {
+          "dependents": 2.0,
+          "age": 40.0,
+          "years_waiting": 10.0,
+          "urgency_score": 9.0,
+          "health_score": 7.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 57.0,
+          "years_waiting": 5.0,
+          "urgency_score": 3.0,
+          "health_score": 6.0
+        },
+        "B": {
+          "dependents": 0.0,
+          "age": 60.0,
+          "years_waiting": 4.0,
+          "urgency_score": 3.0,
+          "health_score": 4.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 65.0,
+          "years_waiting": 7.0,
+          "urgency_score": 10.0,
+          "health_score": 9.0
+        },
+        "B": {
+          "dependents": 2.0,
+          "age": 40.0,
+          "years_waiting": 7.0,
+          "urgency_score": 10.0,
+          "health_score": 5.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 52.0,
+          "years_waiting": 7.0,
+          "urgency_score": 7.0,
+          "health_score": 5.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 55.0,
+          "years_waiting": 12.0,
+          "urgency_score": 8.0,
+          "health_score": 7.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 67.0,
+          "years_waiting": 11.0,
+          "urgency_score": 5.0,
+          "health_score": 9.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 33.0,
+          "years_waiting": 9.0,
+          "urgency_score": 7.0,
+          "health_score": 8.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 2.0,
+          "age": 51.0,
+          "years_waiting": 6.0,
+          "urgency_score": 5.0,
+          "health_score": 6.0
+        },
+        "B": {
+          "dependents": 2.0,
+          "age": 59.0,
+          "years_waiting": 9.0,
+          "urgency_score": 7.0,
+          "health_score": 8.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 54.0,
+          "years_waiting": 1.0,
+          "urgency_score": 4.0,
+          "health_score": 9.0
+        },
+        "B": {
+          "dependents": 0.0,
+          "age": 41.0,
+          "years_waiting": 6.0,
+          "urgency_score": 10.0,
+          "health_score": 9.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 2.0,
+          "age": 41.0,
+          "years_waiting": 8.0,
+          "urgency_score": 6.0,
+          "health_score": 9.0
+        },
+        "B": {
+          "dependents": 2.0,
+          "age": 66.0,
+          "years_waiting": 4.0,
+          "urgency_score": 10.0,
+          "health_score": 9.0
+        }
+      }
+    ],
+    "part1": [
+      {
+        "username": "KK",
+        "scenario": 1,
+        "choice": "A",
+        "timestamp": "2026-08-12T13:33:48.331602",
+        "A_dependents": 1.0,
+        "B_dependents": 0.0,
+        "A_age": 64.0,
+        "B_age": 36.0,
+        "A_years_waiting": 5.0,
+        "B_years_waiting": 1.0,
+        "A_urgency_score": 3.0,
+        "B_urgency_score": 3.0,
+        "A_health_score": 6.0,
+        "B_health_score": 7.0
+      },
+      {
+        "username": "KK",
+        "scenario": 2,
+        "choice": "B",
+        "timestamp": "2026-08-12T13:33:49.067191",
+        "A_dependents": 0.0,
+        "B_dependents": 0.0,
+        "A_age": 48.0,
+        "B_age": 47.0,
+        "A_years_waiting": 10.0,
+        "B_years_waiting": 9.0,
+        "A_urgency_score": 6.0,
+        "B_urgency_score": 4.0,
+        "A_health_score": 8.0,
+        "B_health_score": 8.0
+      },
+      {
+        "username": "KK",
+        "scenario": 3,
+        "choice": "B",
+        "timestamp": "2026-08-12T13:33:49.481111",
+        "A_dependents": 3.0,
+        "B_dependents": 3.0,
+        "A_age": 62.0,
+        "B_age": 63.0,
+        "A_years_waiting": 9.0,
+        "B_years_waiting": 9.0,
+        "A_urgency_score": 6.0,
+        "B_urgency_score": 10.0,
+        "A_health_score": 9.0,
+        "B_health_score": 9.0
+      },
+      {
+        "username": "KK",
+        "scenario": 4,
+        "choice": "B",
+        "timestamp": "2026-08-12T13:33:49.679237",
+        "A_dependents": 3.0,
+        "B_dependents": 3.0,
+        "A_age": 29.0,
+        "B_age": 62.0,
+        "A_years_waiting": 1.0,
+        "B_years_waiting": 7.0,
+        "A_urgency_score": 8.0,
+        "B_urgency_score": 3.0,
+        "A_health_score": 5.0,
+        "B_health_score": 8.0
+      },
+      {
+        "username": "KK",
+        "scenario": 5,
+        "choice": "B",
+        "timestamp": "2026-08-12T13:33:49.950702",
+        "A_dependents": 2.0,
+        "B_dependents": 1.0,
+        "A_age": 41.0,
+        "B_age": 25.0,
+        "A_years_waiting": 8.0,
+        "B_years_waiting": 12.0,
+        "A_urgency_score": 3.0,
+        "B_urgency_score": 7.0,
+        "A_health_score": 6.0,
+        "B_health_score": 4.0
+      },
+      {
+        "username": "KK",
+        "scenario": 6,
+        "choice": "B",
+        "timestamp": "2026-08-12T13:33:50.107613",
+        "A_dependents": 4.0,
+        "B_dependents": 1.0,
+        "A_age": 26.0,
+        "B_age": 31.0,
+        "A_years_waiting": 3.0,
+        "B_years_waiting": 1.0,
+        "A_urgency_score": 3.0,
+        "B_urgency_score": 6.0,
+        "A_health_score": 5.0,
+        "B_health_score": 6.0
+      },
+      {
+        "username": "KK",
+        "scenario": 7,
+        "choice": "B",
+        "timestamp": "2026-08-12T13:33:50.315069",
+        "A_dependents": 3.0,
+        "B_dependents": 4.0,
+        "A_age": 43.0,
+        "B_age": 27.0,
+        "A_years_waiting": 9.0,
+        "B_years_waiting": 7.0,
+        "A_urgency_score": 9.0,
+        "B_urgency_score": 5.0,
+        "A_health_score": 7.0,
+        "B_health_score": 4.0
+      },
+      {
+        "username": "KK",
+        "scenario": 8,
+        "choice": "B",
+        "timestamp": "2026-08-12T13:33:50.493638",
+        "A_dependents": 2.0,
+        "B_dependents": 1.0,
+        "A_age": 37.0,
+        "B_age": 48.0,
+        "A_years_waiting": 4.0,
+        "B_years_waiting": 7.0,
+        "A_urgency_score": 3.0,
+        "B_urgency_score": 8.0,
+        "A_health_score": 8.0,
+        "B_health_score": 9.0
+      },
+      {
+        "username": "KK",
+        "scenario": 9,
+        "choice": "B",
+        "timestamp": "2026-08-12T13:33:50.696051",
+        "A_dependents": 3.0,
+        "B_dependents": 3.0,
+        "A_age": 51.0,
+        "B_age": 62.0,
+        "A_years_waiting": 9.0,
+        "B_years_waiting": 6.0,
+        "A_urgency_score": 3.0,
+        "B_urgency_score": 7.0,
+        "A_health_score": 6.0,
+        "B_health_score": 5.0
+      },
+      {
+        "username": "KK",
+        "scenario": 10,
+        "choice": "B",
+        "timestamp": "2026-08-12T13:33:50.895584",
+        "A_dependents": 1.0,
+        "B_dependents": 3.0,
+        "A_age": 53.0,
+        "B_age": 36.0,
+        "A_years_waiting": 2.0,
+        "B_years_waiting": 7.0,
+        "A_urgency_score": 9.0,
+        "B_urgency_score": 3.0,
+        "A_health_score": 8.0,
+        "B_health_score": 6.0
+      },
+      {
+        "username": "KK",
+        "scenario": 11,
+        "choice": "B",
+        "timestamp": "2026-08-12T13:33:51.079750",
+        "A_dependents": 1.0,
+        "B_dependents": 3.0,
+        "A_age": 35.0,
+        "B_age": 43.0,
+        "A_years_waiting": 7.0,
+        "B_years_waiting": 8.0,
+        "A_urgency_score": 6.0,
+        "B_urgency_score": 6.0,
+        "A_health_score": 9.0,
+        "B_health_score": 8.0
+      },
+      {
+        "username": "KK",
+        "scenario": 12,
+        "choice": "B",
+        "timestamp": "2026-08-12T13:33:51.262825",
+        "A_dependents": 0.0,
+        "B_dependents": 0.0,
+        "A_age": 67.0,
+        "B_age": 64.0,
+        "A_years_waiting": 2.0,
+        "B_years_waiting": 5.0,
+        "A_urgency_score": 9.0,
+        "B_urgency_score": 8.0,
+        "A_health_score": 7.0,
+        "B_health_score": 7.0
+      },
+      {
+        "username": "KK",
+        "scenario": 13,
+        "choice": "B",
+        "timestamp": "2026-08-12T13:33:51.460098",
+        "A_dependents": 2.0,
+        "B_dependents": 2.0,
+        "A_age": 37.0,
+        "B_age": 40.0,
+        "A_years_waiting": 12.0,
+        "B_years_waiting": 10.0,
+        "A_urgency_score": 10.0,
+        "B_urgency_score": 9.0,
+        "A_health_score": 6.0,
+        "B_health_score": 7.0
+      },
+      {
+        "username": "KK",
+        "scenario": 14,
+        "choice": "B",
+        "timestamp": "2026-08-12T13:33:51.663441",
+        "A_dependents": 1.0,
+        "B_dependents": 0.0,
+        "A_age": 57.0,
+        "B_age": 60.0,
+        "A_years_waiting": 5.0,
+        "B_years_waiting": 4.0,
+        "A_urgency_score": 3.0,
+        "B_urgency_score": 3.0,
+        "A_health_score": 6.0,
+        "B_health_score": 4.0
+      },
+      {
+        "username": "KK",
+        "scenario": 15,
+        "choice": "B",
+        "timestamp": "2026-08-12T13:33:51.862626",
+        "A_dependents": 0.0,
+        "B_dependents": 2.0,
+        "A_age": 65.0,
+        "B_age": 40.0,
+        "A_years_waiting": 7.0,
+        "B_years_waiting": 7.0,
+        "A_urgency_score": 10.0,
+        "B_urgency_score": 10.0,
+        "A_health_score": 9.0,
+        "B_health_score": 5.0
+      },
+      {
+        "username": "KK",
+        "scenario": 16,
+        "choice": "B",
+        "timestamp": "2026-08-12T13:33:52.060054",
+        "A_dependents": 0.0,
+        "B_dependents": 1.0,
+        "A_age": 52.0,
+        "B_age": 55.0,
+        "A_years_waiting": 7.0,
+        "B_years_waiting": 12.0,
+        "A_urgency_score": 7.0,
+        "B_urgency_score": 8.0,
+        "A_health_score": 5.0,
+        "B_health_score": 7.0
+      },
+      {
+        "username": "KK",
+        "scenario": 17,
+        "choice": "B",
+        "timestamp": "2026-08-12T13:33:52.280191",
+        "A_dependents": 1.0,
+        "B_dependents": 4.0,
+        "A_age": 67.0,
+        "B_age": 33.0,
+        "A_years_waiting": 11.0,
+        "B_years_waiting": 9.0,
+        "A_urgency_score": 5.0,
+        "B_urgency_score": 7.0,
+        "A_health_score": 9.0,
+        "B_health_score": 8.0
+      },
+      {
+        "username": "KK",
+        "scenario": 18,
+        "choice": "B",
+        "timestamp": "2026-08-12T13:33:52.492986",
+        "A_dependents": 2.0,
+        "B_dependents": 2.0,
+        "A_age": 51.0,
+        "B_age": 59.0,
+        "A_years_waiting": 6.0,
+        "B_years_waiting": 9.0,
+        "A_urgency_score": 5.0,
+        "B_urgency_score": 7.0,
+        "A_health_score": 6.0,
+        "B_health_score": 8.0
+      },
+      {
+        "username": "KK",
+        "scenario": 19,
+        "choice": "B",
+        "timestamp": "2026-08-12T13:33:52.690977",
+        "A_dependents": 0.0,
+        "B_dependents": 0.0,
+        "A_age": 54.0,
+        "B_age": 41.0,
+        "A_years_waiting": 1.0,
+        "B_years_waiting": 6.0,
+        "A_urgency_score": 4.0,
+        "B_urgency_score": 10.0,
+        "A_health_score": 9.0,
+        "B_health_score": 9.0
+      },
+      {
+        "username": "KK",
+        "scenario": 20,
+        "choice": "B",
+        "timestamp": "2026-08-12T13:33:52.964448",
+        "A_dependents": 2.0,
+        "B_dependents": 2.0,
+        "A_age": 41.0,
+        "B_age": 66.0,
+        "A_years_waiting": 8.0,
+        "B_years_waiting": 4.0,
+        "A_urgency_score": 6.0,
+        "B_urgency_score": 10.0,
+        "A_health_score": 9.0,
+        "B_health_score": 9.0
+      }
+    ],
+    "part1_index": 20,
+    "part2_scenarios": [
+      {
+        "A": {
+          "dependents": 2.0,
+          "age": 27.0,
+          "years_waiting": 9.0,
+          "urgency_score": 3.0,
+          "health_score": 5.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 32.0,
+          "years_waiting": 10.0,
+          "urgency_score": 7.0,
+          "health_score": 5.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 25.0,
+          "years_waiting": 5.0,
+          "urgency_score": 5.0,
+          "health_score": 7.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 37.0,
+          "years_waiting": 6.0,
+          "urgency_score": 3.0,
+          "health_score": 7.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 41.0,
+          "years_waiting": 4.0,
+          "urgency_score": 6.0,
+          "health_score": 6.0
+        },
+        "B": {
+          "dependents": 0.0,
+          "age": 67.0,
+          "years_waiting": 11.0,
+          "urgency_score": 8.0,
+          "health_score": 9.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 2.0,
+          "age": 26.0,
+          "years_waiting": 12.0,
+          "urgency_score": 7.0,
+          "health_score": 9.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 47.0,
+          "years_waiting": 2.0,
+          "urgency_score": 4.0,
+          "health_score": 6.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 58.0,
+          "years_waiting": 2.0,
+          "urgency_score": 6.0,
+          "health_score": 8.0
+        },
+        "B": {
+          "dependents": 4.0,
+          "age": 44.0,
+          "years_waiting": 8.0,
+          "urgency_score": 5.0,
+          "health_score": 9.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 1.0,
+          "age": 54.0,
+          "years_waiting": 11.0,
+          "urgency_score": 5.0,
+          "health_score": 4.0
+        },
+        "B": {
+          "dependents": 3.0,
+          "age": 29.0,
+          "years_waiting": 3.0,
+          "urgency_score": 5.0,
+          "health_score": 8.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 34.0,
+          "years_waiting": 5.0,
+          "urgency_score": 5.0,
+          "health_score": 4.0
+        },
+        "B": {
+          "dependents": 2.0,
+          "age": 62.0,
+          "years_waiting": 4.0,
+          "urgency_score": 7.0,
+          "health_score": 9.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 55.0,
+          "years_waiting": 6.0,
+          "urgency_score": 4.0,
+          "health_score": 9.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 43.0,
+          "years_waiting": 2.0,
+          "urgency_score": 10.0,
+          "health_score": 6.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 3.0,
+          "age": 46.0,
+          "years_waiting": 6.0,
+          "urgency_score": 3.0,
+          "health_score": 4.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 53.0,
+          "years_waiting": 1.0,
+          "urgency_score": 4.0,
+          "health_score": 6.0
+        }
+      },
+      {
+        "A": {
+          "dependents": 0.0,
+          "age": 40.0,
+          "years_waiting": 7.0,
+          "urgency_score": 8.0,
+          "health_score": 5.0
+        },
+        "B": {
+          "dependents": 1.0,
+          "age": 67.0,
+          "years_waiting": 9.0,
+          "urgency_score": 8.0,
+          "health_score": 9.0
+        }
+      }
+    ],
+    "part2": [
+      {
+        "username": "KK",
+        "scenario": 1,
+        "choice": "B",
+        "timestamp": "2026-08-12T13:33:58.514446",
+        "A_dependents": 2.0,
+        "B_dependents": 4.0,
+        "A_age": 27.0,
+        "B_age": 32.0,
+        "A_years_waiting": 9.0,
+        "B_years_waiting": 10.0,
+        "A_urgency_score": 3.0,
+        "B_urgency_score": 7.0,
+        "A_health_score": 5.0,
+        "B_health_score": 5.0
+      }
+    ],
+    "part2_index": 1,
+    "alignment_score": 3,
+    "fft_override": {
+      "default_class": 0,
+      "default_purity": 0.5,
+      "default_support": 0.15,
+      "feature_names": [
+        "dependents_diff",
+        "age_diff",
+        "years_waiting_diff",
+        "urgency_score_diff",
+        "health_score_diff"
+      ],
+      "max_depth": 4,
+      "near_tie_threshold": 1,
+      "nodes": [
+        {
+          "exit_class": 0,
+          "feature": "years_waiting_diff",
+          "op": ">=",
+          "prefer_higher": true,
+          "purity": 0.8181818181818182,
+          "support": 0.55,
+          "threshold": 3,
+          "use_abs": true
+        },
+        {
+          "exit_class": 0,
+          "feature": "age_diff",
+          "op": ">=",
+          "prefer_higher": false,
+          "purity": 1,
+          "support": 0.15,
+          "threshold": 12,
+          "use_abs": true
+        },
+        {
+          "exit_class": 0,
+          "feature": "urgency_score_diff",
+          "op": ">=",
+          "prefer_higher": true,
+          "purity": 1,
+          "support": 0.1,
+          "threshold": 3,
+          "use_abs": true
+        },
+        {
+          "exit_class": 0,
+          "feature": "dependents_diff",
+          "op": ">=",
+          "prefer_higher": true,
+          "purity": 1,
+          "support": 0.05,
+          "threshold": 2,
+          "use_abs": true
+        }
+      ]
+    }
+  }
+}

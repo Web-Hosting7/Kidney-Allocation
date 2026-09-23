@@ -1,0 +1,71 @@
+{
+    "_comment": "Single source of truth for every feature used in the study. To swap in a different set of features later, edit this file only — app.py, fft_model.py, fft_component.py and model.html all read their feature-specific data from here rather than hardcoding it. Order here is the order features appear everywhere (dropdowns, patient cards, etc).",
+  
+    "features": [
+      {
+        "key": "dependents",
+        "label": "Dependents",
+        "description": "Number of people who depend on this patient (family, caregivers).",
+        "min": 0,
+        "max": 5,
+        "unit": "",
+        "gap_phrase": "dependents gap",
+        "direction_higher": "Choose more dependents",
+        "direction_lower": "Choose fewer dependents",
+        "direction_higher_short": "More deps.",
+        "direction_lower_short": "Fewer deps."
+      },
+      {
+        "key": "age",
+        "label": "Age",
+        "description": "The patient's age in years.",
+        "min": 18,
+        "max": 75,
+        "unit": "years",
+        "gap_phrase": "age gap",
+        "direction_higher": "Choose older patient",
+        "direction_lower": "Choose younger patient",
+        "direction_higher_short": "Older",
+        "direction_lower_short": "Younger"
+      },
+      {
+        "key": "years_waiting",
+        "label": "Years Waiting",
+        "description": "How long the patient has been on the transplant waiting list.",
+        "min": 0,
+        "max": 10,
+        "unit": "years",
+        "gap_phrase": "waiting time gap",
+        "direction_higher": "Choose patient waiting longer",
+        "direction_lower": "Choose patient waiting shorter",
+        "direction_higher_short": "Longer wait",
+        "direction_lower_short": "Shorter wait"
+      },
+      {
+        "key": "urgency_score",
+        "label": "Urgency Score",
+        "description": "Medical urgency level \u2014 how critical their need is (scale 1\u201310).",
+        "min": 1,
+        "max": 10,
+        "unit": "points",
+        "gap_phrase": "urgency score gap",
+        "direction_higher": "Choose more urgent patient",
+        "direction_lower": "Choose less urgent patient",
+        "direction_higher_short": "More urgent",
+        "direction_lower_short": "Less urgent"
+      },
+      {
+        "key": "health_score",
+        "label": "Health Score",
+        "description": "Overall medical health score (higher is better, scale 1\u201310).",
+        "min": 1,
+        "max": 10,
+        "unit": "points",
+        "gap_phrase": "health score gap",
+        "direction_higher": "Choose healthier patient",
+        "direction_lower": "Choose less healthy patient",
+        "direction_higher_short": "Healthier",
+        "direction_lower_short": "Less healthy"
+      }
+    ]
+  }

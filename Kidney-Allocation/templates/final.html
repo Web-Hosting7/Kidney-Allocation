@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block extra_head %}
+<style>
+.final-tree-card {
+  background: #fff; border: 1px solid var(--border); border-radius: 16px;
+  padding: 28px 26px 22px;
+  box-shadow: 0 1px 2px rgba(15,23,42,.04), 0 8px 24px rgba(15,23,42,.04);
+}
+.final-tree-card svg { display: block; width: 100%; }
+</style>
+{% endblock %}
+{% block content %}
+<div class="eyebrow" style="margin-bottom:8px;">Part 2 · complete</div>
+<h2>Here's your updated model</h2>
+<div class="muted" style="font-size:15px; margin-bottom:20px; line-height:1.6;">
+  This reflects all your choices, including the extra scenarios you just answered.
+</div>
+
+<div class="final-tree-card">
+{{ svg | safe }}
+</div>
+
+<div class="spacer-24"></div>
+<div class="alert alert-success">
+  You've completed the study — thank you. Your responses have been saved.
+</div>
+{% endblock %}
