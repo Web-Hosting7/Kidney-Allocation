@@ -206,6 +206,18 @@ def _migrate_legacy_json():
         return
     if not isinstance(legacy, dict) or not legacy:
         return
+
+    # Skip migration if the legacy data uses a different feature set — happens
+    # when features.json is updated but users.json is from a prior study run.
+    for rec in legacy.values():
+        scens = rec.get("part1_scenarios") or rec.get("part2_scenarios") or []
+        if scens:
+            sample = scens[0].get("A", {})
+            if any(p not in sample for p in _FEATURES):
+                print("[db] Skipping users.json migration — feature set has changed.")
+                return
+            break
+
     save_all_users(legacy)
     print(f"[db] Migrated {len(legacy)} user record(s) from users.json into {DB_PATH}")
 
