@@ -68,18 +68,25 @@ def train_fft_cached(decisions, params, override):
 # Reasonable real-world ranges per feature, used to sample random A/B patient
 # pairs. All five features are integers in this study.
 FEATURE_RANGES = features.ranges()
+# Features with a fixed discrete value set (e.g. rejection_risk: [1,2,5,10]).
+FEATURE_VALUES = features.values_map()
 
 
 def generate_scenarios(n, seed=None):
-    """n random A/B patient pairs, sampled uniformly within FEATURE_RANGES."""
+    """n random A/B patient pairs, sampled uniformly within FEATURE_RANGES.
+    Features with a 'values' list in features.json sample from that list instead."""
     rng = random.Random(seed)
     out = []
     for _ in range(n):
         a, b = {}, {}
         for p in FEATURES:
-            lo, hi = FEATURE_RANGES[p]
-            a[p] = float(rng.randint(lo, hi))
-            b[p] = float(rng.randint(lo, hi))
+            if p in FEATURE_VALUES:
+                a[p] = float(rng.choice(FEATURE_VALUES[p]))
+                b[p] = float(rng.choice(FEATURE_VALUES[p]))
+            else:
+                lo, hi = FEATURE_RANGES[p]
+                a[p] = float(rng.randint(lo, hi))
+                b[p] = float(rng.randint(lo, hi))
         out.append({"A": a, "B": b})
     return out
 
@@ -212,7 +219,21 @@ def record_decision(field, choice, idx, scenarios, csv_suffix):
 
 @app.route("/")
 def start():
-    session.clear()
+    # Consent page always shown — no session check so every new visit requires consent.
+    return render_template("consent.html")
+
+
+@app.route("/consent", methods=["POST"])
+def give_consent():
+    age_ok = request.form.get("age_confirmed")
+    consent_ok = request.form.get("consent_confirmed")
+    if age_ok and consent_ok:
+        session.clear()
+    return redirect(url_for("intro"))
+
+
+@app.route("/intro")
+def intro():
     return render_template(
         "start.html",
         features=FEATURES,
@@ -227,6 +248,7 @@ def do_start():
     if len(name) < 2:
         return render_template(
             "start.html", features=FEATURES, descriptions=PARAM_DESCRIPTIONS,
+            feature_labels=FEATURE_LABELS,
             error="Enter at least 2 characters to continue.",
         )
     session["username"] = name
@@ -247,7 +269,7 @@ def do_start():
 
 def _require_user():
     if "username" not in session:
-        return redirect(url_for("start"))
+        return redirect(url_for("intro"))
     return None
 
 
@@ -674,7 +696,8 @@ def tutorial_seen():
         return jsonify({"ok": False}), 401
     payload = request.get_json(force=True, silent=True) or {}
     db.log_event(session["username"], "tutorial_dismissed",
-                 {"mode": payload.get("mode"), "via": payload.get("via")})
+                 {"mode": payload.get("mode"), "via": payload.get("via"),
+                  "duration_ms": payload.get("duration_ms")})
     return jsonify({"ok": True})
 
 

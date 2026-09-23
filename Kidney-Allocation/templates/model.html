@@ -594,25 +594,36 @@ body { padding: 0; }
 }
 .slider-caption { font-size: var(--fs-xs); color: var(--text-faint); margin: -4px 0 10px; }
 
-/* ── Tutorial ──────────────────────────────────────────────────── */
-#tutorial-backdrop {
-  display: none; position: fixed; inset: 0; background: rgba(15,23,42,.45);
-  z-index: 500; align-items: center; justify-content: center; padding: 20px;
+/* ── Tutorial (spotlight walkthrough) ──────────────────────────── */
+#spotlight-cut {
+  display: none; position: fixed; z-index: 490; pointer-events: none;
+  border-radius: 10px;
+  box-shadow: 0 0 0 9999px rgba(15,23,42,.55);
+  transition: top .22s ease, left .22s ease, width .22s ease, height .22s ease;
 }
-#tutorial-backdrop.visible { display: flex; }
-.tutorial-card {
-  background: #fff; border-radius: 16px; max-width: 460px; width: 100%;
-  padding: 26px 26px 20px; box-shadow: 0 18px 48px rgba(15,23,42,.25);
+#spotlight-cut.visible { display: block; }
+#spotlight-backdrop {
+  display: none; position: fixed; inset: 0; z-index: 489; pointer-events: none;
 }
+#spotlight-backdrop.visible { display: block; }
+#spotlight-tooltip {
+  display: none; position: fixed;
+  top: 50%; left: 50%; transform: translate(-50%, -50%);
+  z-index: 510; width: 310px;
+  background: #fff; border-radius: 14px;
+  padding: 20px 22px 16px;
+  box-shadow: 0 10px 40px rgba(15,23,42,.22);
+}
+#spotlight-tooltip.visible { display: block; }
 .tutorial-step-count {
   font-size: var(--fs-sm); font-weight: 700; color: var(--text-faint); letter-spacing: .07em;
   text-transform: uppercase; margin-bottom: 8px;
 }
-.tutorial-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 8px; }
+.tutorial-title { font-size: 1.15rem; font-weight: 600; margin-bottom: 8px; }
 .tutorial-body { font-size: var(--fs-base); color: var(--text-secondary); line-height: 1.65; }
 .tutorial-actions {
   display: flex; align-items: center; justify-content: space-between;
-  gap: 12px; margin-top: 20px;
+  gap: 12px; margin-top: 16px;
 }
 .tutorial-dots { display: flex; gap: 6px; }
 .tutorial-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--border); }
@@ -903,19 +914,19 @@ body { padding: 0; }
   </div>
 </div>
 
-<!-- ── Tutorial ─────────────────────────────────────────────────── -->
-<div id="tutorial-backdrop">
-  <div class="tutorial-card" role="dialog" aria-modal="true" aria-labelledby="tutorial-title">
-    <div class="tutorial-step-count" id="tutorial-step-count">Step 1 of 4</div>
-    <div class="tutorial-title" id="tutorial-title">Title</div>
-    <div class="tutorial-body" id="tutorial-body">Body</div>
-    <div class="tutorial-actions">
-      <div class="tutorial-dots" id="tutorial-dots"></div>
-      <div style="display:flex;gap:10px;align-items:center">
-        <button class="btn-link" id="tutorial-skip" type="button">Skip</button>
-        <button class="btn-apply" id="tutorial-next"
-                style="width:auto;padding:9px 20px;font-size: var(--fs-base)">Next</button>
-      </div>
+<!-- ── Tutorial (spotlight walkthrough) ─────────────────────────── -->
+<div id="spotlight-cut"></div>
+<div id="spotlight-backdrop"></div>
+<div id="spotlight-tooltip" role="dialog" aria-modal="true" aria-labelledby="spotlight-title">
+  <div class="tutorial-step-count" id="spotlight-step-count">Step 1 of 4</div>
+  <div class="tutorial-title" id="spotlight-title">Title</div>
+  <div class="tutorial-body" id="spotlight-body">Body</div>
+  <div class="tutorial-actions">
+    <div class="tutorial-dots" id="spotlight-dots"></div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <button class="btn-link" id="spotlight-skip" type="button">Skip</button>
+      <button class="btn-apply" id="spotlight-next"
+              style="width:auto;padding:9px 20px;font-size:var(--fs-base)">Next</button>
     </div>
   </div>
 </div>
@@ -2029,6 +2040,7 @@ document.getElementById('ep-close').addEventListener('click', function() {
 });
 document.getElementById('ep-del').addEventListener('click', function() {
   if (selectedNode === null || tree.nodes.length <= 1) return;
+  logEvent('node_deleted', {step: selectedNode + 1});
   tree.nodes.splice(selectedNode, 1);
   selectedNode = null;
   document.getElementById('edit-panel').style.display = 'none';
@@ -2036,17 +2048,28 @@ document.getElementById('ep-del').addEventListener('click', function() {
 });
 document.getElementById('ep-feat').addEventListener('change', function() {
   var feat = document.getElementById('ep-feat').value;
+  logEvent('feature_changed', {step: selectedNode !== null ? selectedNode + 1 : null, to: feat});
   _refreshOutcomeLabels(feat, 'ep-out-a', 'ep-out-b');
   var absLbl = document.getElementById('ep-abs-label');
   if (absLbl.style.display !== 'none') absLbl.textContent = '|' + pretty(feat) + ' gap| \u2265';
   updateSVG();
 });
-document.getElementById('ep-op').addEventListener('change', updateSVG);
-document.getElementById('ep-thr').addEventListener('change', updateSVG);
+document.getElementById('ep-op').addEventListener('change', function() {
+  logEvent('operator_changed', {step: selectedNode !== null ? selectedNode + 1 : null,
+                                to: document.getElementById('ep-op').value});
+  updateSVG();
+});
+document.getElementById('ep-thr').addEventListener('change', function() {
+  logEvent('threshold_changed', {step: selectedNode !== null ? selectedNode + 1 : null,
+                                 to: parseFloat(document.getElementById('ep-thr').value)});
+  updateSVG();
+});
 document.getElementById('ep-out-a').addEventListener('click', function() {
+  logEvent('outcome_changed', {step: selectedNode !== null ? selectedNode + 1 : null, to: 'A'});
   setOutcomeToggle('ep-out-a','ep-out-b',true); updateSVG();
 });
 document.getElementById('ep-out-b').addEventListener('click', function() {
+  logEvent('outcome_changed', {step: selectedNode !== null ? selectedNode + 1 : null, to: 'B'});
   setOutcomeToggle('ep-out-a','ep-out-b',false); updateSVG();
 });
 // Prevent panel clicks from bubbling to svg-wrap
@@ -2099,6 +2122,7 @@ document.getElementById('rp-close').addEventListener('click', function() {
 });
 document.getElementById('rp-del').addEventListener('click', function() {
   if (refinePanelNode === null) return;
+  logEvent('refine_deleted', {step: refinePanelNode + 1});
   delete tree.nodes[refinePanelNode].refine;
   closeRefinePanel();
   render();
@@ -2238,7 +2262,15 @@ function setMode(nextEditing) {
 // The only way into edit mode is this button (shown after rating); the only
 // way out is "done editing" in the toolbar, which saves and reloads.
 document.getElementById('mode-toggle').addEventListener('click', function() {
+  if (!_firstEditLogged) {
+    _firstEditLogged = true;
+    logEvent('first_edit_started', {view_ms: Date.now() - PAGE_LOAD_TIME});
+  }
   setMode(true);
+  if (!_editTutorialShown) {
+    _editTutorialShown = true;
+    openTutorial('edit_mode_enter', 'edit');
+  }
 });
 
 var resetBtn = document.getElementById('reset-model');
@@ -2553,107 +2585,219 @@ function renderAudit() {
   // Views render on demand when opened from the picker; nothing to do eagerly.
 }
 
-// ── Tutorial ──────────────────────────────────────────────────────
-// Shows on the first visit, returns once as a short reminder, and is always
-// reachable from the "?" button. Dismissible at every step — it never blocks
-// the page behind a required walkthrough.
+// ── Tracking ──────────────────────────────────────────────────────
+// Reaction time: first user interaction after the results page loads.
+var PAGE_LOAD_TIME = Date.now();
+var _reactionLogged = false;
+var _firstEditLogged = false;
 
+function _logReactionOnce() {
+  if (_reactionLogged) return;
+  _reactionLogged = true;
+  logEvent('reaction_time', {ms: Date.now() - PAGE_LOAD_TIME});
+}
+document.addEventListener('pointerdown', _logReactionOnce, {once: true, passive: true});
+document.addEventListener('keydown', _logReactionOnce, {once: true});
+
+// ── Tutorial (spotlight walkthrough) ──────────────────────────────
+// Each step highlights one UI element by cutting it out of a dark overlay,
+// and positions a tooltip card nearby. Dismissible at every step.
+
+// View-mode tutorial: explains the tree visualisation
 var TUTORIAL_STEPS = [
   {
     title: 'This is your model',
-    body: 'It reads top to bottom. Each box is one check. If the check holds, ' +
-          'the YES branch on the left gives the answer; if not, the NO branch ' +
-          'carries on down to the next check.'
+    body:  'It reads top to bottom. Each box is one check — YES exits left with ' +
+           'an immediate answer, NO continues down to the next check.',
+    target: '.tree-card'
   },
   {
     title: 'The bottom box is the fallback',
-    body: 'When no check applies, the model uses the outcome in the ' +
-          '“OTHERWISE” box at the end of the tree.'
+    body:  'When no check applies, the model uses the outcome in the “OTHERWISE” ' +
+           'box at the very bottom of the tree.',
+    target: '#default-leaf'
   },
   {
-    title: 'You can change any of it',
-    body: 'Rate the model first, then use “Edit the model” at the top. Click a ' +
-          'check to change its factor or threshold, or use the green + on a box ' +
-          'to add a new check straight after it.'
+    title: 'Rate then edit',
+    body:  'Rate how well this model matches your thinking (1–7 below). Once ' +
+           'rated, you can click any check to change its factor or threshold, or ' +
+           'add new checks.',
+    target: '#rating-card'
   },
   {
     title: 'Test it against a new scenario',
-    body: 'Open “Try a new scenario” at the bottom to see a fresh pair of ' +
-          'patients, make your own choice, and compare it with the model\'s. ' +
-          'Your agreements and disagreements are kept so you can review them.'
+    body:  'After rating, use “Test this model” to see a fresh patient pair and ' +
+           'compare your choice with the model\'s prediction. Agreements and ' +
+           'disagreements are saved for review.',
+    target: '#post-rating-row'
+  }
+];
+
+// Edit-mode tutorial: explains each editing control
+var EDIT_TUTORIAL_STEPS = [
+  {
+    title: 'Click any box to edit it',
+    body:  'Every check now has a dashed border — click it to open an edit panel. ' +
+           'Change the factor, the threshold value, or which patient the check favours.',
+    target: '.tree-card'
+  },
+  {
+    title: 'Add steps or save changes',
+    body:  'Use “＋ Add decision step” to insert a new check. When you\'re happy, ' +
+           'click “✓ Done editing” — your changes are saved and the model retrains.',
+    target: '#toolbar'
+  },
+  {
+    title: 'Reorder steps',
+    body:  'Drag the ▲▼ handles on each step box to change the order. ' +
+           'The model tests checks top to bottom and stops at the first one that fires.',
+    target: '#editing-banner'
   }
 ];
 
 var tutorialStep = 0;
+var _tutorialOpenedAt = null;
+// 'view' | 'edit' — controls which step array is active
+var _tutorialContext = 'view';
+// prevent the edit tutorial from auto-opening more than once per page load
+var _editTutorialShown = false;
 
-function renderTutorial() {
-  var s = TUTORIAL_STEPS[tutorialStep];
-  document.getElementById('tutorial-step-count').textContent =
-    'Step ' + (tutorialStep + 1) + ' of ' + TUTORIAL_STEPS.length;
-  document.getElementById('tutorial-title').textContent = s.title;
-  document.getElementById('tutorial-body').textContent = s.body;
-  document.getElementById('tutorial-next').textContent =
-    tutorialStep === TUTORIAL_STEPS.length - 1 ? 'Got it' : 'Next';
+function _isTutorialVisible(el) {
+  if (!el) return false;
+  var s = window.getComputedStyle(el);
+  if (s.display === 'none' || s.visibility === 'hidden' || s.opacity === '0') return false;
+  var r = el.getBoundingClientRect();
+  return r.width > 0 && r.height > 0;
+}
 
-  var dots = document.getElementById('tutorial-dots');
+function _positionSpotlight(el) {
+  var cut = document.getElementById('spotlight-cut');
+  if (!_isTutorialVisible(el)) { cut.classList.remove('visible'); return; }
+  var r = el.getBoundingClientRect(), pad = 6;
+  cut.style.top    = (r.top  - pad) + 'px';
+  cut.style.left   = (r.left - pad) + 'px';
+  cut.style.width  = (r.width  + pad * 2) + 'px';
+  cut.style.height = (r.height + pad * 2) + 'px';
+  cut.classList.add('visible');
+}
+
+function _positionTooltip(el) {
+  var tt = document.getElementById('spotlight-tooltip');
+  var margin = 14, ttW = 310, ttH = 200;
+  var vw = window.innerWidth, vh = window.innerHeight;
+
+  if (!_isTutorialVisible(el)) {
+    // Centered fallback when the target element is hidden — clear the JS
+    // transform override so the CSS "top:50%; left:50%; transform:-50%" centres it.
+    tt.style.top = '';
+    tt.style.left = '';
+    tt.style.transform = '';
+    return;
+  }
+  var r = el.getBoundingClientRect();
+  var top = (r.bottom + margin + ttH < vh)
+    ? r.bottom + margin
+    : Math.max(margin, r.top - ttH - margin);
+  var left = r.left + (r.width - ttW) / 2;
+  left = Math.max(margin, Math.min(left, vw - ttW - margin));
+  top  = Math.max(margin, top);
+  // Clear the CSS centering transform before setting explicit pixel positions
+  tt.style.transform = 'none';
+  tt.style.top  = top + 'px';
+  tt.style.left = left + 'px';
+}
+
+function _activeSteps() {
+  return _tutorialContext === 'edit' ? EDIT_TUTORIAL_STEPS : TUTORIAL_STEPS;
+}
+
+function _updateSpotlightPositions() {
+  if (!document.getElementById('spotlight-tooltip').classList.contains('visible')) return;
+  var steps = _activeSteps();
+  var s = steps[tutorialStep];
+  var el = s && s.target ? document.querySelector(s.target) : null;
+  _positionSpotlight(el);
+  _positionTooltip(el);
+}
+
+function renderTutorialStep() {
+  var steps = _activeSteps();
+  var s = steps[tutorialStep];
+  var total = steps.length;
+  document.getElementById('spotlight-step-count').textContent =
+    'Step ' + (tutorialStep + 1) + ' of ' + total;
+  document.getElementById('spotlight-title').textContent = s.title;
+  document.getElementById('spotlight-body').textContent  = s.body;
+  document.getElementById('spotlight-next').textContent  =
+    tutorialStep === total - 1 ? 'Got it' : 'Next';
+
+  var dots = document.getElementById('spotlight-dots');
   dots.innerHTML = '';
-  TUTORIAL_STEPS.forEach(function (_, i) {
+  steps.forEach(function (_, i) {
     var d = document.createElement('span');
     d.className = 'tutorial-dot' + (i === tutorialStep ? ' on' : '');
     dots.appendChild(d);
   });
+
+  var el = s.target ? document.querySelector(s.target) : null;
+  if (el) el.scrollIntoView({block: 'nearest', behavior: 'instant'});
+  _updateSpotlightPositions();
 }
 
-function openTutorial(via) {
+function openTutorial(via, context) {
+  _tutorialContext = context || 'view';
   tutorialStep = 0;
-  renderTutorial();
-  document.getElementById('tutorial-backdrop').classList.add('visible');
-  logEvent('tutorial_opened', {via: via || 'auto'});
+  _tutorialOpenedAt = Date.now();
+  document.getElementById('spotlight-backdrop').classList.add('visible');
+  document.getElementById('spotlight-tooltip').classList.add('visible');
+  renderTutorialStep();
+  logEvent('tutorial_opened', {via: via || 'auto', context: _tutorialContext});
 }
 
 function closeTutorial(via) {
-  document.getElementById('tutorial-backdrop').classList.remove('visible');
+  document.getElementById('spotlight-cut').classList.remove('visible');
+  document.getElementById('spotlight-backdrop').classList.remove('visible');
+  document.getElementById('spotlight-tooltip').classList.remove('visible');
+  var duration = _tutorialOpenedAt ? Date.now() - _tutorialOpenedAt : null;
   fetch(TUTORIAL_SEEN_URL, {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({mode: TUTORIAL_MODE || 'manual', via: via || 'close'})
+    body: JSON.stringify({mode: TUTORIAL_MODE || 'manual', via: via || 'close',
+                          duration_ms: duration})
   }).catch(function () {});
 }
 
-document.getElementById('tutorial-next').addEventListener('click', function () {
-  if (tutorialStep < TUTORIAL_STEPS.length - 1) {
+document.getElementById('spotlight-next').addEventListener('click', function () {
+  if (tutorialStep < _activeSteps().length - 1) {
     tutorialStep++;
-    renderTutorial();
+    renderTutorialStep();
   } else {
     closeTutorial('finished');
   }
 });
-document.getElementById('tutorial-skip').addEventListener('click', function () {
+document.getElementById('spotlight-skip').addEventListener('click', function () {
   closeTutorial('skipped');
-});
-document.getElementById('tutorial-backdrop').addEventListener('click', function (e) {
-  if (e.target === this) closeTutorial('backdrop');
 });
 document.addEventListener('keydown', function (e) {
   if (e.key === 'Escape' &&
-      document.getElementById('tutorial-backdrop').classList.contains('visible')) {
+      document.getElementById('spotlight-tooltip').classList.contains('visible')) {
     closeTutorial('escape');
   }
 });
 document.getElementById('btn-help').addEventListener('click', function () {
-  openTutorial('help_button');
+  openTutorial('help_button', editing ? 'edit' : 'view');
 });
 document.getElementById('tutorial-nudge-open').addEventListener('click', function () {
   document.getElementById('tutorial-nudge').classList.remove('visible');
   openTutorial('reminder');
 });
+window.addEventListener('scroll', _updateSpotlightPositions, {passive: true});
+document.getElementById('svg-scroll').addEventListener('scroll', _updateSpotlightPositions, {passive: true});
 
 function startTutorial() {
   if (TUTORIAL_MODE === 'full') {
-    openTutorial('first_visit');
+    openTutorial('first_visit', 'view');
   } else if (TUTORIAL_MODE === 'reminder') {
-    // The return visit gets an inline strip rather than a modal — a reminder
-    // that interrupts is just the first tutorial again.
     document.getElementById('tutorial-nudge').classList.add('visible');
     logEvent('tutorial_reminder_shown', {});
   }

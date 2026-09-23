@@ -37,6 +37,32 @@ LEGACY_JSON  = os.path.join(APP_DIR, "users.json")
 _FEATURES = []
 
 
+# ── feature-column migration ──────────────────────────────────────────────────
+# Called before CREATE TABLE IF NOT EXISTS. If the scenarios table already
+# exists but doesn't have the expected first feature column, the study's
+# feature set has changed and the dynamic tables must be rebuilt (the stored
+# data is incompatible with the new column layout).
+
+def _drop_stale_feature_tables():
+    if not _FEATURES:
+        return
+    with _connect() as conn:
+        tbl = conn.execute(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name='scenarios'"
+        ).fetchone()
+        if not tbl:
+            return
+        existing = {r["name"] for r in conn.execute("PRAGMA table_info(scenarios)")}
+        expected = {f"A_{k}" for k in _FEATURES} | {f"B_{k}" for k in _FEATURES}
+        if not expected.issubset(existing):
+            conn.executescript("""
+                DROP TABLE IF EXISTS trials;
+                DROP TABLE IF EXISTS decisions;
+                DROP TABLE IF EXISTS scenarios;
+            """)
+            print("[db] Feature set changed — dropped stale dynamic tables.")
+
+
 # ── connection ────────────────────────────────────────────────────────────────
 
 def _connect():
@@ -67,6 +93,8 @@ def init_db(features):
     pair_cols = ",\n            ".join(
         f"{c} REAL" for c in (_cols("A") + _cols("B"))
     )
+
+    _drop_stale_feature_tables()
 
     with _connect() as conn:
         conn.executescript(f"""

@@ -18,11 +18,11 @@ def _load():
     with open(_PATH) as f:
         data = json.load(f)
     feats = data["features"]
+    required = ("key", "label", "description", "min", "max",
+                "gap_phrase", "direction_higher", "direction_lower",
+                "direction_higher_short", "direction_lower_short")
     for f_ in feats:
-        missing = [k for k in ("key", "label", "description", "min", "max",
-                                "gap_phrase", "direction_higher", "direction_lower",
-                                "direction_higher_short", "direction_lower_short")
-                   if k not in f_]
+        missing = [k for k in required if k not in f_]
         if missing:
             raise ValueError(f"features.json entry {f_.get('key', '?')!r} is missing: {missing}")
     return feats
@@ -53,3 +53,9 @@ def direction_labels(short=False):
 def gap_phrases():
     """key -> (gap phrase, unit) — e.g. ("age gap", "years"), used in captions."""
     return {k: (v["gap_phrase"], v.get("unit", "")) for k, v in FEATURE_BY_KEY.items()}
+
+
+def values_map():
+    """key -> list of allowed discrete values, for features with a fixed value set.
+    Features without a 'values' entry are continuous and are not included."""
+    return {k: v["values"] for k, v in FEATURE_BY_KEY.items() if "values" in v}

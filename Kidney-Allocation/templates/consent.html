@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}Research Participation Consent{% endblock %}
+{% block content %}
+<h1>Research Participation Consent</h1>
+<div class="spacer-20"></div>
+
+<div class="content-card">
+  <p><strong>Study</strong></p>
+  <p>Kidney Organ Allocation Preference Study, conducted by Vijay Keswani (IIT Delhi).</p>
+
+  <hr>
+
+  <p><strong>What you will do</strong></p>
+  <p>You will see pairs of patients who each need a kidney transplant and choose who you think
+  should receive it. Afterwards, you will see a simple model that captures the pattern in your
+  choices — you can rate it, edit it, and test it against new scenarios. The whole study takes
+  about 20–25 minutes.</p>
+
+  <hr>
+
+  <p><strong>Timing</strong></p>
+  <p>The study is untimed. Take as long as you need on each pair.</p>
+
+  <hr>
+
+  <p><strong>Risks and benefits</strong></p>
+  <p>There are no anticipated risks beyond those of ordinary computer use. The study contributes
+  to research on how people reason through organ allocation decisions when working alongside
+  AI systems.</p>
+</div>
+
+<div class="spacer-24"></div>
+
+<form method="post" action="{{ url_for('give_consent') }}">
+  <label class="consent-check">
+    <input type="checkbox" name="age_confirmed" id="chk-age">
+    <span>I confirm that I am <strong>18 years of age or older</strong>.</span>
+  </label>
+  <div class="spacer-16"></div>
+  <label class="consent-check">
+    <input type="checkbox" name="consent_confirmed" id="chk-consent">
+    <span>I have read the information above and <strong>consent to participate</strong> in this study.</span>
+  </label>
+  <div class="spacer-28"></div>
+  <button type="submit" class="btn btn-primary consent-continue" id="btn-continue" disabled>
+    Continue &rarr;
+  </button>
+</form>
+
+<style>
+.consent-check {
+  display: flex; align-items: flex-start; gap: 12px; cursor: pointer;
+  font-size: 16px; line-height: 1.6;
+}
+.consent-check input[type="checkbox"] {
+  width: 20px; height: 20px; margin-top: 3px; flex-shrink: 0;
+  accent-color: var(--accent); cursor: pointer;
+}
+.consent-continue { min-width: 180px; }
+.consent-continue:disabled {
+  background: var(--border-strong, #cbd5e1); border-color: var(--border-strong, #cbd5e1);
+  cursor: not-allowed; opacity: 0.6;
+}
+</style>
+
+<script>
+(function () {
+  var chkAge     = document.getElementById('chk-age');
+  var chkConsent = document.getElementById('chk-consent');
+  var btn        = document.getElementById('btn-continue');
+  function update() {
+    btn.disabled = !(chkAge.checked && chkConsent.checked);
+  }
+  chkAge.addEventListener('change', update);
+  chkConsent.addEventListener('change', update);
+})();
+</script>
+{% endblock %}
