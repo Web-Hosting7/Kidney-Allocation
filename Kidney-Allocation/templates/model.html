@@ -2633,25 +2633,49 @@ var TUTORIAL_STEPS = [
   }
 ];
 
-// Edit-mode tutorial: explains each editing control
+// Edit-mode tutorial: explains every control on a node, one at a time
 var EDIT_TUTORIAL_STEPS = [
   {
-    title: 'Click any box to edit it',
-    body:  'Every check now has a dashed border — click it to open an edit panel. ' +
-           'Change the factor, the threshold value, or which patient the check favours.',
-    target: '.tree-card'
+    title: '✎ Edit this check',
+    body:  'Click the blue pencil badge to open an edit panel for this step. ' +
+           'You can change the factor it checks, the threshold value, and which patient it favours.',
+    target: '.fft-badge-pencil.fft-badge-tl'
   },
   {
-    title: 'Add steps or save changes',
-    body:  'Use “＋ Add decision step” to insert a new check. When you\'re happy, ' +
-           'click “✓ Done editing” — your changes are saved and the model retrains.',
+    title: '🗑 Delete this check',
+    body:  'Click the grey trash badge to remove this check from the model entirely. ' +
+           'The remaining checks still run in order.',
+    target: '.fft-badge-delete'
+  },
+  {
+    title: '＋ Add a check below',
+    body:  'The green ＋ at the bottom of each step inserts a brand-new check ' +
+           'immediately after it. You can add up to 2 new checks per editing pass.',
+    target: '.fft-badge-add.fft-badge-br'
+  },
+  {
+    title: '⠿ Drag to reorder',
+    body:  'Drag the grey grid badge up or down to change this check\'s position in the tree. ' +
+           'Order matters — the model stops at the first check that fires.',
+    target: '.fft-badge-grip'
+  },
+  {
+    title: '▲ Move up',
+    body:  'Click the up arrow to shift this check one position earlier in the tree. ' +
+           'Earlier checks are tested first.',
+    target: '.fft-badge-move.fft-badge-tr2'
+  },
+  {
+    title: '▼ Move down',
+    body:  'Click the down arrow to shift this check one position later, ' +
+           'so it only runs if every check above it has already said NO.',
+    target: '.fft-badge-move.fft-badge-tr1'
+  },
+  {
+    title: 'Save your changes',
+    body:  'When you\'re done, click “✓ Done editing” in the toolbar above the tree. ' +
+           'Your changes are saved and the model retrains on your original answers.',
     target: '#toolbar'
-  },
-  {
-    title: 'Reorder steps',
-    body:  'Drag the ▲▼ handles on each step box to change the order. ' +
-           'The model tests checks top to bottom and stops at the first one that fires.',
-    target: '#editing-banner'
   }
 ];
 
@@ -2673,7 +2697,9 @@ function _isTutorialVisible(el) {
 function _positionSpotlight(el) {
   var cut = document.getElementById('spotlight-cut');
   if (!_isTutorialVisible(el)) { cut.classList.remove('visible'); return; }
-  var r = el.getBoundingClientRect(), pad = 6;
+  // Use a larger padding for small badge buttons so the spotlight isn't too tight
+  var r = el.getBoundingClientRect();
+  var pad = r.width < 40 ? 12 : 6;
   cut.style.top    = (r.top  - pad) + 'px';
   cut.style.left   = (r.left - pad) + 'px';
   cut.style.width  = (r.width  + pad * 2) + 'px';
